@@ -3,11 +3,13 @@ import CustomInput from '../../components/CustomInput'
 import { useState } from 'react'
 import CustomButton from '../../components/CustomButton'
 import { router } from 'expo-router'
+import { useForm } from 'react-hook-form'
 
 const VerifyEmail = () => {
-  const [code, setCode] = useState('')
+  const {control, handleSubmit, formState: {errors}} = useForm()
   
-  const onVerifyPressed = () => {
+  const onVerifyPressed = (data) => {
+    console.log(data)
     console.warn('onVerifyPressed')
   }
 
@@ -25,14 +27,15 @@ const VerifyEmail = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Verify your Email</Text>
       <CustomInput
+        name="code"
+        rules={{required: "This field is required"}}
         placeholder={"Verification Code"} 
-        value={code} 
-        setValue={setCode} 
+        control={control}
       />
 
       <CustomButton
         text="Verify"
-        onPress={onVerifyPressed}
+        onPress={handleSubmit(onVerifyPressed)}
       />
 
       <CustomButton

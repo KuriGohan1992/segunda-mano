@@ -1,16 +1,17 @@
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, TextInput } from 'react-native'
 import CustomInput from '../../components/CustomInput'
 import { useState } from 'react'
 import CustomButton from '../../components/CustomButton'
 import { router } from 'expo-router'
+import { useForm } from 'react-hook-form'
 
 const SignIn = () => {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+  const {control, handleSubmit, formState: {errors}} = useForm()
 
-  const onSignInPressed = () => {
+  const onSignInPressed = (data) => {
+    console.log(data);
     console.warn('onSignInPressed')
-  }
+  } 
 
   const onForgotPasswordPressed = () => {
     console.warn('onForgotPasswordPresssed')
@@ -24,25 +25,30 @@ const SignIn = () => {
   const onSignUpPressed = () => {
     console.warn('onSignUpPressed')
     router.replace("sign_up")
-  }
+  } 
 
   return (
     <View style={styles.container}>
       <CustomInput
+        name="username"
+        rules={{required: "This field is required"}}
         placeholder={"Username"} 
-        value={username} 
-        setValue={setUsername} 
+        control={control}  
       />
       <CustomInput 
-        placeholder={"Password"} 
-        value={password} 
-        setValue={setPassword}
+        name="password"
+        rules={{required: "This field is required", minLength: {
+          value: 3,
+          message: "Password should be minimum 3 characters long",
+        }}}
+        placeholder={"Password"}
         secureTextEntry
+        control={control}
       />
 
       <CustomButton
         text="Sign In"
-        onPress={onSignInPressed}
+        onPress={handleSubmit(onSignInPressed)}
       />
 
       <CustomButton

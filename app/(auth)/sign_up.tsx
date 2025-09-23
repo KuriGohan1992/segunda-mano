@@ -3,18 +3,19 @@ import CustomInput from '../../components/CustomInput'
 import { useState } from 'react'
 import CustomButton from '../../components/CustomButton'
 import { router } from 'expo-router'
+import { useForm } from 'react-hook-form'
+
+const EMAIL_REGEX = /^(?=.{1,64}@)(?:"[^"\\\r\n]+"|[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*)@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}$/
 
 const SignUp = () => {
-  const [username, setUsername] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
+  const {control, handleSubmit, watch, formState: {errors}} = useForm()
+  const pwd = watch('password')
   
-  const onSignUpPressed = () => {
+  const onSignUpPressed = (data) => {
+    console.log(data)
     console.warn('onSignUpPressed')
     router.push("verify_email")
   }
-
   const onTermsOfUsePressed = () => {
     console.warn('onTermsOfUsePressed')
   }
@@ -36,32 +37,36 @@ const SignUp = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Create an account</Text>
       <CustomInput
+        name="username"
+        rules={{required: "This field is required"}}
         placeholder={"Username"} 
-        value={username} 
-        setValue={setUsername} 
+        control={control}
       />
       <CustomInput
+        name="email"
+        rules={{required: "This field is required", pattern: {value: EMAIL_REGEX, message: "Invalid Email"}}}
         placeholder={"Email"}
-        value={email}
-        setValue={setEmail}
+        control={control}
       />
 
-      <CustomInput 
-        placeholder={"Password"} 
-        value={password} 
-        setValue={setPassword}
+      <CustomInput
+        name="password"
+        rules={{required: "This field is required"}}
+        placeholder={"Password"}        
         secureTextEntry
+        control={control}
       />
-      <CustomInput 
+      <CustomInput
+        name="confirm_password"
+        rules={{required: "This field is required", validate: value => value === pwd || 'Passwords do not match'}}
         placeholder={"Confirm Password"} 
-        value={confirmPassword} 
-        setValue={setConfirmPassword}
         secureTextEntry
+        control={control}
       />
 
       <CustomButton
         text="Sign Up"
-        onPress={onSignUpPressed}
+        onPress={handleSubmit(onSignUpPressed)}
       />
 
       <Text style={styles.text}>By creating an account, you confirm that you have read and agree to the{" "}

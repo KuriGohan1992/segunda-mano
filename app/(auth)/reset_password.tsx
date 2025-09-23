@@ -3,12 +3,12 @@ import CustomInput from '../../components/CustomInput'
 import { useState } from 'react'
 import CustomButton from '../../components/CustomButton'
 import { router } from 'expo-router'
+import { useForm } from 'react-hook-form'
 
 const ResetPassword = () => {
-  const [code, setCode] = useState('')
-  const [newPassword, setNewPassword] = useState('')
+  const {control, handleSubmit, formState: {errors}} = useForm()
   
-  const onSubmitPressed = () => {
+  const onSubmitPressed = (data) => {
     console.warn('onSubmitPressed')
   }
 
@@ -22,21 +22,23 @@ const ResetPassword = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Reset your Password</Text>
       <CustomInput
+        name="verification"
+        rules={{required: "This field is required"}}
         placeholder={"Verification Code"} 
-        value={code} 
-        setValue={setCode} 
+        control={control}
       />
 
-      <CustomInput 
-        placeholder={"New Password"} 
-        value={newPassword} 
-        setValue={setNewPassword}
+      <CustomInput
+        name="new_password"
+        rules={{required: "This field is required"}}
+        placeholder={"New Password"}        
         secureTextEntry
+        control={control}
       />
 
       <CustomButton
         text="Submit"
-        onPress={onSubmitPressed}
+        onPress={handleSubmit(onSubmitPressed)}
       />
 
       <CustomButton 

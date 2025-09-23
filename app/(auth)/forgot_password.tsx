@@ -3,11 +3,13 @@ import CustomInput from '../../components/CustomInput'
 import { useState } from 'react'
 import CustomButton from '../../components/CustomButton'
 import { router } from 'expo-router'
+import { useForm } from 'react-hook-form'
 
 const ForgotPassword = () => {
-  const [email, setEmail] = useState('')
+  const {control, handleSubmit, formState: {errors}} = useForm()
   
-  const onSendPressed = () => {
+  const onSendPressed = (data) => {
+    console.log(data);
     console.warn('onSendPressed')
     router.push("reset_password")
   }
@@ -22,14 +24,15 @@ const ForgotPassword = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Reset your Password</Text>
       <CustomInput
+        name="email"
+        rules={{required: "This field is required"}}
         placeholder={"Email"} 
-        value={email} 
-        setValue={setEmail} 
+        control={control}
       />
 
       <CustomButton
         text="Send"
-        onPress={onSendPressed}
+        onPress={handleSubmit(onSendPressed)}
       />
 
       <CustomButton 
