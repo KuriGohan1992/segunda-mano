@@ -12,7 +12,7 @@ const HomePage = () => {
       })}>
         <Text>Go to user 2</Text>
       </Pressable>
-      <Link href="../(auth)/login">Log out</Link>
+      <Link href="../(auth)">Log out</Link>
     </View>
   );
 };

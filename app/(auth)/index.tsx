@@ -2,6 +2,7 @@ import { View, Text, StyleSheet } from 'react-native'
 import CustomInput from '../../components/CustomInput'
 import { useState } from 'react'
 import CustomButton from '../../components/CustomButton'
+import { router } from 'expo-router'
 
 const SignIn = () => {
   const [username, setUsername] = useState('')
@@ -13,22 +14,16 @@ const SignIn = () => {
 
   const onForgotPasswordPressed = () => {
     console.warn('onForgotPasswordPresssed')
+    router.push("forgot_password")
   }
 
-  const onSignInFacebookPressed = () => {
-    console.warn('onSignInFacebookPressed')
-  }
-
-  const onSignInGooglePressed = () => {
-    console.warn('onSignInGooglePressed')
-  }
-
-  const onSignInApplePressed = () => {
-    console.warn('onSignInApplePressed')
+  const onGooglePressed = () => {
+    console.warn('onGooglePressed')
   }
 
   const onSignUpPressed = () => {
     console.warn('onSignUpPressed')
+    router.replace("sign_up")
   }
 
   return (
@@ -57,24 +52,10 @@ const SignIn = () => {
       />
 
       <CustomButton
-        text="Sign In with Facebook"
-        onPress={onSignInFacebookPressed}
-        bgColor="#e7eaf4"
-        fgColor="#4765a9"
-      />
-
-      <CustomButton
-        text="Sign In with Google"
-        onPress={onSignInGooglePressed}
+        text="Continue with Google"
+        onPress={onGooglePressed}
         bgColor="#fae9ea"
         fgColor="#dd4d44"
-      />
-
-      <CustomButton
-        text="Sign In with Apple"
-        onPress={onSignInApplePressed}
-        bgColor="#e3e3e3"
-        fgColor="#363636"
       />
 
       <CustomButton

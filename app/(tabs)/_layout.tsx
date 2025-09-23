@@ -6,10 +6,12 @@ const TabsLayout = () => {
     <Tabs>
       <Tabs.Screen name="index" options={{
         headerTitle: "Home",
+        headerShown: false,
         title: "Home",
       }}/>
       <Tabs.Screen name="users/[id]" options={{
         headerTitle: "User Page",
+        headerShown: false,
         title: "User",
       }}/>
     </Tabs>
