@@ -8,6 +8,8 @@ import Logo from '../../assets/icon.png'
 import { sendEmailVerification, signInWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '../../firebase'
 import { useUser } from '../../context/UserContext'
+import { resendVerification } from '../../utils/auth'
+const EMAIL_REGEX = /^(?=.{1,64}@)(?:"[^"\\\r\n]+"|[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*)@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}$/
 
 const SignIn = () => {
   const { setUser } = useUser();
@@ -27,19 +29,7 @@ const SignIn = () => {
       setUser(user);
 
       if (!user.emailVerified) {
-        try {
-          await sendEmailVerification(user);
-          Alert.alert("We've sent a new verification email!")
-        } catch (error: any) {
-          if (error.code === "auth/too-many-requests") {
-            Alert.alert(
-              "Too many requests",
-              "You've requested too many emails. Please wait a few minutes before trying again."
-            );
-          } else {
-            Alert.alert("Error", error.message);
-          }
-        }
+        await resendVerification(user);
         setError("email", {type: "manual", message: "Your email is not verified yet. Check your inbox."});
         return;
       }
@@ -80,7 +70,7 @@ const SignIn = () => {
       <Image source={Logo} style={[styles.logo, {height: height * 0.4}]} resizeMode="contain"/>
       <CustomInput
         name="email"
-        rules={{required: "Email is required"}}
+        rules={{required: "Email is required", pattern: {value: EMAIL_REGEX, message: "Invalid Email"}}}
         placeholder={"Email"}
         control={control}
       />

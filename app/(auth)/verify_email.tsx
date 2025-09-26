@@ -4,6 +4,7 @@ import { router } from 'expo-router'
 import { useForm } from 'react-hook-form'
 import { useUser } from '../../context/UserContext'
 import { sendEmailVerification } from 'firebase/auth'
+import { resendVerification } from '../../utils/auth'
 
 const VerifyEmail = () => {
   const { user } = useUser();
@@ -16,19 +17,7 @@ const VerifyEmail = () => {
       Alert.alert("Error: User is null")
       return;
     } 
-    try {
-      await sendEmailVerification(user);
-      Alert.alert("We've sent a new verification email!")
-    } catch (error: any) {
-      if (error.code === "auth/too-many-requests") {
-        Alert.alert(
-          "Too many requests",
-          "You've requested too many emails. Please wait a few minutes before trying again."
-        );
-      } else {
-        Alert.alert("Error", error.message);
-      }
-    }
+    await resendVerification(user);
   };
 
   const onSignInPressed = () => {

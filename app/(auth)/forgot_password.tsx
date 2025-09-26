@@ -4,14 +4,15 @@ import { useState } from 'react'
 import CustomButton from '../../components/CustomButton'
 import { router } from 'expo-router'
 import { useForm } from 'react-hook-form'
+import { resetPassword } from '../../utils/auth'
+const EMAIL_REGEX = /^(?=.{1,64}@)(?:"[^"\\\r\n]+"|[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*)@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}$/
 
 const ForgotPassword = () => {
   const {control, handleSubmit, formState: {errors}} = useForm()
   
-  const onSendPressed = (data) => {
-    console.log(data);
-    console.warn('onSendPressed')
-    router.push("reset_password")
+  const onSendPressed = async ({ email }) => {
+    await resetPassword(email);
+
   }
 
   const onSignInPressed = () => {
@@ -25,8 +26,8 @@ const ForgotPassword = () => {
       <Text style={styles.title}>Reset your Password</Text>
       <CustomInput
         name="email"
-        rules={{required: "This field is required"}}
-        placeholder={"Email"} 
+        rules={{required: "Email is required", pattern: {value: EMAIL_REGEX, message: "Invalid Email"}}}
+        placeholder={"Email"}
         control={control}
       />
 
