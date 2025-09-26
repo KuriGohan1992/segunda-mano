@@ -16,7 +16,8 @@ const CustomInput = ({control, name, rules={}, placeholder, secureTextEntry}) =>
               {borderColor: error ? 'red' : '#e8e8e8'}
             ]}>
             <TextInput 
-              value={value} 
+              value={value}
+              autoCapitalize="none"
               onChangeText={onChange} 
               onBlur={onBlur} 
               placeholder={placeholder}

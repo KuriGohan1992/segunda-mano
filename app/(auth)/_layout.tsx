@@ -6,23 +6,23 @@ const AuthLayout = () => {
     <Stack>
       <Stack.Screen name="index" options={{
         headerTitle: "Sign In",
-        headerShown: true,
+        headerShown: false,
       }}/>
       <Stack.Screen name="sign_up" options={{
         headerTitle: "Sign Up",
-        headerShown: true,
+        headerShown: false,
       }}/>
       <Stack.Screen name="verify_email" options={{
         headerTitle: "Verify Email",
-        headerShown: true,
+        headerShown: false,
       }}/>
       <Stack.Screen name="forgot_password" options={{
         headerTitle: "Forgot Password",
-        headerShown: true,
+        headerShown: false,
       }}/>
       <Stack.Screen name="reset_password" options={{
         headerTitle: "Reset Password",
-        headerShown: true,
+        headerShown: false,
       }}/>
     </Stack>
     

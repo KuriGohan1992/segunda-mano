@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "segunda-mano",
+    "name": "Segunda Mano",
     "slug": "segunda-mano",
     "scheme": "segunda-mano",
     "version": "1.0.0",
@@ -9,13 +9,13 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.segundamano"
+      "bundleIdentifier": "com.cham.segundamano"
     },
     "android": {
       "adaptiveIcon": {
@@ -24,14 +24,24 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.segundamano"
+      "package": "com.cham.segundamano"
     },
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ],
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth"
     ]
   }
 }

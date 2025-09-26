@@ -1,20 +1,57 @@
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, Alert } from 'react-native'
 import CustomInput from '../../components/CustomInput'
 import { useState } from 'react'
 import CustomButton from '../../components/CustomButton'
 import { router } from 'expo-router'
 import { useForm } from 'react-hook-form'
+import { collection, doc, getDocs, query, serverTimestamp, setDoc, where } from 'firebase/firestore'
+import { auth, db } from '../../firebase'
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth'
 
 const EMAIL_REGEX = /^(?=.{1,64}@)(?:"[^"\\\r\n]+"|[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*)@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}$/
 
 const SignUp = () => {
-  const {control, handleSubmit, watch, formState: {errors}} = useForm()
+  const [loading, setLoading] = useState(false)
+  const {control, handleSubmit, watch, setError, formState: {errors}} = useForm()
   const pwd = watch('password')
   
-  const onSignUpPressed = (data) => {
-    console.log(data)
-    console.warn('onSignUpPressed')
-    router.push("verify_email")
+  const onSignUpPressed = async (data) => {
+    if (loading) return;
+    setLoading(true);
+
+    const {username, email, password} = data;
+
+    try {
+      const q = query(collection(db, "users"), where("username", "==", username));
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        setError("username", {type: "manual", message: "Username is already taken"})
+        setLoading(false);
+        return;
+      }
+
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      await setDoc(doc(db, "users", user.uid), {
+        username, email, createdAt: serverTimestamp(),
+      });
+
+      await sendEmailVerification(user);
+      router.replace({
+        pathname: "verify_email",
+        params: { email },
+      });
+    } catch (error: any) {
+      if (error.code === "auth/email-already-in-use") {
+        setError("email", {type: "manual", message: "Email is already in use"});
+      } else {
+        Alert.alert("Error", error.message);
+      }
+    } finally {
+      setLoading(false);
+    }
+    
   }
   const onTermsOfUsePressed = () => {
     console.warn('onTermsOfUsePressed')
@@ -38,27 +75,27 @@ const SignUp = () => {
       <Text style={styles.title}>Create an account</Text>
       <CustomInput
         name="username"
-        rules={{required: "This field is required"}}
+        rules={{required: "Username is required"}}
         placeholder={"Username"} 
         control={control}
       />
       <CustomInput
         name="email"
-        rules={{required: "This field is required", pattern: {value: EMAIL_REGEX, message: "Invalid Email"}}}
+        rules={{required: "Email is required", pattern: {value: EMAIL_REGEX, message: "Invalid Email"}}}
         placeholder={"Email"}
         control={control}
       />
 
       <CustomInput
         name="password"
-        rules={{required: "This field is required"}}
+        rules={{required: "Password is required"}}
         placeholder={"Password"}        
         secureTextEntry
         control={control}
       />
       <CustomInput
         name="confirm_password"
-        rules={{required: "This field is required", validate: value => value === pwd || 'Passwords do not match'}}
+        rules={{required: "Please confirm your password", validate: value => value === pwd || 'Passwords do not match'}}
         placeholder={"Confirm Password"} 
         secureTextEntry
         control={control}
@@ -109,7 +146,8 @@ const styles = StyleSheet.create({
   },
 
   link: {
-    color: '#fdb075'
+    color: '#fdb075',
+    fontWeight: 'bold',
   }
 })
 
