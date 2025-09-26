@@ -7,8 +7,10 @@ import { useForm } from 'react-hook-form'
 import Logo from '../../assets/icon.png'
 import { sendEmailVerification, signInWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '../../firebase'
+import { useUser } from '../../context/UserContext'
 
 const SignIn = () => {
+  const { setUser } = useUser();
   const [loading, setLoading] = useState(false)
   const {control, handleSubmit, setError, formState: {errors}} = useForm()
   const {height} = useWindowDimensions();
@@ -22,12 +24,23 @@ const SignIn = () => {
       const userCredential = await signInWithEmailAndPassword(auth, email, password)
       const user = userCredential.user
 
+      setUser(user);
+
       if (!user.emailVerified) {
-        await sendEmailVerification(user);
-        router.replace({
-          pathname: "verify_email",
-          params: { email },
-        });
+        try {
+          await sendEmailVerification(user);
+          Alert.alert("We've sent a new verification email!")
+        } catch (error: any) {
+          if (error.code === "auth/too-many-requests") {
+            Alert.alert(
+              "Too many requests",
+              "You've requested too many emails. Please wait a few minutes before trying again."
+            );
+          } else {
+            Alert.alert("Error", error.message);
+          }
+        }
+        setError("email", {type: "manual", message: "Your email is not verified yet. Check your inbox."});
         return;
       }
 

@@ -1,18 +1,35 @@
-import { View, Text, StyleSheet } from 'react-native'
-import CustomInput from '../../components/CustomInput'
-import { useState } from 'react'
+import { View, Text, StyleSheet, Alert } from 'react-native'
 import CustomButton from '../../components/CustomButton'
-import { router, useLocalSearchParams } from 'expo-router'
+import { router } from 'expo-router'
 import { useForm } from 'react-hook-form'
+import { useUser } from '../../context/UserContext'
+import { sendEmailVerification } from 'firebase/auth'
 
 const VerifyEmail = () => {
+  const { user } = useUser();
+  const email = user?.email ?? "your email"
   const {control, handleSubmit, formState: {errors}} = useForm()
-  const { email } = useLocalSearchParams();
   
 
-  const onResendPressed = () => {
-    console.warn('onResendPressed')
-  }
+  const onResendPressed = async () => {
+    if (!user) {
+      Alert.alert("Error: User is null")
+      return;
+    } 
+    try {
+      await sendEmailVerification(user);
+      Alert.alert("We've sent a new verification email!")
+    } catch (error: any) {
+      if (error.code === "auth/too-many-requests") {
+        Alert.alert(
+          "Too many requests",
+          "You've requested too many emails. Please wait a few minutes before trying again."
+        );
+      } else {
+        Alert.alert("Error", error.message);
+      }
+    }
+  };
 
   const onSignInPressed = () => {
     console.warn('onSignInPressed')

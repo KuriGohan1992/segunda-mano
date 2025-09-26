@@ -7,10 +7,12 @@ import { useForm } from 'react-hook-form'
 import { collection, doc, getDocs, query, serverTimestamp, setDoc, where } from 'firebase/firestore'
 import { auth, db } from '../../firebase'
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth'
+import { useUser } from '../../context/UserContext'
 
 const EMAIL_REGEX = /^(?=.{1,64}@)(?:"[^"\\\r\n]+"|[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*)@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}$/
 
 const SignUp = () => {
+  const { setUser } = useUser();
   const [loading, setLoading] = useState(false)
   const {control, handleSubmit, watch, setError, formState: {errors}} = useForm()
   const pwd = watch('password')
@@ -33,15 +35,14 @@ const SignUp = () => {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
+      setUser(user);
+
       await setDoc(doc(db, "users", user.uid), {
         username, email, createdAt: serverTimestamp(),
       });
 
       await sendEmailVerification(user);
-      router.replace({
-        pathname: "verify_email",
-        params: { email },
-      });
+      router.replace("verify_email");
     } catch (error: any) {
       if (error.code === "auth/email-already-in-use") {
         setError("email", {type: "manual", message: "Email is already in use"});
