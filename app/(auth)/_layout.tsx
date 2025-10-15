@@ -1,7 +1,6 @@
 import { Slot, Stack } from "expo-router"
 import { UserProvider } from "../../context/UserContext"
 
-
 const AuthLayout = () => {
   return (
     <UserProvider>
