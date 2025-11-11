@@ -9,6 +9,9 @@ import { Listing } from '../../type/listing';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from './styles';
 import { img_placeholder } from '../../constants/img_placeholder';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 const screenWidth = Dimensions.get('window').width;
 const CARD_MARGIN = 8;
@@ -65,6 +68,11 @@ export default function Home() {
           value={searchText}
           onChangeText={setSearchText}
         />
+        <TouchableOpacity style={styles.filterContainer}>
+          <MaterialIcons name="filter-list" size={30} color='#DC143C' />
+          {/* <MaterialCommunityIcons name="filter-menu-outline" size={28} color='#DC143C' /> */}
+          {/* <Ionicons name="filter-sharp" size={26} color='#DC143C' /> */}
+        </TouchableOpacity>
       </View>
       <FlatList
         horizontal

@@ -2,21 +2,34 @@ import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FAFAFA' },
-  header: { paddingHorizontal: 12, paddingVertical: 6 },
+  header: { 
+    paddingHorizontal: 12, 
+    paddingVertical: 6, 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    justifyContent: 'space-between',
+  },
+
+
   search: { 
     backgroundColor: '#fff', 
+    width: '90%',
     borderRadius: 8, 
-    padding: 10, 
+    padding: 12, 
     fontSize: 14,
     elevation: 1,
     shadowColor: '#000',
     shadowOpacity: 0.06,
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 2 },
-
+    justifyContent:'center',
     borderWidth: 1,
     borderColor: '#eee',
-    paddingBottom: 8,
+
+  },
+
+  filterContainer: {
+    marginHorizontal: 6,
   },
   chips: { flexDirection: 'row', paddingHorizontal: 12, paddingTop: 10, paddingBottom: 8 },
   chip: { 
@@ -38,7 +51,11 @@ const styles = StyleSheet.create({
   chipActive: { backgroundColor: '#DC143C' },
   chipText: { fontSize: 13, fontWeight: '500' },
   chipTextActive: { color: '#fff', fontWeight: '700' },
-  feed: { marginTop: 8, flex: 1},
+  feed: { 
+    marginTop: 4,
+    marginBottom: -34,
+    flex: 1, 
+  },
 
   title: {
     fontSize: 24,

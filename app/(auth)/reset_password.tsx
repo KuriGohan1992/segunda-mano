@@ -5,7 +5,7 @@ import CustomButton from '../../components/CustomButton'
 import { router } from 'expo-router'
 import { useForm } from 'react-hook-form'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { styles } from './styles'
+import styles from './styles'
 
 const ResetPassword = () => {
   const {control, handleSubmit, formState: {errors}} = useForm()

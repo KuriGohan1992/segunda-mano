@@ -4,12 +4,13 @@ import { useState } from 'react'
 import CustomButton from '../../components/CustomButton'
 import { router } from 'expo-router'
 import { useForm } from 'react-hook-form'
-import Logo from '../../assets/icon.png'
+import Logo from '../../assets/test_logo.png'
 import { sendEmailVerification, signInWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '../../firebase'
 import { useUser } from '../../context/UserContext'
 import { resendVerification } from '../../utils/auth'
 import { SafeAreaView } from 'react-native-safe-area-context'
+
 const EMAIL_REGEX = /^(?=.{1,64}@)(?:"[^"\\\r\n]+"|[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*)@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}$/
 
 const SignIn = () => {
@@ -59,6 +60,8 @@ const SignIn = () => {
 
   const onGooglePressed = () => {
     console.warn('onGooglePressed')
+    // const provider = new firebase.auth.GoogleAuthProvider();
+    // auth.signInWithPopup(provider);
   }
 
   const onSignUpPressed = () => {
