@@ -1,0 +1,1 @@
+export const CATEGORIES = ['All','Phones','Electronics','Fashion','Home','Sports'];

@@ -72,6 +72,7 @@ const SignIn = () => {
         name="email"
         rules={{required: "Email is required", pattern: {value: EMAIL_REGEX, message: "Invalid Email"}}}
         placeholder={"Email"}
+        autoFocus={true}
         control={control}
       />
       <CustomInput 
@@ -80,6 +81,8 @@ const SignIn = () => {
           value: 3,
           message: "Password should be minimum 3 characters long",
         }}}
+        onSubmitEditing={handleSubmit(onSignInPressed)}
+        submitBehavior={"blurAndSubmit"}
         placeholder={"Password"}
         secureTextEntry
         control={control}

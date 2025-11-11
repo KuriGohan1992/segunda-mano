@@ -2,7 +2,7 @@ import { View, Text, TextInput, StyleSheet } from 'react-native'
 import React from 'react'
 import { Controller } from 'react-hook-form'
 
-const CustomInput = ({control, name, rules={}, placeholder, secureTextEntry}) => {
+const CustomInput = ({control, name, rules={}, placeholder, autoFocus, onSubmitEditing, submitBehavior, secureTextEntry}) => {
   return (
     <Controller 
       control={control}
@@ -22,6 +22,9 @@ const CustomInput = ({control, name, rules={}, placeholder, secureTextEntry}) =>
               onBlur={onBlur} 
               placeholder={placeholder}
               style={styles.input}
+              autoFocus={autoFocus}
+              submitBehavior={submitBehavior}
+              onSubmitEditing={onSubmitEditing}
               secureTextEntry={secureTextEntry}
             /> 
           </View>

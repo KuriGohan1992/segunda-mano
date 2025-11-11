@@ -1,0 +1,1 @@
+export const CONDITIONS = ['New (Sealed)', 'Open Box', 'Lightly Used', 'Well Used', 'Heavily Used', 'Damaged', 'Defective']

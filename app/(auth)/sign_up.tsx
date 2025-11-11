@@ -21,7 +21,7 @@ const SignUp = () => {
     if (loading) return;
     setLoading(true);
 
-    const {username, email, password} = data;
+    const {username, email, address, password} = data;
 
     try {
       const q = query(collection(db, "users"), where("username", "==", username));
@@ -38,7 +38,7 @@ const SignUp = () => {
       setUser(user);
 
       await setDoc(doc(db, "users", user.uid), {
-        username, email, createdAt: serverTimestamp(),
+        username, email, address, createdAt: serverTimestamp(),
       });
 
       await sendEmailVerification(user);
@@ -84,6 +84,13 @@ const SignUp = () => {
         name="email"
         rules={{required: "Email is required", pattern: {value: EMAIL_REGEX, message: "Invalid Email"}}}
         placeholder={"Email"}
+        control={control}
+      />
+
+      <CustomInput
+        name="address"
+        rules={{required: "Username is required"}}
+        placeholder={"Address"}
         control={control}
       />
 
