@@ -40,8 +40,8 @@ const SignUp = () => {
       setUser(user);
 
       await setDoc(doc(db, "users", user.uid), {
-        username, email, address, createdAt: serverTimestamp(),
-      });
+        username, email, address, createdAt: serverTimestamp(), carton: []
+      }, { merge: true });
 
       await sendEmailVerification(user);
       router.replace("verify_email");

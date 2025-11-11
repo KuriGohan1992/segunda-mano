@@ -69,7 +69,7 @@ export default function Sell() {
         category: category || 'Other',
         condition: condition || 'No Label',
         createdAt: serverTimestamp(),
-        description: description || '',
+        description: description.trim() || '',
         images,
         location: userLocation,
         price: Number(price),

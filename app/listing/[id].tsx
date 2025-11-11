@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Image, View, Text, TextInput, FlatList, ActivityIndicator, TouchableOpacity, StyleSheet, Dimensions, ScrollView, Button, Platform } from 'react-native';
+import { Image, View, Text, TextInput, FlatList, ActivityIndicator, TouchableOpacity, StyleSheet, Dimensions, ScrollView, Button, Platform, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5'
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6'
-import { doc, getDoc } from 'firebase/firestore';
+import { arrayRemove, arrayUnion, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { Listing } from '../../type/listing';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { img_placeholder } from '../../constants/img_placeholder';
+import { useUser } from '../../context/UserContext';
 
 
 export default function ListingDetail() {
@@ -16,7 +17,11 @@ export default function ListingDetail() {
   const [seller, setSeller] = useState<string | null>('');
   const [picture, setPicture] = useState<string | null>('');
   const [listing, setListing] = useState<Listing | null>(null);
-  const [loading, setLoading] = useState(true);  
+  const [loading, setLoading] = useState(true);
+  const [inCart, setInCart] = useState(false);
+
+  const { user, setUser } = useUser();
+  const uid = user?.uid;
 
   useEffect(() => {
     if (!id) {
@@ -49,6 +54,19 @@ export default function ListingDetail() {
           title: d.title || '',
         };
         setListing(fetchedListing);
+
+        if (uid) {
+          const userRef = doc(db, 'users', uid);
+          const userSnap = await getDoc(userRef);
+
+          if (userSnap.exists()) {
+            const u = userSnap.data() as any;
+            setInCart(u.carton.includes(id));
+          }
+
+        }
+
+
 
         if (fetchedListing.sellerId) {
           const sellerRef = doc(db, 'users', fetchedListing.sellerId);
@@ -118,11 +136,35 @@ export default function ListingDetail() {
         </Text>
       </TouchableOpacity>
       <View style={styles.divider}></View>
-      <TouchableOpacity style={styles.action}>
+      <TouchableOpacity style={styles.action} onPress={async () => {
+        if (loading) return;
+        setLoading(true);
+        if (uid) {
+          if (inCart) {
+            setInCart(false);
+            await updateDoc(doc(db, 'users', uid), {
+              carton: arrayRemove(id)
+            })
+            Alert.alert('Item Removed', 'This item has been removed from your cart');
+          } else {
+            setInCart(true);
+            await updateDoc(doc(db, 'users', uid), {
+              carton: arrayUnion(id)
+            })
+            Alert.alert('Item Added', 'This item has been added to your cart');
+          }
+        }
+        setLoading(false);
+      }}>
         <FontAwesome5 size={21} name="box-open" color='#DC143C'/>
+        { inCart ? 
+        <Text style={styles.label}>
+          Remove Item
+        </Text> :         
         <Text style={styles.label}>
           Add to Carton
-        </Text>
+        </Text> 
+        }
       </TouchableOpacity>
       <View style={styles.divider}></View>
       <TouchableOpacity style={styles.primary}>
