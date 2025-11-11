@@ -7,6 +7,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { Listing } from '../../type/listing';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { img_placeholder } from '../../constants/img_placeholder';
 
 
 export default function ListingDetail() {
@@ -41,7 +42,7 @@ export default function ListingDetail() {
           createdAt: (new Date((d.createdAt.seconds) * 1000)).toDateString().slice(4) || new Date().toISOString(),
           description: d.description || '',
           images: Array.isArray(d.images) ? d.images : [],
-          thumbnail: Array.isArray(d.images) ? d.images[0] : 'https://picsum.photos/seed/default/600/400',
+          thumbnail: Array.isArray(d.images) ? d.images[0] : img_placeholder,
           location: d.location || '',
           price: d.price ?? 0,
           sellerId: d.sellerId || '',
@@ -90,7 +91,7 @@ export default function ListingDetail() {
       <Ionicons name="chevron-back" size={28} color="#FAFAFA" style={styles.arrowIcon} />
     </TouchableOpacity>
     <ScrollView style={styles.container}>
-      <Image source={{ uri: listing.thumbnail || 'https://picsum.photos/seed/default/800/600' }} style={styles.image} />
+      <Image source={{ uri: listing.thumbnail || img_placeholder }} style={styles.image} />
       <View style={{ padding: 12 }}>
         <Text style={styles.title}>{listing.title}</Text>
         <Text style={styles.price}>₱ {Number(listing.price).toLocaleString()}</Text>

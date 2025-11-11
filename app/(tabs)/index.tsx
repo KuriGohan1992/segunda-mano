@@ -8,6 +8,7 @@ import { CATEGORIES } from '../../constants/categories';
 import { Listing } from '../../type/listing';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from './styles';
+import { img_placeholder } from '../../constants/img_placeholder';
 
 const screenWidth = Dimensions.get('window').width;
 const CARD_MARGIN = 8;
@@ -34,7 +35,7 @@ export default function Home() {
           createdAt: d.createdAt || new Date().toISOString(),
           description: d.description || '',
           images: Array.isArray(d.images) ? d.images : [],
-          thumbnail: Array.isArray(d.images) ? d.images[0] : 'https://picsum.photos/seed/default/600/400',
+          thumbnail: Array.isArray(d.images) ? d.images[0] : img_placeholder,
           location: d.location || '',
           price: d.price ?? 0,
           sellerId: d.sellerId || '',
