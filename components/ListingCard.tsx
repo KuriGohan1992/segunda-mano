@@ -45,10 +45,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
 
     borderWidth: 1,
-    borderColor: '#eee',
-    paddingBottom: 8,
-
-    
+    borderColor: '#eee',    
   },
   image: {
     height: 160,
@@ -62,5 +59,5 @@ const styles = StyleSheet.create({
   title: { fontSize: 14, fontWeight: '600' },
   price: { marginTop: 4, fontSize: 15, fontWeight: '700', color: '#DC143C' },
   condition: {marginTop: 4, color: '#000', fontSize: 12},
-  location: { marginTop: 4, color: '#666', fontSize: 12 }
+  location: { marginTop: 8, color: '#666', fontSize: 12 }
 });

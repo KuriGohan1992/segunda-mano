@@ -6,7 +6,7 @@ import { useUser } from '../../context/UserContext'
 import { sendEmailVerification } from 'firebase/auth'
 import { resendVerification } from '../../utils/auth'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { styles } from './styles'
+import styles from './styles'
 
 const VerifyEmail = () => {
   const { user } = useUser();

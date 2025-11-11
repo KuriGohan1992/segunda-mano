@@ -6,7 +6,7 @@ import { router } from 'expo-router'
 import { useForm } from 'react-hook-form'
 import { resetPassword } from '../../utils/auth'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { styles } from './styles'
+import styles from './styles'
 const EMAIL_REGEX = /^(?=.{1,64}@)(?:"[^"\\\r\n]+"|[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*)@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}$/
 
 const ForgotPassword = () => {

@@ -14,7 +14,7 @@ const TabsLayout = () => {
           }
         }}
         safeAreaInsets={{ bottom: 0 }}>
-
+          
         <Tabs.Screen name="index" options={{
           headerTitle: "Home",
           headerShown: false,
@@ -46,12 +46,12 @@ const TabsLayout = () => {
           tabBarIcon: ({ color }) => <Ionicons name="chatbubble-ellipses" size={24} color={color}/>,
         }}/>
 
-        {/* <Tabs.Screen name="listing/[id]" options={{
-          headerTitle: "Listing",
+        <Tabs.Screen name="styles" options={{
+          headerTitle: "Styles",
           headerShown: false,
-          title: "Listing",
+          title: "Styles",
           href: null,
-        }}/> */}
+        }}/>
 
       </Tabs>
     </UserProvider>

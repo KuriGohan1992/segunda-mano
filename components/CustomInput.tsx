@@ -2,7 +2,7 @@ import { View, Text, TextInput, StyleSheet } from 'react-native'
 import React from 'react'
 import { Controller } from 'react-hook-form'
 
-const CustomInput = ({control, name, rules={}, placeholder, autoFocus, onSubmitEditing, submitBehavior, secureTextEntry}) => {
+const CustomInput = ({multiline=false, control, name, rules={}, keyboardType, placeholder, autoFocus, onSubmitEditing, submitBehavior, secureTextEntry}) => {
   return (
     <Controller 
       control={control}
@@ -12,16 +12,19 @@ const CustomInput = ({control, name, rules={}, placeholder, autoFocus, onSubmitE
         <>
           <View 
             style={[
+              {height: multiline ? 120 : 50},
               styles.container, 
               {borderColor: error ? 'red' : '#e8e8e8'}
             ]}>
             <TextInput 
+              multiline={multiline}
               value={value}
               autoCapitalize="none"
               onChangeText={onChange} 
               onBlur={onBlur} 
               placeholder={placeholder}
-              style={styles.input}
+              keyboardType={keyboardType}
+              style={[styles.input, multiline ? {height: 110, textAlignVertical: 'top'} : '']}
               autoFocus={autoFocus}
               submitBehavior={submitBehavior}
               onSubmitEditing={onSubmitEditing}
@@ -40,22 +43,23 @@ const CustomInput = ({control, name, rules={}, placeholder, autoFocus, onSubmitE
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
-    width: '100%',
-
+    width: '100%',    
     borderColor: '#e8e8e8',
     borderWidth: 1,
     borderRadius: 5,
-
+    justifyContent: 'center',
     padding: 10,
     marginVertical: 5,
-
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
   },
   input: {
     fontSize: 16,
     color: '#333',
-  },
-
-  
+  },  
 })
 
 export default CustomInput

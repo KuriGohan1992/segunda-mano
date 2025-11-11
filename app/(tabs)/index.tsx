@@ -7,6 +7,7 @@ import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 import { CATEGORIES } from '../../constants/categories';
 import { Listing } from '../../type/listing';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import styles from './styles';
 
 const screenWidth = Dimensions.get('window').width;
 const CARD_MARGIN = 8;
@@ -104,43 +105,3 @@ export default function Home() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FAFAFA' },
-  header: { paddingHorizontal: 12, paddingVertical: 6 },
-  search: { 
-    backgroundColor: '#fff', 
-    borderRadius: 8, 
-    padding: 10, 
-    fontSize: 14,
-    elevation: 1,
-    shadowColor: '#000',
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-
-    borderWidth: 1,
-    borderColor: '#eee',
-    paddingBottom: 8,
-  },
-  chips: { flexDirection: 'row', paddingHorizontal: 12, paddingTop: 10, paddingBottom: 8 },
-  chip: { 
-    paddingVertical: 6, 
-    paddingHorizontal: 12, 
-    backgroundColor: '#fff', 
-    borderRadius: 8, 
-    marginRight: 8,
-    elevation: 1,
-    shadowColor: '#000',
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-
-    borderWidth: 1,
-    borderColor: '#eee',
-    paddingBottom: 8,
-  },
-  chipActive: { backgroundColor: '#DC143C' },
-  chipText: { fontSize: 13, fontWeight: '500' },
-  chipTextActive: { color: '#fff', fontWeight: '700' },
-  feed: { marginTop: 8, flex: 1},
-});

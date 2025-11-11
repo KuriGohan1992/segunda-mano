@@ -97,7 +97,7 @@ const SignIn = () => {
       <CustomButton
         text="Forgot password?"
         onPress={onForgotPasswordPressed}
-        type="TERTIARY"
+        type="SECONDARY"
       />
 
       <CustomButton
