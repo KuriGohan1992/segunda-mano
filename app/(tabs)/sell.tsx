@@ -82,6 +82,8 @@ export default function Sell() {
           text: 'OK',
           onPress: () => {
             reset();
+            setCategory(null);
+            setCondition(null);
             router.replace('/')
           }
         }
