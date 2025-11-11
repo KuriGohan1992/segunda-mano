@@ -86,7 +86,7 @@ export default function Home() {
       <View style={styles.header}>
         <Image style={{width: 40, height: 40}} source={require('../../assets/logo.png')}/>
         <TextInput
-          placeholder="Search items..."
+          placeholder="Search Items..."
           style={styles.search}
           value={searchText}
           onChangeText={setSearchText}
