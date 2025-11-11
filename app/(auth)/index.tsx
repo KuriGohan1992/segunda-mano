@@ -9,6 +9,7 @@ import { sendEmailVerification, signInWithEmailAndPassword } from 'firebase/auth
 import { auth } from '../../firebase'
 import { useUser } from '../../context/UserContext'
 import { resendVerification } from '../../utils/auth'
+import { SafeAreaView } from 'react-native-safe-area-context'
 const EMAIL_REGEX = /^(?=.{1,64}@)(?:"[^"\\\r\n]+"|[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*)@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}$/
 
 const SignIn = () => {
@@ -66,13 +67,12 @@ const SignIn = () => {
   } 
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Image source={Logo} style={[styles.logo, {height: height * 0.4}]} resizeMode="contain"/>
       <CustomInput
         name="email"
         rules={{required: "Email is required", pattern: {value: EMAIL_REGEX, message: "Invalid Email"}}}
         placeholder={"Email"}
-        autoFocus={true}
         control={control}
       />
       <CustomInput 
@@ -112,12 +112,14 @@ const SignIn = () => {
         onPress={onSignUpPressed}
         type="TERTIARY"
       />
-    </View>
+    </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    backgroundColor: '#FAFAFA',
     alignItems: 'center',
     padding: 20,
   },

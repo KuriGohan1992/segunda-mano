@@ -5,6 +5,8 @@ import { useForm } from 'react-hook-form'
 import { useUser } from '../../context/UserContext'
 import { sendEmailVerification } from 'firebase/auth'
 import { resendVerification } from '../../utils/auth'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { styles } from './styles'
 
 const VerifyEmail = () => {
   const { user } = useUser();
@@ -26,7 +28,7 @@ const VerifyEmail = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Almost there!</Text>
       <Text style={styles.message}>
         We’ve sent a verification link to your email:{"\n"}
@@ -48,42 +50,9 @@ const VerifyEmail = () => {
         onPress={onSignInPressed}
         type="TERTIARY"
       />
-    </View>
+    </SafeAreaView>
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#051c60',
-  },
-  message: {
-    fontSize: 16,
-    textAlign: 'center',
-    color: '#333',
-    marginBottom: 30,
-  },
-  email: {
-    fontWeight: 'bold',
-    color: '#051c60',
-  },
-  footer: {
-    fontSize: 14,
-    color: '#666',
-    textAlign: 'center',
-  },
-  link: {
-    color: '#fdb075',
-    fontWeight: 'bold',
-  },
-});
 
 export default VerifyEmail

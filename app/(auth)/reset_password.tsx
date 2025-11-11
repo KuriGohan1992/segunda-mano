@@ -4,6 +4,8 @@ import { useState } from 'react'
 import CustomButton from '../../components/CustomButton'
 import { router } from 'expo-router'
 import { useForm } from 'react-hook-form'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { styles } from './styles'
 
 const ResetPassword = () => {
   const {control, handleSubmit, formState: {errors}} = useForm()
@@ -19,7 +21,7 @@ const ResetPassword = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Reset your Password</Text>
       <CustomInput
         name="verification"
@@ -46,22 +48,10 @@ const ResetPassword = () => {
         onPress={onSignInPressed}
         type="TERTIARY"
       />
-    </View>
+    </SafeAreaView>
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    padding: 20,
-  },
 
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#051c60',
-    margin: 10,
-  },
-})
 
 export default ResetPassword

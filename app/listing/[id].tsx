@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { Image, View, Text, TextInput, FlatList, ActivityIndicator, TouchableOpacity, StyleSheet, Dimensions, ScrollView, Button } from 'react-native';
+import { Image, View, Text, TextInput, FlatList, ActivityIndicator, TouchableOpacity, StyleSheet, Dimensions, ScrollView, Button, Platform } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5'
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6'
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { Listing } from '../../type/listing';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 
 export default function ListingDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const [seller, setSeller] = useState<string | null>('');
+  const [picture, setPicture] = useState<string | null>('');
   const [listing, setListing] = useState<Listing | null>(null);
   const [loading, setLoading] = useState(true);  
 
@@ -28,12 +32,13 @@ export default function ListingDetail() {
         setListing(null);
       } else {
         const d = docSnap.data() as any;
-        setListing({
+
+        const fetchedListing: Listing = {
           id: docSnap.id,
           available: d.available ?? true,
           category: d.category || '',
           condition: d.condition || '',
-          createdAt: d.createdAt || new Date().toISOString(),
+          createdAt: (new Date((d.createdAt.seconds) * 1000)).toDateString().slice(4) || new Date().toISOString(),
           description: d.description || '',
           // images: Array.isArray(d.images) ? d.images : [],
           thumbnail: d.thumbnail || 'https://picsum.photos/seed/default/600/400',
@@ -41,9 +46,22 @@ export default function ListingDetail() {
           price: d.price ?? 0,
           sellerId: d.sellerId || '',
           title: d.title || '',
-        } as Listing);
-      }
+        };
+        setListing(fetchedListing);
 
+        if (fetchedListing.sellerId) {
+          const sellerRef = doc(db, 'users', fetchedListing.sellerId);
+          const sellerSnap = await getDoc(sellerRef);
+
+          if (sellerSnap.exists()) {
+            const d = sellerSnap.data() as any;
+            setSeller(d.username);
+            setPicture(d.picture);
+          } else {
+            setSeller(null);
+          }
+        }
+      }
       setLoading(false);
     }
     fetchListing();
@@ -54,11 +72,10 @@ export default function ListingDetail() {
   if (loading) {
     return (
       <View style={styles.container}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator style={styles.loading} size="large" />
       </View>
     );
   }
-
   if (!listing) {
     return (
       <View style={styles.container}>
@@ -68,29 +85,134 @@ export default function ListingDetail() {
   }
 
   return (
-    <View style={styles.container}>
+    <>
+    <TouchableOpacity style={styles.arrow} onPress={() => router.back()}>
+      <Ionicons name="chevron-back" size={28} color="#FAFAFA" style={styles.arrowIcon} />
+    </TouchableOpacity>
+    <ScrollView style={styles.container}>
       <Image source={{ uri: listing.thumbnail || 'https://picsum.photos/seed/default/800/600' }} style={styles.image} />
       <View style={{ padding: 12 }}>
         <Text style={styles.title}>{listing.title}</Text>
         <Text style={styles.price}>₱ {Number(listing.price).toLocaleString()}</Text>
+        <Text style={styles.field}>Condition: <Text style={{ fontWeight: 400 }}>{listing.condition}</Text></Text>
+        <Text style={styles.field}>Description: </Text>
         <Text style={styles.desc}>{listing.description}</Text>
-        <Text style={styles.seller}>Seller: {listing.sellerId || 'Unknown'}</Text>
-
-        <View style={{ marginTop: 12 }}>
-          <Button title="Chat with Seller" onPress={() => router.push(`/chat/${listing.sellerId}_${/*buyerId*/'ME'}`)} />
-          <View style={{ height: 8 }} />
-          <Button title="Add to Cart" onPress={() => {/* TODO: add to cart logic */}} />
+        <Text style={styles.field}>Seller:</Text>
+        <View style={{flexDirection: 'row'}}>
+          <Image style={{ margin: 4, width: 50, height: 50, borderRadius: '50%' }} source={ picture ? { uri: picture } : require('../../assets/profile.png') }/>
+          <View style={{justifyContent: 'center'}}>
+            <Text style={styles.seller}>{seller || 'Unknown'}</Text>
+            <Text style={[styles.seller, {fontWeight: 400}]}>{listing.location || 'Unknown'}</Text>
+          </View>
         </View>
       </View>
+
+
+    </ScrollView>
+    <View style={styles.footer}>
+      <TouchableOpacity style={styles.action} onPress={() => router.push('../(tabs)/chats')}>
+        <Ionicons name="chatbubble-ellipses" size={26} color='#DC143C'/>
+        <Text style={styles.label}>
+          Chat with Seller    
+        </Text>
+      </TouchableOpacity>
+      <View style={styles.divider}></View>
+      <TouchableOpacity style={styles.action}>
+        <FontAwesome5 size={21} name="box-open" color='#DC143C'/>
+        <Text style={styles.label}>
+          Add to Carton
+        </Text>
+      </TouchableOpacity>
+      <View style={styles.divider}></View>
+      <TouchableOpacity style={styles.primary}>
+        <FontAwesome5 name="box" size={21} color="#fff" />
+        <View>
+          <Text style={styles.primaryText}>
+            Box it Now
+          </Text>
+          <Text style={styles.primaryText}>
+            ₱ {Number(listing.price).toLocaleString()}
+          </Text>
+        </View>
+      </TouchableOpacity>
     </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f2f2f2' },
-  image: { width: '100%', height: 380, resizeMode: 'cover' },
-  title: { fontSize: 18, fontWeight: '700', marginTop: 8 },
-  price: { fontSize: 16, fontWeight: '800', color: '#DC143C', marginTop: 6 },
-  desc: { marginTop: 8, color: '#444' },
-  seller: { marginTop: 12, color: '#333', fontWeight: '600' }
+  container: { flex: 1, backgroundColor: '#FAFAFA' },
+  image: { width: '100%', height: 420, resizeMode: 'cover' },
+  title: { fontSize: 20, fontWeight: '700' },
+  field: { fontSize: 18, fontWeight: '700', marginTop: 12, marginBottom: 4, color: '#555' },
+  price: { fontSize: 18, fontWeight: '800', color: '#DC143C', marginTop: 6 },
+  desc: { marginLeft: 12, fontSize:16, color: '#444', lineHeight: 24},
+  seller: { marginLeft: 8, marginTop: 4, fontSize: 15, color: '#333', fontWeight: '600' },
+  loading: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  arrow: {
+    position: 'absolute',
+    top: 50,
+    left: 15,
+    zIndex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 20,
+    padding: 4,
+  },
+  arrowIcon: {
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowRadius: 3,
+  },
+  footer: {
+    
+    backgroundColor: '#fff',
+    borderTopWidth: 0.5,
+    borderTopColor: "#eee",
+    height: 80,
+    flexDirection: "row",
+    alignItems: 'flex-end',
+    justifyContent: 'flex-start',
+
+
+  },
+
+  divider: {
+    width: 1,
+    backgroundColor: '#ddd',
+    height: '40%',
+    marginBottom: 36,
+  }, 
+  action: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 28,
+    paddingHorizontal: 12,
+  },
+  label: {
+    marginTop: 4,
+    fontSize: 12,
+    color: "#333",
+  },
+
+  primary: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#DC143C",
+    paddingHorizontal: 18,
+    marginLeft: 20,
+    marginBottom: 24,
+    paddingVertical: 8,
+    borderRadius: 8,
+
+  },
+  primaryText: {
+    color: "#fff",
+    fontWeight: "700",
+    fontSize: 14,
+    marginLeft: 8,
+  },
 });

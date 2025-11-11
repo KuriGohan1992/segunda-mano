@@ -8,6 +8,8 @@ import { collection, doc, getDocs, query, serverTimestamp, setDoc, where } from 
 import { auth, db } from '../../firebase'
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth'
 import { useUser } from '../../context/UserContext'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { styles } from './styles'
 
 const EMAIL_REGEX = /^(?=.{1,64}@)(?:"[^"\\\r\n]+"|[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*)@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}$/
 
@@ -72,7 +74,7 @@ const SignUp = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Create an account</Text>
       <CustomInput
         name="username"
@@ -131,32 +133,9 @@ const SignUp = () => {
         onPress={onSignInPressed}
         type="TERTIARY"
       />
-    </View>
+    </SafeAreaView>
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    padding: 20,
-  },
-
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#051c60',
-    margin: 10,
-  },
-
-  text: {
-    color: 'gray',
-    marginVertical: 10,
-  },
-
-  link: {
-    color: '#fdb075',
-    fontWeight: 'bold',
-  }
-})
 
 export default SignUp

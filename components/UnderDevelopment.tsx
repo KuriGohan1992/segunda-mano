@@ -1,13 +1,13 @@
 import { Image, Text, View, StyleSheet, Dimensions } from "react-native";
 
 
-export default function UnderDevelopment() {
+export default function UnderDevelopment(pageName: string) {
     return (
         <View style={styles.container}>
             <Image style={styles.image} source={require('../assets/under-dev.png')}/>
-            <Text style={styles.title}>Page Under Construction</Text>
+            <Text style={styles.title}>{pageName} Page Under Construction</Text>
             <Text style={styles.subtitle}>
-                We’re still polishing this feature — check back soon!
+                We’re still developing this feature — check back soon!
             </Text>
         </View>
     )

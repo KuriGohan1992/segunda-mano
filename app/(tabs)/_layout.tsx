@@ -8,7 +8,10 @@ const TabsLayout = () => {
     <UserProvider>
       <Tabs 
         screenOptions={{
-          tabBarActiveTintColor: '#DC143C'
+          tabBarActiveTintColor: '#DC143C',
+          tabBarStyle: {
+            height: 80,
+          }
         }}
         safeAreaInsets={{ bottom: 0 }}>
 
@@ -43,12 +46,12 @@ const TabsLayout = () => {
           tabBarIcon: ({ color }) => <Ionicons name="chatbubble-ellipses" size={24} color={color}/>,
         }}/>
 
-        <Tabs.Screen name="listing/[id]" options={{
+        {/* <Tabs.Screen name="listing/[id]" options={{
           headerTitle: "Listing",
           headerShown: false,
           title: "Listing",
           href: null,
-        }}/>
+        }}/> */}
 
       </Tabs>
     </UserProvider>

@@ -9,6 +9,6 @@ export type Listing = {
   thumbnail: string;
   location: string;
   price: number;
-  sellerId?: string;
+  sellerId: string;
   title: string;
 }

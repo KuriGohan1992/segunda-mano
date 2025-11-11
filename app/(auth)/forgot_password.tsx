@@ -5,6 +5,8 @@ import CustomButton from '../../components/CustomButton'
 import { router } from 'expo-router'
 import { useForm } from 'react-hook-form'
 import { resetPassword } from '../../utils/auth'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { styles } from './styles'
 const EMAIL_REGEX = /^(?=.{1,64}@)(?:"[^"\\\r\n]+"|[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*)@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}$/
 
 const ForgotPassword = () => {
@@ -22,7 +24,7 @@ const ForgotPassword = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Reset your Password</Text>
       <CustomInput
         name="email"
@@ -41,22 +43,10 @@ const ForgotPassword = () => {
         onPress={onSignInPressed}
         type="TERTIARY"
       />
-    </View>
+    </SafeAreaView>
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    padding: 20,
-  },
 
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#051c60',
-    margin: 10,
-  },
-})
 
 export default ForgotPassword

@@ -43,6 +43,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.06,
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 2 },
+
+    borderWidth: 1,
+    borderColor: '#eee',
+    paddingBottom: 8,
+
+    
   },
   image: {
     height: 160,
