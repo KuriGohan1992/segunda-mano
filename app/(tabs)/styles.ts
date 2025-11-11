@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
 
   search: { 
     backgroundColor: '#fff', 
-    width: '90%',
+    width: '78%',
     borderRadius: 8, 
     padding: 12, 
     fontSize: 14,
@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     justifyContent:'center',
     borderWidth: 1,
     borderColor: '#eee',
-
+    marginRight: 2,
   },
 
   filterContainer: {
@@ -62,6 +62,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#e3303f',
     marginBottom: 10,
+    flexWrap: 'wrap',
   },
   dropdown: {
     backgroundColor: 'white',
@@ -91,7 +92,81 @@ const styles = StyleSheet.create({
     color: '#fdb075',
     fontWeight: 'bold',
   },
-  
+
+  card: {
+    width: "80%",
+    alignItems: "center",
+    backgroundColor: "#fff",
+
+
+    paddingTop: 15,
+    paddingBottom: 25,
+    marginVertical: 10,
+
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 5,
+    
+  },
+
+  avatar: {
+    width: 110,
+    height: 110,
+    borderRadius: '50%',
+    margin: 6,
+    backgroundColor: "#f0f0f0",
+  },
+  name: {
+    marginTop: 8,
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#111",
+  },
+  address: {
+    fontSize: 16,
+    color: "#222",
+    marginTop: 4,
+  },
+  email: {
+    fontSize: 16,
+    color: "#333",
+    marginTop: 2,
+    marginBottom: 12,
+  },
+
+  logoutBtn: {
+    backgroundColor: "#E6173B",
+    paddingVertical: 12,
+    paddingHorizontal: 40,
+    borderRadius: 10,
+  },
+  logoutText: {
+    color: "#fff",
+    fontWeight: "600",
+    fontSize: 15,
+  },
+
+  dropdownWrapper: {
+    position: "absolute",
+    top: 0,
+    right: 5,
+    width: 200,
+    zIndex: 9999,
+  },
+  dropdownFilter: {
+    backgroundColor: "#fff",
+    borderColor: "#ddd",
+    borderRadius: 8,
+    opacity: 0.1,
+  },
+  dropdownContainer: {
+    borderColor: "#ddd",
+    backgroundColor: "#fff",
+  },
+
 });
 
 export default styles

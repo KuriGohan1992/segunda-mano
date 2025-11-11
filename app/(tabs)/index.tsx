@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, FlatList, ActivityIndicator, TouchableOpacity, StyleSheet, Dimensions, ScrollView } from 'react-native';
+import { View, Text, TextInput, FlatList, ActivityIndicator, TouchableOpacity, StyleSheet, Dimensions, ScrollView, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import ListingCard from '../../components/ListingCard';
 import { db } from '../../firebase';
@@ -12,10 +12,13 @@ import { img_placeholder } from '../../constants/img_placeholder';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const screenWidth = Dimensions.get('window').width;
 const CARD_MARGIN = 8;
 const CARD_WIDTH = (screenWidth / 2) - (CARD_MARGIN * 3)
+const closedWidth = 44; 
+const openWidth = 200; 
 
 export default function Home() {
   const [data, setData] = useState<Listing[]>([]);
@@ -24,8 +27,27 @@ export default function Home() {
   const [category, setCategory] = useState('All');
   const router = useRouter();
 
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState<string | null>(null);
+  const [items, setItems] = useState([
+    { label: "Highest Price First", value: "price_desc" },
+    { label: "Lowest Price First", value: "price_asc" },
+    { label: "Newest First", value: "date_desc" },
+    { label: "Oldest First", value: "date_asc" },
+  ]);
+
   useEffect(() => {
-    const q = query(collection(db, 'listings'), orderBy('createdAt', 'desc'))
+    let q;
+
+    if (value === "price_desc") {
+      q = query(collection(db, 'listings'), orderBy('price', 'desc'))
+    } else if (value === "price_asc") {
+      q = query(collection(db, 'listings'), orderBy('price', 'asc'))
+    } else if (value === "date_asc") {
+      q = query(collection(db, 'listings'), orderBy('createdAt', 'asc'))
+    } else {
+      q = query(collection(db, 'listings'), orderBy('createdAt', 'desc'))
+    }
 
     const unsub = onSnapshot(q, (snapshot) => {
       const docs = snapshot.docs.map(doc => {
@@ -51,7 +73,7 @@ export default function Home() {
       console.error('onSnapshot error', err);
       setLoading(false);
     });
-  }, []); 
+  }, [value]); 
 
   const filtered = data.filter(d => {
     if (category !== 'All' && d.category !== category) return false;
@@ -62,6 +84,7 @@ export default function Home() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
+        <Image style={{width: 40, height: 40}} source={require('../../assets/logo.png')}/>
         <TextInput
           placeholder="Search items..."
           style={styles.search}
@@ -69,10 +92,52 @@ export default function Home() {
           onChangeText={setSearchText}
         />
         <TouchableOpacity style={styles.filterContainer}>
-          <MaterialIcons name="filter-list" size={30} color='#DC143C' />
+          <MaterialIcons name="filter-list" size={32} color='#DC143C' />
           {/* <MaterialCommunityIcons name="filter-menu-outline" size={28} color='#DC143C' /> */}
           {/* <Ionicons name="filter-sharp" size={26} color='#DC143C' /> */}
         </TouchableOpacity>
+        <DropDownPicker
+          open={open}
+          value={value}
+          items={items}
+          setOpen={setOpen}
+          setValue={setValue}
+          setItems={setItems}
+          showArrowIcon={false}
+          containerStyle={{
+            position: "absolute",
+            top: 0,
+            right: 5,
+            width: open ? openWidth : closedWidth, 
+            zIndex: 1000,
+          }}
+          style={{
+            backgroundColor: 'transparent',
+            borderWidth: 0,
+            elevation: 0,
+            shadowOpacity: 0,
+            height: 0,         
+            opacity: 1,
+        
+          }}
+          dropDownContainerStyle={{
+            backgroundColor: '#fff',
+            borderColor: '#ddd',
+            borderRadius: 10,
+            marginTop: 0,       
+            elevation: 6,
+            shadowColor: '#000',
+            shadowOpacity: 0.1,
+            shadowRadius: 8,
+            shadowOffset: { width: 0, height: 2 },
+          }}
+          listItemLabelStyle={{ fontSize: 15}}
+
+          placeholder=" "         
+          placeholderStyle={{ color: 'transparent' }}
+          listItemContainerStyle={{ paddingVertical: 8, }}
+          labelStyle={{ color: 'transparent' }}
+          />
       </View>
       <FlatList
         horizontal

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import UnderDevelopment from "../../components/UnderDevelopment";
 import DropDownPicker from 'react-native-dropdown-picker';
 import { CATEGORIES } from "../../constants/categories";
-import { View, Text, StyleSheet, Alert } from "react-native";
+import { View, Text, StyleSheet, Alert, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomInput from "../../components/CustomInput";
 import { useForm } from "react-hook-form";
@@ -36,7 +36,7 @@ export default function Sell() {
   const addListingPressed = async (data) => {
     console.log('condition:', condition, 'category:', category);
     if (!condition || !category) {
-      alert('Please pick both condition and category');
+      alert('Please fill-in both condition and category');
       return;
     }
     if (loading) return;
@@ -136,14 +136,17 @@ export default function Sell() {
           dropDownContainerStyle={styles.dropdown}
         />
       </View>
+
       <CustomInput
         name="description"
         placeholder={"Description"}
         multiline={true}
         control={control}
       />
+
       <View style={{zIndex: 1, elevation: 1,}}>
         <DropDownPicker 
+          onPress={Keyboard.dismiss}
           open={openCategory}
           value={category}
           items={CATEGORIES.slice(1).map(i => ({ label: i, value: i }))}
