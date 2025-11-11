@@ -3,7 +3,7 @@ import { View, Text, TextInput, FlatList, ActivityIndicator, TouchableOpacity, S
 import { useRouter } from 'expo-router';
 import ListingCard from '../../components/ListingCard';
 import { db } from '../../firebase';
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, doc, getDoc } from 'firebase/firestore';
 import { CATEGORIES } from '../../constants/categories';
 import { Listing } from '../../type/listing';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -13,6 +13,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { useUser } from '../../context/UserContext';
 
 const screenWidth = Dimensions.get('window').width;
 const CARD_MARGIN = 8;
@@ -21,11 +22,14 @@ const closedWidth = 44;
 const openWidth = 200; 
 
 export default function Carton() {
+  const [carton, setCarton] = useState<string[]>([]);
   const [data, setData] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchText, setSearchText] = useState('');
   const [category, setCategory] = useState('All');
   const router = useRouter();
+  const { user, setUser } = useUser();
+  const uid = user?.uid;
 
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState<string | null>(null);
@@ -73,13 +77,28 @@ export default function Carton() {
       console.error('onSnapshot error', err);
       setLoading(false);
     });
-  }, [value]); 
+  }, [value]);
+
+  async function filter() {
+    if (uid) {
+      const userRef = doc(db, 'users', uid);
+      const userSnap = await getDoc(userRef);
+
+      if (userSnap.exists()) {
+        const u = userSnap.data() as any;
+        setCarton(u.carton);
+      }
+    }
+  }  
 
   const filtered = data.filter(d => {
     if (category !== 'All' && d.category !== category) return false;
+    if (!carton.includes(d.id)) return false;
     if (!searchText) return true;
     return d.title.toLowerCase().includes(searchText.toLowerCase());
   });
+
+  filter();
 
   return (
     <SafeAreaView style={styles.container}>
