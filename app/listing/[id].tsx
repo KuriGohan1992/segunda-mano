@@ -145,13 +145,13 @@ export default function ListingDetail() {
             await updateDoc(doc(db, 'users', uid), {
               carton: arrayRemove(id)
             })
-            Alert.alert('Item Removed', 'This item has been removed from your cart');
+            Alert.alert('Item Removed', 'This item has been removed from your Carton');
           } else {
             setInCart(true);
             await updateDoc(doc(db, 'users', uid), {
               carton: arrayUnion(id)
             })
-            Alert.alert('Item Added', 'This item has been added to your cart');
+            Alert.alert('Item Added', 'This item has been added to your Carton');
           }
         }
         setLoading(false);

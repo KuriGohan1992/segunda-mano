@@ -98,6 +98,7 @@ export default function Carton() {
     if (!searchText) return true;
     return d.title.toLowerCase().includes(searchText.toLowerCase());
   });
+  console.log(filtered)
 
   filter();
 
@@ -183,24 +184,24 @@ export default function Carton() {
       <View style={styles.feed}>
         {loading ? (
           <ActivityIndicator style={{ marginTop: 20}}/>
-        ) : !filtered ? (
-          <View style={{ alignItems: 'center', marginTop: 40 }}>
+        ) : filtered.length === 0 ? (
+          <View style={{  marginTop: 8, alignItems: 'center', justifyContent: 'center' }}>
             <Text>No listings found.</Text>
           </View>
         ) : (
-          <FlatList
-            data={filtered}
-            keyExtractor={i => i.id}
-            renderItem={({ item }) => (
-              <View style={{ width: CARD_WIDTH, marginHorizontal: CARD_MARGIN }}>
-                <CartCard item={item} onPress={() => router.push(`/listing/${item.id}`)} />
-              </View>
-            )}
-            numColumns={1}
-            style={{borderRadius: 8}}
-            contentContainerStyle={{ padding: 8, paddingBottom: 80 }}
-            showsVerticalScrollIndicator={false}
-          />
+            <FlatList
+              data={filtered}
+              keyExtractor={i => i.id}
+              renderItem={({ item }) => (
+                <View style={{ width: CARD_WIDTH, marginHorizontal: CARD_MARGIN }}>
+                  <CartCard item={item} onPress={() => router.push(`/listing/${item.id}`)} />
+                </View>
+              )}
+              numColumns={1}
+              style={{borderRadius: 8}}
+              contentContainerStyle={{ padding: 8, paddingBottom: 80 }}
+              showsVerticalScrollIndicator={false}
+            />
         )}
       </View>
     </SafeAreaView>

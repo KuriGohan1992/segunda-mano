@@ -155,8 +155,8 @@ export default function Home() {
       <View style={styles.feed}>
         {loading ? (
           <ActivityIndicator style={{ marginTop: 20}}/>
-        ) : !filtered ? (
-          <View style={{ alignItems: 'center', marginTop: 40 }}>
+        ) : filtered.length === 0 ? (
+          <View style={{ marginTop: 8, alignItems: 'center', justifyContent: 'center' }}>
             <Text>No listings found.</Text>
           </View>
         ) : (
