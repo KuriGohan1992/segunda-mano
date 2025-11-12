@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Image, View, Text, TextInput, FlatList, ActivityIndicator, TouchableOpacity, StyleSheet, Dimensions, ScrollView, Button, Platform, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5'
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6'
+
 import { arrayRemove, arrayUnion, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { Listing } from '../../type/listing';

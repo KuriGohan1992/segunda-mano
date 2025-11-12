@@ -14,10 +14,11 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useUser } from '../../context/UserContext';
+import CartCard from '../../components/CartCard';
 
 const screenWidth = Dimensions.get('window').width;
 const CARD_MARGIN = 8;
-const CARD_WIDTH = (screenWidth / 2) - (CARD_MARGIN * 3)
+const CARD_WIDTH = (screenWidth) - (CARD_MARGIN * 4)
 const closedWidth = 44; 
 const openWidth = 200; 
 
@@ -192,10 +193,10 @@ export default function Carton() {
             keyExtractor={i => i.id}
             renderItem={({ item }) => (
               <View style={{ width: CARD_WIDTH, marginHorizontal: CARD_MARGIN }}>
-                <ListingCard item={item} onPress={() => router.push(`/listing/${item.id}`)} />
+                <CartCard item={item} onPress={() => router.push(`/listing/${item.id}`)} />
               </View>
             )}
-            numColumns={2}
+            numColumns={1}
             style={{borderRadius: 8}}
             contentContainerStyle={{ padding: 8, paddingBottom: 80 }}
             showsVerticalScrollIndicator={false}

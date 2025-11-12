@@ -9,7 +9,7 @@ type Props = {
   onPress?: (item: Listing) => void;
 };
 
-export default function ListingCard({ item, onPress }: Props) {
+export default function CartCard({ item, onPress }: Props) {
 
   return (
     <Pressable style={styles.card} onPress={() => onPress?.(item)}>
@@ -27,9 +27,9 @@ export default function ListingCard({ item, onPress }: Props) {
 
 const styles = StyleSheet.create({
   card: {
-    flexDirection: 'column',
+    flexDirection: 'row',
     backgroundColor: '#fff',
-    borderRadius: 10,
+    borderRadius: 12,
     overflow: 'hidden',
     marginBottom: 12,
     elevation: 1,
@@ -37,20 +37,28 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.06,
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 2 },
-    height: 280,
-    borderWidth: 1,
+    height: 120,
+    borderWidth: 2,
     borderColor: '#eee',    
   },
   image: {
-    height: 160,
-    resizeMode: 'cover'
+    backgroundColor: 'black',
+    height: 120,
+    width: 120,
+    resizeMode: 'cover',
+    alignSelf: 'center',
+    borderBottomLeftRadius: 12,
+    borderTopLeftRadius: 12,
+    borderColor: '#eee',  
+    borderRightWidth: 1
   },
   meta: {
     flex: 1,
     padding: 10,
-    justifyContent: 'center'
+    justifyContent: 'center',
+    alignItems: 'flex-start',
   },
-  title: { fontSize: 14, fontWeight: '600' },
+  title: { fontSize: 16, fontWeight: '600' },
   price: { marginTop: 4, fontSize: 15, fontWeight: '700', color: '#DC143C' },
   condition: {marginTop: 4, color: '#000', fontSize: 12},
   location: { marginTop: 8, color: '#666', fontSize: 12 }
