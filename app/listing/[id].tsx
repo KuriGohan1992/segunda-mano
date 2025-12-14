@@ -19,6 +19,7 @@ export default function ListingDetail() {
   const [listing, setListing] = useState<Listing | null>(null);
   const [loading, setLoading] = useState(true);
   const [inCart, setInCart] = useState(false);
+  const [sellerId, setSellerId] = useState('');
 
   const { user, setUser } = useUser();
   const uid = user?.uid;
@@ -76,6 +77,7 @@ export default function ListingDetail() {
             const d = sellerSnap.data() as any;
             setSeller(d.username);
             setPicture(d.picture);
+            setSellerId(fetchedListing.sellerId);
           } else {
             setSeller(null);
           }
@@ -117,13 +119,16 @@ export default function ListingDetail() {
         <Text style={styles.field}>Description: </Text>
         <Text style={styles.desc}>{listing.description}</Text>
         <Text style={styles.field}>Seller:</Text>
-        <View style={{flexDirection: 'row'}}>
-          <Image style={{ margin: 4, width: 50, height: 50, borderRadius: '50%' }} source={ picture ? { uri: picture } : require('../../assets/profile.png') }/>
-          <View style={{justifyContent: 'center'}}>
-            <Text style={styles.seller}>{seller || 'Unknown'}</Text>
-            <Text style={[styles.seller, {fontWeight: 400}]}>{listing.location || 'Unknown'}</Text>
+        <TouchableOpacity onPress={() => router.push(`../seller/${sellerId}`)}>
+
+          <View style={{flexDirection: 'row'}}>
+            <Image style={{ margin: 4, width: 50, height: 50, borderRadius: '50%' }} source={ picture ? { uri: picture } : require('../../assets/profile.png') }/>
+            <View style={{justifyContent: 'center'}}>
+              <Text style={styles.seller}>{seller || 'Unknown'}</Text>
+              <Text style={[styles.seller, {fontWeight: 400}]}>{listing.location || 'Unknown'}</Text>
+            </View>
           </View>
-        </View>
+        </TouchableOpacity>
       </View>
 
 
@@ -167,7 +172,9 @@ export default function ListingDetail() {
         }
       </TouchableOpacity>
       <View style={styles.divider}></View>
-      <TouchableOpacity style={styles.primary}>
+      <TouchableOpacity style={styles.primary} onPress={() => {
+        router.push('../checkout/checkout')
+      }}>
         <FontAwesome5 name="box" size={21} color="#fff" />
         <View>
           <Text style={styles.primaryText}>
