@@ -13,7 +13,20 @@ export default function ListingCard({ item, onPress }: Props) {
 
   return (
     <Pressable style={styles.card} onPress={() => onPress?.(item)}>
-      <Image source={{ uri: item.thumbnail || img_placeholder }} style={styles.image} />
+      {(() => {
+      const imageUri = item.thumbnail
+        ? item.thumbnail.startsWith("http")
+          ? item.thumbnail
+          : `data:image/jpeg;base64,${item.thumbnail}`
+        : img_placeholder;
+
+      return (
+        <Image
+          source={{ uri: imageUri }}
+          style={styles.image}
+        />
+      );
+    })()}
       <View style={styles.meta}>
         <Text numberOfLines={2} style={styles.title}>{item.title}</Text>
         <Text style={styles.condition}>{item.condition}</Text>

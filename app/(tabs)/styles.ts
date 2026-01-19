@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   avatar: {
     width: 110,
     height: 110,
-    borderRadius: '50%',
+    borderRadius: 25,
     margin: 6,
     backgroundColor: "#f0f0f0",
   },
@@ -165,6 +165,59 @@ const styles = StyleSheet.create({
   dropdownContainer: {
     borderColor: "#ddd",
     backgroundColor: "#fff",
+  },
+  
+  FirstBox: {
+    width: 100,
+    height: 100,
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    borderColor: '#aaa',
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+    backgroundColor: '#fafafa',
+  },
+
+  text_image: {
+    fontSize: 16,
+    color: '#888',
+  },
+
+  imageBox: {
+    width: 100,
+    height: 100,
+    borderRadius: 10,
+    overflow: 'hidden',
+    marginRight: 10,
+    backgroundColor: '#eee',
+  },
+
+  image: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+
+  removeButton: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    zIndex: 10,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  removeButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 'bold',
+    lineHeight: 14,
   },
 
 });
