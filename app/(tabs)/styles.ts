@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   avatar: {
     width: 110,
     height: 110,
-    borderRadius: 25,
+    borderRadius: '50%',
     margin: 6,
     backgroundColor: "#f0f0f0",
   },
@@ -170,14 +170,18 @@ const styles = StyleSheet.create({
   FirstBox: {
     width: 100,
     height: 100,
-    borderWidth: 1,
-    borderStyle: 'dashed',
-    borderColor: '#aaa',
-    borderRadius: 10,
+    borderColor: '#e8e8e8',
+    borderWidth: 2,
+    borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 10,
+    marginLeft: 10,
     backgroundColor: '#fafafa',
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
   },
 
   text_image: {

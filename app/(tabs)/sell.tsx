@@ -147,17 +147,19 @@ export default function Sell() {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{ alignItems: 'center', paddingHorizontal: 5 }}
         >
-          <TouchableOpacity onPress={pickImage} style={styles.FirstBox}>
-            <Text style={styles.text_image}>+</Text>
-            <Text style={styles.text_image}>Add</Text>
-          </TouchableOpacity>
-
+          
           {imageBase64 && (
             <Image
               source={{ uri: `data:image/jpeg;base64,${imageBase64}` }}
               style={{ width: 200, height: 200, borderRadius: 8, marginLeft: 10 }}
             />
           )}
+
+          <TouchableOpacity onPress={pickImage} style={styles.FirstBox}>
+            <Text style={styles.text_image}>+</Text>
+            <Text style={styles.text_image}>Add</Text>
+          </TouchableOpacity>
+
         </ScrollView>
       </View>
 
