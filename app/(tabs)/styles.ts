@@ -187,12 +187,14 @@ const styles = StyleSheet.create({
   text_image: {
     fontSize: 16,
     color: '#888',
+    borderRadius: 5,
+    textAlign: 'center'
   },
 
   imageBox: {
     width: 100,
     height: 100,
-    borderRadius: 10,
+    borderRadius: 5,
     overflow: 'hidden',
     marginRight: 10,
     backgroundColor: '#eee',
