@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Image,
   View,
@@ -16,7 +16,6 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-
 import {
   arrayRemove,
   arrayUnion,
@@ -39,9 +38,34 @@ export default function ListingDetail() {
   const [loading, setLoading] = useState(true);
   const [inCart, setInCart] = useState(false);
   const [sellerId, setSellerId] = useState("");
-
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const flatListRef = useRef<FlatList>(null);
   const { user, setUser } = useUser();
   const uid = user?.uid;
+  const goNext = () => {
+    if (currentImageIndex < images.length - 1) {
+      flatListRef.current?.scrollToIndex({
+        index: currentImageIndex + 1,
+        animated: true,
+      });
+    }
+  };
+
+  const goPrev = () => {
+    if (currentImageIndex > 0) {
+      flatListRef.current?.scrollToIndex({
+        index: currentImageIndex - 1,
+        animated: true,
+      });
+    }
+  };
+
+  const handleScroll = (event: any) => {
+    const slide = Math.round(
+      event.nativeEvent.contentOffset.x / Dimensions.get("window").width,
+    );
+    setCurrentImageIndex(slide);
+  };
 
   useEffect(() => {
     if (!id) {
@@ -121,6 +145,8 @@ export default function ListingDetail() {
       </View>
     );
   }
+  
+  const images = listing.images ?? [];
 
   return (
     <>
@@ -133,15 +159,55 @@ export default function ListingDetail() {
         />
       </TouchableOpacity>
       <ScrollView style={styles.container}>
-        {(() => {
-          const imageUri = listing.thumbnail
-            ? listing.thumbnail.startsWith("http")
-              ? listing.thumbnail
-              : `data:image/jpeg;base64,${listing.thumbnail}`
-            : img_placeholder;
+        <View style={styles.imageContainer}>
+          <FlatList
+            ref={flatListRef}
+            data={images.length ? images : [img_placeholder]}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onMomentumScrollEnd={handleScroll}
+            initialNumToRender={1}
+            maxToRenderPerBatch={1}
+            windowSize={3}
+            keyExtractor={(_, index) => index.toString()}
+            renderItem={({ item }) => {
+              const uri = item.startsWith?.("http")
+                ? item
+                : `data:image/jpeg;base64,${item}`;
 
-          return <Image source={{ uri: imageUri }} style={styles.image} />;
-        })()}
+              return (
+                <Image
+                  source={{ uri }}
+                  style={{
+                    width: Dimensions.get("window").width,
+                    height: 420,
+                    resizeMode: "cover",
+                  }}
+                />
+              );
+            }}
+          />
+
+          {currentImageIndex > 0 && (
+            <TouchableOpacity style={styles.leftArrow} onPress={goPrev}>
+              <Ionicons name="chevron-back" size={30} color="#fff" />
+            </TouchableOpacity>
+          )}
+
+          {images.length > 1 && currentImageIndex < images.length - 1 && (
+            <TouchableOpacity style={styles.rightArrow} onPress={goNext}>
+              <Ionicons name="chevron-forward" size={30} color="#fff" />
+            </TouchableOpacity>
+          )}
+
+          <View style={styles.imageIndicator}>
+            <Text style={styles.indicatorText}>
+              {currentImageIndex + 1}/{images.length}
+            </Text>
+          </View>
+        </View>
+
         <View style={{ padding: 12 }}>
           <Text style={styles.title}>{listing.title}</Text>
           <Text style={styles.price}>
@@ -243,6 +309,38 @@ export default function ListingDetail() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FAFAFA" },
+  imageContainer: {
+    position: "relative",
+  },
+  imageIndicator: {
+    position: "absolute",
+    bottom: 10,
+    alignSelf: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: 10,
+  },
+  indicatorText: {
+    color: "#fff",
+    fontSize: 12,
+  },
+  leftArrow: {
+    position: "absolute",
+    left: 10,
+    top: "45%",
+    backgroundColor: "rgba(0,0,0,0.4)",
+    borderRadius: 20,
+    padding: 5,
+  },
+  rightArrow: {
+    position: "absolute",
+    right: 10,
+    top: "45%",
+    backgroundColor: "rgba(0,0,0,0.4)",
+    borderRadius: 20,
+    padding: 5,
+  },
   image: { width: "100%", height: 420, resizeMode: "cover" },
   title: { fontSize: 20, fontWeight: "700" },
   field: {
@@ -302,12 +400,7 @@ const styles = StyleSheet.create({
     marginBottom: 28,
     paddingHorizontal: 12,
   },
-  label: {
-    marginTop: 4,
-    fontSize: 12,
-    color: "#333",
-  },
-
+  label: { marginTop: 4, fontSize: 12, color: "#333" },
   primary: {
     flexDirection: "row",
     alignItems: "center",
