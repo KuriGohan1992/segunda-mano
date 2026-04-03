@@ -9,7 +9,7 @@ import {
   Pressable,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { Ionicons } from "@expo/vector-icons"; // ✅ NEW
+import { Ionicons } from "@expo/vector-icons";
 import UnderDevelopment from "../../components/UnderDevelopment";
 import { useUser } from "../../context/UserContext";
 import { useRouter } from "expo-router";
