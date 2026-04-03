@@ -135,6 +135,7 @@ export default function Profile() {
               {
                 borderWidth: 2,
                 borderColor: "#d11a2a",
+                borderRadius: 999,
               },
             ]}
             source={getImageSource()}
