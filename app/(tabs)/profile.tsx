@@ -133,7 +133,7 @@ export default function Profile() {
             style={[
               styles.avatar,
               {
-                borderWidth: 2,
+                borderWidth: 3,
                 borderColor: "#d11a2a",
                 borderRadius: 999,
               },
@@ -227,7 +227,6 @@ export default function Profile() {
               )}
             </TouchableOpacity>
 
-            {/* SAVE */}
             <TouchableOpacity
               onPress={saveImage}
               style={{
@@ -242,7 +241,6 @@ export default function Profile() {
               <Text style={{ color: "#fff" }}>Save Photo</Text>
             </TouchableOpacity>
 
-            {/* CANCEL */}
             <TouchableOpacity
               onPress={() => {
                 setModalVisible(false);
