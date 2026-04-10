@@ -1,15 +1,15 @@
-import { ScrollView, View, Text, TextInput, Button } from "react-native";
-import { useState } from "react";
-import { getDocs, collection, addDoc, serverTimestamp, query, onSnapshot, orderBy } from "firebase/firestore";
+import { View, Text, TouchableOpacity, FlatList, Image } from "react-native";
+import { useState, useEffect } from "react";
+import { getDocs, collection } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useUser } from "../../context/UserContext";
-import { useEffect } from "react";
-import { useRouter } from 'expo-router';
+import { useRouter } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
+import styles from "../(tabs)/styles";
 
 export default function Chats() {
   const { user } = useUser();
   const [users, setUsers] = useState<any[]>([]);
-  const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -19,7 +19,6 @@ export default function Chats() {
         id: doc.id,
         ...doc.data()
       }));
-
       setUsers(userList);
     };
 
@@ -27,25 +26,36 @@ export default function Chats() {
   }, []);
 
   return (
-    <View style={{ flex: 1, padding: 20 }}>
-      <Text>Chat</Text>
-
-      {users.map((u) => {
-        if (u.id === user?.uid) return null;
-
-        return (
-          <Text
-            key={u.id}
-            onPress={() => router.push(`/chat/${u.id}`)}
-            style={{
-              padding: 10,
-              backgroundColor: selectedUser === u.id ? "#ddd" : "#fff",
-            }}
-          >
-            {u.username || u.email}
-          </Text>
-        );
-      })}
-    </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Chats</Text>
+      </View>
+      <View style={styles.feed}>
+        <FlatList
+          data={users.filter(u => u.id !== user?.uid)}
+          keyExtractor={item => item.id}
+          contentContainerStyle={{ paddingHorizontal: 12 }}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={styles.userItem}
+              onPress={() => router.push(`/chat/${item.id}`)}
+            >
+              <Image source={ item.picture ? { uri: item.picture } : require("../../assets/profile.png") }
+              style={styles.chatAvatar}
+              />
+              <View>
+                <Text style={styles.username}>
+                  {item.username || item.email}
+                </Text>
+                <Text style={styles.subtitle}>
+                  Tap to chat
+                </Text>
+              </View>
+            </TouchableOpacity>
+          )}
+        />
+      </View>
+    </SafeAreaView>
   );
 }

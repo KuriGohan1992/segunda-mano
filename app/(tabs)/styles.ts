@@ -418,6 +418,50 @@ const styles = StyleSheet.create({
     color: "#fff",
     marginTop: 20,
   },
+
+  userItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    marginBottom: 10,
+
+    borderWidth: 1,
+    borderColor: "#eee",
+
+    elevation: 1,
+    shadowColor: "#000",
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+  },
+
+  chatAvatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "#e0e0e0",
+    marginRight: 12,
+  },
+
+  chatTextContainer: {
+    flex: 1,
+    justifyContent: "center",
+  },
+
+  username: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#111",
+  },
+
+  subtitle: {
+    fontSize: 13,
+    color: "#888",
+    marginTop: 2,
+  },
 });
 
 export default styles;
