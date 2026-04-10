@@ -36,10 +36,16 @@ export default function Sell() {
   const [openCondition, setOpenCondition] = useState(false);
   const [condition, setCondition] = useState<string | null>(null);
   const { user } = useUser();
-  const [imageBase64, setImageBase64] = useState<string | null>(null);
+  const [imagesBase64, setImagesBase64] = useState<string[]>([]);
 
   const pickImage = async () => {
+    if (imagesBase64.length >= 10) {
+      Alert.alert("Limit reached", "You can upload up to 10 images.");
+      return;
+    }
+
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
     if (!permission.granted) {
       Alert.alert("Permission required", "Allow access to your photos.");
       return;
@@ -53,8 +59,12 @@ export default function Sell() {
     });
 
     if (!result.canceled && result.assets[0].base64) {
-      setImageBase64(result.assets[0].base64);
+      setImagesBase64((prev) => [...prev, result.assets[0].base64!]);
     }
+  };
+
+  const removeImage = (index: number) => {
+    setImagesBase64((prev) => prev.filter((_, i) => i !== index));
   };
 
   function handleSetOpenCategory(v: boolean) {
@@ -79,8 +89,8 @@ export default function Sell() {
       return;
     }
 
-    if (!imageBase64) {
-      Alert.alert("Error", "Please pick an image");
+    if (imagesBase64.length === 0) {
+      Alert.alert("Error", "Please pick at least one image");
       return;
     }
 
@@ -109,7 +119,7 @@ export default function Sell() {
         description: description?.trim() || "",
         category,
         condition,
-        images: [imageBase64],
+        images: imagesBase64,
         location: userLocation,
         sellerId: user.uid,
         createdAt: serverTimestamp(),
@@ -120,7 +130,7 @@ export default function Sell() {
           text: "OK",
           onPress: () => {
             reset();
-            setImageBase64(null);
+            setImagesBase64([]);
             setCategory(null);
             setCondition(null);
             router.replace("/");
@@ -140,28 +150,45 @@ export default function Sell() {
       style={[styles.container, { alignItems: "center", padding: 20 }]}
     >
       <Text style={styles.title}>List an Item</Text>
-
       <View style={{ height: 100 }}>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{ alignItems: "center", paddingHorizontal: 5 }}
         >
-          {imageBase64 && (
-            <View style={styles.imageBox}>
+          {imagesBase64.map((img, index) => (
+            <View key={index} style={styles.imageBox}>
               <Image
-                source={{ uri: `data:image/jpeg;base64,${imageBase64}` }}
+                source={{ uri: `data:image/jpeg;base64,${img}` }}
                 style={{ width: "100%", height: "100%" }}
                 resizeMode="cover"
               />
+              <TouchableOpacity
+                onPress={() => removeImage(index)}
+                style={{
+                  position: "absolute",
+                  top: 5,
+                  right: 5,
+                  width: 20,
+                  height: 20,
+                  borderRadius: 10,
+                  backgroundColor: "rgba(0,0,0,0.7)",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ color: "white", fontSize: 12 }}>X</Text>
+              </TouchableOpacity>
             </View>
+          ))}
+          
+          {imagesBase64.length < 10 && (
+            <TouchableOpacity onPress={pickImage} style={styles.FirstBox}>
+              <Text style={styles.text_image}>
+                +{"\n"}Add Image
+              </Text>
+            </TouchableOpacity>
           )}
-
-          <TouchableOpacity onPress={pickImage} style={styles.FirstBox}>
-            <Text style={styles.text_image}>
-              {imageBase64 ? "Change Image" : "+\nAdd Image"}
-            </Text>
-          </TouchableOpacity>
         </ScrollView>
       </View>
 
