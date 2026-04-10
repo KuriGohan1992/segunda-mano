@@ -245,7 +245,7 @@ export default function ListingDetail() {
       <View style={styles.footer}>
         <TouchableOpacity
           style={styles.action}
-          onPress={() => router.push("../(tabs)/chats")}
+          onPress={() => router.push(`../chat/${sellerId}`)}
         >
           <Ionicons name="chatbubble-ellipses" size={26} color="#DC143C" />
           <Text style={styles.label}>Chat with Seller</Text>

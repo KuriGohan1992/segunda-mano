@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, Image, useWindowDimensions, Alert } from 'react-native'
+import { TouchableWithoutFeedback, KeyboardAvoidingView, Platform, Keyboard, View, Text, StyleSheet, TextInput, Image, useWindowDimensions, Alert } from 'react-native'
 import CustomInput from '../../components/CustomInput'
 import { useState } from 'react'
 import CustomButton from '../../components/CustomButton'
@@ -70,52 +70,61 @@ const SignIn = () => {
   } 
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Image source={Logo} style={[styles.logo, {height: height * 0.4}]} resizeMode="contain"/>
-      <CustomInput
-        name="email"
-        rules={{required: "Email is required", pattern: {value: EMAIL_REGEX, message: "Invalid Email"}}}
-        placeholder={"Email"}
-        control={control}
-      />
-      <CustomInput 
-        name="password"
-        rules={{required: "Password is required", minLength: {
-          value: 3,
-          message: "Password should be minimum 3 characters long",
-        }}}
-        onSubmitEditing={handleSubmit(onSignInPressed)}
-        submitBehavior={"blurAndSubmit"}
-        placeholder={"Password"}
-        secureTextEntry
-        control={control}
-      />
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <View style={{ flex: 1 }}>
+          <SafeAreaView style={styles.container}>
+            <Image source={Logo} style={[styles.logo, {height: height * 0.4}]} resizeMode="contain"/>
+            <CustomInput
+              name="email"
+              rules={{required: "Email is required", pattern: {value: EMAIL_REGEX, message: "Invalid Email"}}}
+              placeholder={"Email"}
+              control={control}
+            />
+            <CustomInput 
+              name="password"
+              rules={{required: "Password is required", minLength: {
+                value: 3,
+                message: "Password should be minimum 3 characters long",
+              }}}
+              onSubmitEditing={handleSubmit(onSignInPressed)}
+              submitBehavior={"blurAndSubmit"}
+              placeholder={"Password"}
+              secureTextEntry
+              control={control}
+            />
 
-      <CustomButton
-        text="Sign In"
-        loading={loading}
-        onPress={handleSubmit(onSignInPressed)}
-      />
+            <CustomButton
+              text="Sign In"
+              loading={loading}
+              onPress={handleSubmit(onSignInPressed)}
+            />
 
-      <CustomButton
-        text="Forgot password?"
-        onPress={onForgotPasswordPressed}
-        type="SECONDARY"
-      />
+            <CustomButton
+              text="Forgot password?"
+              onPress={onForgotPasswordPressed}
+              type="SECONDARY"
+            />
 
-      <CustomButton
-        text="Continue with Google"
-        onPress={onGooglePressed}
-        bgColor="#fae9ea"
-        fgColor="#dd4d44"
-      />
+            <CustomButton
+              text="Continue with Google"
+              onPress={onGooglePressed}
+              bgColor="#fae9ea"
+              fgColor="#dd4d44"
+            />
 
-      <CustomButton
-        text="Don't have an account yet? Sign Up"
-        onPress={onSignUpPressed}
-        type="TERTIARY"
-      />
-    </SafeAreaView>
+            <CustomButton
+              text="Don't have an account yet? Sign Up"
+              onPress={onSignUpPressed}
+              type="TERTIARY"
+            />
+          </SafeAreaView>
+        </View>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   )
 }
 
