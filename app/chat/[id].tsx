@@ -1,7 +1,7 @@
-import { StyleSheet, Keyboard, ScrollView, View, Text, TextInput, Button, TouchableOpacity } from "react-native";
+import { StyleSheet, Keyboard, ScrollView, View, Text, TextInput, Button, TouchableOpacity, Image } from "react-native";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useState, useRef } from "react";
-import { getDocs, collection, addDoc, serverTimestamp, query, onSnapshot, orderBy } from "firebase/firestore";
+import { getDocs, getDoc, doc, collection, addDoc, serverTimestamp, query, onSnapshot, orderBy } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useUser } from "../../context/UserContext";
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -17,6 +17,24 @@ export default function ChatScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const otherUserId = id as string;
   const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+  const [otherUser, setOtherUser] = useState<any>(null);
+
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (!otherUserId) return;
+
+      const userRef = doc(db, "users", otherUserId);
+      const userSnap = await getDoc(userRef);
+
+      if (userSnap.exists()) {
+        setOtherUser({ id: userSnap.id, ...userSnap.data() });
+      }
+    };
+
+    fetchUser();
+  }, [otherUserId]);
 
   useEffect(() => {
     const showSub = Keyboard.addListener("keyboardDidShow", (e) => {
@@ -84,6 +102,20 @@ export default function ChatScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ flex: 1, paddingBottom: keyboardHeight-34}}>
+        <View style={styles.chatHeader}>
+          <Image
+            source={
+              otherUser?.picture
+                ? { uri: otherUser.picture }
+                : require("../../assets/profile.png")
+            }
+            style={styles.headerAvatar}
+          />
+
+          <Text style={styles.headerName}>
+            {otherUser?.username || "User"}
+          </Text>
+        </View>
 
         <ScrollView
           style={{ flex: 1 }}
@@ -118,9 +150,6 @@ export default function ChatScreen() {
             ref={inputRef}
             value={text}
             onChangeText={setText}
-            onFocus={() => 
-              scrollRef.current?.scrollToEnd({ animated: false })
-            }
             placeholder="Type message..."
             style={styles.input}
             onSubmitEditing={sendMessage}
@@ -224,5 +253,29 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "600",
     fontSize: 14,
+  },
+
+  chatHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    backgroundColor: "#fff",
+    borderBottomWidth: 1,
+    borderColor: "#eee",
+  },
+
+  headerAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 10,
+    backgroundColor: "#eee",
+  },
+
+  headerName: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#111",
   },
 });

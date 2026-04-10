@@ -49,7 +49,7 @@ export default function Chats() {
                   {item.username || item.email}
                 </Text>
                 <Text style={styles.subtitle}>
-                  Tap to chat
+                  Latest message placeholder
                 </Text>
               </View>
             </TouchableOpacity>
