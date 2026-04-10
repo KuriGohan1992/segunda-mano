@@ -1,4 +1,7 @@
 import { StyleSheet } from "react-native";
+import { Dimensions } from "react-native";
+
+const SCREEN_WIDTH = Dimensions.get("window").width;
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FAFAFA' },
@@ -226,6 +229,195 @@ const styles = StyleSheet.create({
     lineHeight: 14,
   },
 
+  profileHeader: {
+    height: 80,
+    backgroundColor: "#E6173B",
+  },
+
+  menuButton: {
+    position: "absolute",
+    right: 20,
+    bottom: 16,
+  },
+
+  cover: {
+    height: 140,
+    backgroundColor: "black",
+  },
+
+  profileSection: {
+    alignItems: "center",
+    marginTop: -45,
+  },
+
+  profileAvatar: {
+    width: 100,
+    height: 100,
+    borderRadius: 999,
+    borderWidth: 3,
+    borderColor: "#E6173B",
+    backgroundColor: "#fff",
+  },
+
+  cameraButton: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    backgroundColor: "#E6173B",
+    borderRadius: 20,
+    padding: 6,
+  },
+
+  usernameText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginTop: 8,
+  },
+
+  ratingText: {
+    color: "gray",
+  },
+
+  tabsContainer: {
+    marginTop: 20,
+  },
+
+  tabsRow: {
+    flexDirection: "row",
+  },
+
+  tabItem: {
+    width: SCREEN_WIDTH / 3,
+    alignItems: "center",
+  },
+
+  tabText: {
+    fontWeight: "bold",
+    color: "#555",
+  },
+
+  activeTabText: {
+    color: "#E6173B",
+  },
+
+  tabLine: {
+    height: 1,
+    backgroundColor: "#ccc",
+    marginTop: 8,
+  },
+
+  tabIndicator: {
+    height: 3,
+    width: SCREEN_WIDTH / 3,
+    backgroundColor: "#E6173B",
+  },
+
+  scrollContent: {
+    flexGrow: 1,
+    padding: 16,
+  },
+
+  centerContent: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  sectionHeader: {
+    backgroundColor: "#E6173B",
+    padding: 8,
+    borderRadius: 10,
+  },
+
+  sectionHeaderText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+
+  label: {
+    marginTop: 10,
+    color: "gray",
+  },
+
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  modalBox: {
+    width: 250,
+    backgroundColor: "#fff",
+    borderRadius: 15,
+    padding: 20,
+    alignItems: "center",
+  },
+
+  imagePickerCircle: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: "#eee",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 20,
+    overflow: "hidden",
+  },
+
+  previewImage: {
+    width: "100%",
+    height: "100%",
+  },
+
+  plusText: {
+    fontSize: 30,
+  },
+
+  saveButton: {
+    width: "100%",
+    padding: 10,
+    backgroundColor: "#E6173B",
+    borderRadius: 8,
+    marginBottom: 10,
+    alignItems: "center",
+  },
+
+  saveText: {
+    color: "#fff",
+  },
+
+  cancelButton: {
+    width: "100%",
+    padding: 10,
+    backgroundColor: "#ccc",
+    borderRadius: 8,
+    alignItems: "center",
+  },
+
+  menuOverlay: {
+    flex: 1,
+    backgroundColor: "#00000088",
+  },
+
+  menuPanel: {
+    width: 260,
+    backgroundColor: "#E6173B",
+    height: "100%",
+    padding: 20,
+    position: "absolute",
+    right: 0,
+  },
+
+  menuText: {
+    color: "#fff",
+    marginVertical: 10,
+  },
+
+  menuLogout: {
+    color: "#fff",
+    marginTop: 20,
+  },
 });
 
-export default styles
+export default styles;
