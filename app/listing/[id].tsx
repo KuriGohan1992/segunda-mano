@@ -3,15 +3,12 @@ import {
   Image,
   View,
   Text,
-  TextInput,
   FlatList,
   ActivityIndicator,
   TouchableOpacity,
   StyleSheet,
   Dimensions,
   ScrollView,
-  Button,
-  Platform,
   Alert,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -40,8 +37,9 @@ export default function ListingDetail() {
   const [sellerId, setSellerId] = useState("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
-  const { user, setUser } = useUser();
+  const { user } = useUser();
   const uid = user?.uid;
+
   const goNext = () => {
     if (currentImageIndex < images.length - 1) {
       flatListRef.current?.scrollToIndex({
@@ -62,7 +60,7 @@ export default function ListingDetail() {
 
   const handleScroll = (event: any) => {
     const slide = Math.round(
-      event.nativeEvent.contentOffset.x / Dimensions.get("window").width,
+      event.nativeEvent.contentOffset.x / Dimensions.get("window").width
     );
     setCurrentImageIndex(slide);
   };
@@ -89,11 +87,14 @@ export default function ListingDetail() {
           category: d.category || "",
           condition: d.condition || "",
           createdAt:
-            new Date(d.createdAt.seconds * 1000).toDateString().slice(4) ||
-            new Date().toISOString(),
+            new Date(d.createdAt.seconds * 1000)
+              .toDateString()
+              .slice(4) || new Date().toISOString(),
           description: d.description || "",
           images: Array.isArray(d.images) ? d.images : [],
-          thumbnail: Array.isArray(d.images) ? d.images[0] : img_placeholder,
+          thumbnail: Array.isArray(d.images)
+            ? d.images[0]
+            : img_placeholder,
           location: d.location || "",
           price: d.price ?? 0,
           sellerId: d.sellerId || "",
@@ -127,8 +128,8 @@ export default function ListingDetail() {
       }
       setLoading(false);
     }
+
     fetchListing();
-    return;
   }, [id]);
 
   if (loading) {
@@ -138,6 +139,7 @@ export default function ListingDetail() {
       </View>
     );
   }
+
   if (!listing) {
     return (
       <View style={styles.container}>
@@ -145,7 +147,7 @@ export default function ListingDetail() {
       </View>
     );
   }
-  
+
   const images = listing.images ?? [];
 
   return (
@@ -158,48 +160,49 @@ export default function ListingDetail() {
           style={styles.arrowIcon}
         />
       </TouchableOpacity>
+
       <ScrollView style={styles.container}>
         <View style={styles.imageContainer}>
-          <FlatList
-            ref={flatListRef}
-            data={images.length ? images : [img_placeholder]}
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            onMomentumScrollEnd={handleScroll}
-            initialNumToRender={1}
-            maxToRenderPerBatch={1}
-            windowSize={3}
-            keyExtractor={(_, index) => index.toString()}
-            renderItem={({ item }) => {
-              const uri = item.startsWith?.("http")
-                ? item
-                : `data:image/jpeg;base64,${item}`;
-
-              return (
-                <Image
-                  source={{ uri }}
-                  style={{
-                    width: Dimensions.get("window").width,
-                    height: 420,
-                    resizeMode: "cover",
-                  }}
-                />
-              );
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={(e) => {
+              const x = e.nativeEvent.locationX;
+              const width = Dimensions.get("window").width;
+              if (x < width / 2) {
+                goPrev();
+              } else {
+                goNext();
+              }
             }}
-          />
-
-          {currentImageIndex > 0 && (
-            <TouchableOpacity style={styles.leftArrow} onPress={goPrev}>
-              <Ionicons name="chevron-back" size={30} color="#fff" />
-            </TouchableOpacity>
-          )}
-
-          {images.length > 1 && currentImageIndex < images.length - 1 && (
-            <TouchableOpacity style={styles.rightArrow} onPress={goNext}>
-              <Ionicons name="chevron-forward" size={30} color="#fff" />
-            </TouchableOpacity>
-          )}
+          >
+            <FlatList
+              ref={flatListRef}
+              data={images.length ? images : [img_placeholder]}
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              onMomentumScrollEnd={handleScroll}
+              initialNumToRender={1}
+              maxToRenderPerBatch={1}
+              windowSize={3}
+              keyExtractor={(_, index) => index.toString()}
+              renderItem={({ item }) => {
+                const uri = item.startsWith?.("http")
+                  ? item
+                  : `data:image/jpeg;base64,${item}`;
+                return (
+                  <Image
+                    source={{ uri }}
+                    style={{
+                      width: Dimensions.get("window").width,
+                      height: 420,
+                      resizeMode: "cover",
+                    }}
+                  />
+                );
+              }}
+            />
+          </TouchableOpacity>
 
           <View style={styles.imageIndicator}>
             <Text style={styles.indicatorText}>
@@ -213,19 +216,28 @@ export default function ListingDetail() {
           <Text style={styles.price}>
             ₱ {Number(listing.price).toLocaleString()}
           </Text>
+
           <Text style={styles.field}>
             Condition:{" "}
             <Text style={{ fontWeight: 400 }}>{listing.condition}</Text>
           </Text>
-          <Text style={styles.field}>Description: </Text>
+
+          <Text style={styles.field}>Description:</Text>
           <Text style={styles.desc}>{listing.description}</Text>
+
           <Text style={styles.field}>Seller:</Text>
+
           <TouchableOpacity
-            onPress={() => router.push(`../seller/${sellerId}`)}
+            onPress={() => router.push(`/seller/${sellerId}`)}
           >
             <View style={{ flexDirection: "row" }}>
               <Image
-                style={{ margin: 4, width: 50, height: 50, borderRadius: 25 }}
+                style={{
+                  margin: 4,
+                  width: 50,
+                  height: 50,
+                  borderRadius: 25,
+                }}
                 source={
                   picture
                     ? { uri: picture }
@@ -242,20 +254,24 @@ export default function ListingDetail() {
           </TouchableOpacity>
         </View>
       </ScrollView>
+
       <View style={styles.footer}>
         <TouchableOpacity
           style={styles.action}
-          onPress={() => router.push(`../chat/${sellerId}`)}
+          onPress={() => router.push(`/chat/${sellerId}`)}
         >
           <Ionicons name="chatbubble-ellipses" size={26} color="#DC143C" />
           <Text style={styles.label}>Chat with Seller</Text>
         </TouchableOpacity>
-        <View style={styles.divider}></View>
+
+        <View style={styles.divider} />
+
         <TouchableOpacity
           style={styles.action}
           onPress={async () => {
             if (loading) return;
             setLoading(true);
+
             if (uid) {
               if (inCart) {
                 setInCart(false);
@@ -264,7 +280,7 @@ export default function ListingDetail() {
                 });
                 Alert.alert(
                   "Item Removed",
-                  "This item has been removed from your Carton",
+                  "This item has been removed from your Carton"
                 );
               } else {
                 setInCart(true);
@@ -273,26 +289,25 @@ export default function ListingDetail() {
                 });
                 Alert.alert(
                   "Item Added",
-                  "This item has been added to your Carton",
+                  "This item has been added to your Carton"
                 );
               }
             }
+
             setLoading(false);
           }}
         >
           <FontAwesome5 size={21} name="box-open" color="#DC143C" />
-          {inCart ? (
-            <Text style={styles.label}>Remove Item</Text>
-          ) : (
-            <Text style={styles.label}>Add to Carton</Text>
-          )}
+          <Text style={styles.label}>
+            {inCart ? "Remove Item" : "Add to Carton"}
+          </Text>
         </TouchableOpacity>
-        <View style={styles.divider}></View>
+
+        <View style={styles.divider} />
+
         <TouchableOpacity
           style={styles.primary}
-          onPress={() => {
-            router.push("../checkout/checkout");
-          }}
+          onPress={() => router.push("../checkout/checkout")}
         >
           <FontAwesome5 name="box" size={21} color="#fff" />
           <View>
@@ -309,9 +324,7 @@ export default function ListingDetail() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FAFAFA" },
-  imageContainer: {
-    position: "relative",
-  },
+  imageContainer: { position: "relative" },
   imageIndicator: {
     position: "absolute",
     bottom: 10,
@@ -321,27 +334,7 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     borderRadius: 10,
   },
-  indicatorText: {
-    color: "#fff",
-    fontSize: 12,
-  },
-  leftArrow: {
-    position: "absolute",
-    left: 10,
-    top: "45%",
-    backgroundColor: "rgba(0,0,0,0.4)",
-    borderRadius: 20,
-    padding: 5,
-  },
-  rightArrow: {
-    position: "absolute",
-    right: 10,
-    top: "45%",
-    backgroundColor: "rgba(0,0,0,0.4)",
-    borderRadius: 20,
-    padding: 5,
-  },
-  image: { width: "100%", height: 420, resizeMode: "cover" },
+  indicatorText: { color: "#fff", fontSize: 12 },
   title: { fontSize: 20, fontWeight: "700" },
   field: {
     fontSize: 18,
@@ -359,11 +352,7 @@ const styles = StyleSheet.create({
     color: "#333",
     fontWeight: "600",
   },
-  loading: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
+  loading: { flex: 1, alignItems: "center", justifyContent: "center" },
   arrow: {
     position: "absolute",
     top: 50,
@@ -384,9 +373,7 @@ const styles = StyleSheet.create({
     height: 80,
     flexDirection: "row",
     alignItems: "flex-end",
-    justifyContent: "flex-start",
   },
-
   divider: {
     width: 1,
     backgroundColor: "#ddd",
@@ -394,7 +381,6 @@ const styles = StyleSheet.create({
     marginBottom: 36,
   },
   action: {
-    flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 28,

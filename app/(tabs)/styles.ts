@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#e3303f',
+    color: '#DC143C',
     marginBottom: 10,
     flexWrap: 'wrap',
   },
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
   },
 
   logoutBtn: {
-    backgroundColor: "#E6173B",
+    backgroundColor: '#DC143C',
     paddingVertical: 12,
     paddingHorizontal: 40,
     borderRadius: 10,
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
 
   profileHeader: {
     height: 80,
-    backgroundColor: "#E6173B",
+    backgroundColor: '#DC143C',
   },
 
   menuButton: {
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 999,
     borderWidth: 3,
-    borderColor: "#E6173B",
+    borderColor: '#DC143C',
     backgroundColor: "#fff",
   },
 
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     right: 0,
-    backgroundColor: "#E6173B",
+    backgroundColor: '#DC143C',
     borderRadius: 20,
     padding: 6,
   },
@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
   },
 
   activeTabText: {
-    color: "#E6173B",
+    color: '#DC143C',
   },
 
   tabLine: {
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
   tabIndicator: {
     height: 3,
     width: SCREEN_WIDTH / 3,
-    backgroundColor: "#E6173B",
+    backgroundColor: '#DC143C',
   },
 
   scrollContent: {
@@ -324,7 +324,7 @@ const styles = StyleSheet.create({
   },
 
   sectionHeader: {
-    backgroundColor: "#E6173B",
+    backgroundColor: '#DC143C',
     padding: 8,
     borderRadius: 10,
   },
@@ -377,7 +377,7 @@ const styles = StyleSheet.create({
   saveButton: {
     width: "100%",
     padding: 10,
-    backgroundColor: "#E6173B",
+    backgroundColor: '#DC143C',
     borderRadius: 8,
     marginBottom: 10,
     alignItems: "center",
@@ -402,7 +402,7 @@ const styles = StyleSheet.create({
 
   menuPanel: {
     width: 260,
-    backgroundColor: "#E6173B",
+    backgroundColor: '#DC143C',
     height: "100%",
     padding: 20,
     position: "absolute",

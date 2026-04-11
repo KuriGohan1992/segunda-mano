@@ -270,17 +270,17 @@ export default function Profile() {
           numColumns={2}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ padding: 8, paddingBottom: 80 }}
+          columnWrapperStyle={{ justifyContent: "center" }}
           ListEmptyComponent={
             <View style={styles.centerContent}>
               <Text>No products available</Text>
             </View>
           }
-          renderItem={({ item, index }) => (
+          renderItem={({ item }) => (
             <View
               style={{
-                flex: 1,
-                marginLeft: index % 2 === 0 ? 8 : 4,
-                marginRight: index % 2 === 0 ? 4 : 8,
+                width: "48%",
+                marginHorizontal: "1%",
                 marginBottom: 12,
               }}
             >
