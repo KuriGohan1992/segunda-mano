@@ -116,13 +116,25 @@ export default function SellerProfile() {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity
+        onPress={() => router.back()}
+        style={{
+          position: "absolute",
+          top: 40,
+          left: 15,
+          zIndex: 10,
+        }}
+      >
+        <Ionicons name="close" size={28} color="#FFF" />
+      </TouchableOpacity>
+
       <View style={styles.profileHeader} />
       
       <View style={styles.cover} />
 
       <View style={styles.profileSection}>
         <View>
-          <Image style={styles.profileAvatar} source={getImageSource()} />
+          <Image style={styles.avatar} source={getImageSource()} />
         </View>
 
         <Text style={styles.usernameText}>@{username}</Text>
@@ -176,8 +188,13 @@ export default function SellerProfile() {
           keyExtractor={(item) => item.id}
           numColumns={2}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ padding: 8, paddingBottom: 80 }}
-          //columnWrapperStyle={{ justifyContent: "center" }}
+          contentContainerStyle={{
+            padding: 8,
+            paddingBottom: 80,
+          }}
+          columnWrapperStyle={{
+            justifyContent: "flex-start",
+          }}
           ListEmptyComponent={
             <View style={styles.centerContent}>
               <Text>No products available</Text>
@@ -186,8 +203,9 @@ export default function SellerProfile() {
           renderItem={({ item }) => (
             <View
               style={{
-                width: "48%",
-                marginHorizontal: "1%",
+                flex: 1,
+                maxWidth: "50%",
+                paddingHorizontal: 4,
                 marginBottom: 12,
               }}
             >

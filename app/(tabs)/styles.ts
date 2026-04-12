@@ -116,11 +116,12 @@ const styles = StyleSheet.create({
   },
 
   avatar: {
-    width: 110,
-    height: 110,
-    borderRadius: 50,
-    margin: 6,
-    backgroundColor: "#f0f0f0",
+    width: 100,
+    height: 100,
+    borderRadius: 999,
+    borderWidth: 3,
+    borderColor: '#DC143C',
+    backgroundColor: "#fff",
   },
   name: {
     marginTop: 8,
@@ -250,15 +251,6 @@ const styles = StyleSheet.create({
     marginTop: -45,
   },
 
-  profileAvatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 999,
-    borderWidth: 3,
-    borderColor: '#DC143C',
-    backgroundColor: "#fff",
-  },
-
   cameraButton: {
     position: "absolute",
     bottom: 0,
@@ -326,7 +318,7 @@ const styles = StyleSheet.create({
   sectionHeader: {
     backgroundColor: '#DC143C',
     padding: 8,
-    borderRadius: 10,
+    borderRadius: 5,
   },
 
   sectionHeaderText: {
@@ -337,6 +329,7 @@ const styles = StyleSheet.create({
   label: {
     marginTop: 10,
     color: "gray",
+    
   },
 
   modalOverlay: {

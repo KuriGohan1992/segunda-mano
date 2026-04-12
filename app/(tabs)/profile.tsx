@@ -208,7 +208,7 @@ export default function Profile() {
 
       <View style={styles.profileSection}>
         <View>
-          <Image style={styles.profileAvatar} source={getImageSource()} />
+          <Image style={styles.avatar} source={getImageSource()} />
 
           <TouchableOpacity
             onPress={() => setModalVisible(true)}
@@ -269,8 +269,13 @@ export default function Profile() {
           keyExtractor={(item) => item.id}
           numColumns={2}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ padding: 8, paddingBottom: 80 }}
-          columnWrapperStyle={{ justifyContent: "center" }}
+          contentContainerStyle={{
+            padding: 8,
+            paddingBottom: 80,
+          }}
+          columnWrapperStyle={{
+            justifyContent: "flex-start",
+          }}
           ListEmptyComponent={
             <View style={styles.centerContent}>
               <Text>No products available</Text>
@@ -279,8 +284,9 @@ export default function Profile() {
           renderItem={({ item }) => (
             <View
               style={{
-                width: "48%",
-                marginHorizontal: "1%",
+                flex: 1,
+                maxWidth: "50%",
+                paddingHorizontal: 4,
                 marginBottom: 12,
               }}
             >
