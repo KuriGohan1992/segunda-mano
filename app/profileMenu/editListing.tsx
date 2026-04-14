@@ -3,9 +3,9 @@ import {
   View,
   Text,
   Alert,
-  ScrollView,
   Image,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -28,7 +28,6 @@ export default function EditListing() {
   const { control, handleSubmit, setValue } = useForm();
 
   const [loading, setLoading] = useState(true);
-  const [listing, setListing] = useState<Listing | null>(null);
 
   const [images, setImages] = useState<string[]>([]);
   const [condition, setCondition] = useState<string | null>(null);
@@ -46,8 +45,6 @@ export default function EditListing() {
 
       if (snap.exists()) {
         const data = snap.data() as Listing;
-
-        setListing(data);
 
         setValue("title", data.title);
         setValue("price", String(data.price));
@@ -100,7 +97,7 @@ export default function EditListing() {
       category,
     });
 
-    Alert.alert("Success", "This product has been updated");
+    Alert.alert("Success", "Your product has been updated");
     router.back();
   };
 
@@ -109,7 +106,7 @@ export default function EditListing() {
 
     await deleteDoc(doc(db, "listings", id));
 
-    Alert.alert("Deleted", "This product has been deleted");
+    Alert.alert("Deleted", "Your product has been deleted");
     router.back();
   };
 
@@ -125,10 +122,10 @@ export default function EditListing() {
     <SafeAreaView style={styles.container}>
       <View style={styles.headerRow}>
         <TouchableOpacity onPress={() => router.back()}>
-            <Ionicons name="chevron-back" size={28} color="#DC143C" />
+          <Ionicons name="chevron-back" size={28} color="#DC143C" />
         </TouchableOpacity>
 
-        <Text style={styles.title}>Edit Product Listing</Text>
+        <Text style={styles.title}>Edit an item</Text>
 
         <View style={{ width: 28 }} />
       </View>
@@ -136,11 +133,11 @@ export default function EditListing() {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
-          alignItems: "center",
           padding: 20,
           paddingTop: 10,
         }}
       >
+
         <View style={{ height: 100 }}>
           <ScrollView
             horizontal
@@ -185,43 +182,66 @@ export default function EditListing() {
           </ScrollView>
         </View>
 
-        <View style={{ width: "100%" }}>
-          <Text style={styles.BoxTitle}>Title</Text>
-          <CustomInput name="title" control={control} placeholder="Title" />
+        <Text style={styles.BoxTitle}>Title</Text>
+        <CustomInput name="title" control={control} placeholder="Title" />
 
-          <Text style={styles.BoxTitle}>Price</Text>
-          <CustomInput name="price" control={control} placeholder="Price" />
+        <Text style={styles.BoxTitle}>Price</Text>
+        <CustomInput name="price" control={control} placeholder="Price" />
 
-          <Text style={styles.BoxTitle}>Description</Text>
-          <CustomInput
-            name="description"
-            control={control}
-            placeholder="Description"
-            multiline
-          />
+        <Text style={styles.BoxTitle}>Description</Text>
+        <CustomInput
+          name="description"
+          control={control}
+          placeholder="Description"
+          multiline
+        />
 
+        <View
+          style={{
+            width: "100%",
+            marginBottom: openCondition ? 180 : 10,
+          }}
+        >
           <Text style={styles.BoxTitle}>Condition</Text>
+
           <DropDownPicker
             open={openCondition}
             value={condition}
             items={CONDITIONS.map((i) => ({ label: i, value: i }))}
-            setOpen={setOpenCondition}
+            setOpen={(val) => {
+              setOpenCondition(val);
+              if (val) setOpenCategory(false);
+            }}
             setValue={setCondition}
-            placeholder="Condition"
+            listMode="SCROLLVIEW"
+            dropDownDirection="BOTTOM"
             style={styles.dropdown}
           />
+        </View>
 
+        <View
+          style={{
+            width: "100%",
+            marginBottom: openCategory ? 180 : 10,
+          }}
+        >
           <Text style={styles.BoxTitle}>Category</Text>
+
           <DropDownPicker
             open={openCategory}
             value={category}
             items={CATEGORIES.map((i) => ({ label: i, value: i }))}
-            setOpen={setOpenCategory}
+            setOpen={(val) => {
+              setOpenCategory(val);
+              if (val) setOpenCondition(false);
+            }}
             setValue={setCategory}
-            placeholder="Category"
+            listMode="SCROLLVIEW"
+            dropDownDirection="BOTTOM"
             style={styles.dropdown}
           />
         </View>
+
         <View style={{ marginTop: 20, width: "100%" }}>
           <CustomButton text="Update" onPress={handleSubmit(onUpdate)} />
           <View style={{ height: 10 }} />
