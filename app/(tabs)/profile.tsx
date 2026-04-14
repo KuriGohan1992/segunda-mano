@@ -313,23 +313,27 @@ export default function Profile() {
                 </Text>
               </View>
 
-              <Text style={styles.label}>Name</Text>
-              <Text>{username}</Text>
+              <View style={{ paddingHorizontal: 10 }}>
+                <Text style={styles.label}>Name</Text>
+                <Text>{username}</Text>
 
-              <Text style={styles.label}>Gender</Text>
-              <Text>Not Specified</Text>
+                <Text style={styles.label}>Gender</Text>
+                <Text>Not Specified</Text>
+              </View>
 
-              <View style={styles.sectionHeader}>
+              <View style={[styles.sectionHeader, { marginTop: 10 }]}>
                 <Text style={styles.sectionHeaderText}>
                   Contact Information
                 </Text>
               </View>
 
-              <Text style={styles.label}>Email</Text>
-              <Text>{email}</Text>
+              <View style={{ paddingHorizontal: 10 }}>
+                <Text style={styles.label}>Email</Text>
+                <Text>{email}</Text>
 
-              <Text style={styles.label}>Address</Text>
-              <Text>{address}</Text>
+                <Text style={styles.label}>Address</Text>
+                <Text>{address}</Text>
+              </View>
             </View>
           )}
         </ScrollView>
@@ -378,22 +382,42 @@ export default function Profile() {
         </Pressable>
       </Modal>
 
-      <Modal transparent visible={menuVisible}>
+      <Modal transparent visible={menuVisible} animationType="fade">
         <Pressable
           style={styles.menuOverlay}
           onPress={() => setMenuVisible(false)}
         >
-          <View style={styles.menuPanel}>
-            {[
-              "Account Settings",
-              "Display Settings",
-              "Help and Support",
-              "Settings and Privacy",
-            ].map((item) => (
-              <TouchableOpacity key={item}>
-                <Text style={styles.menuText}>{item}</Text>
-              </TouchableOpacity>
-            ))}
+          <View style={[styles.menuPanel]}>
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: "700",
+                marginBottom: 16,
+                color: "white",
+              }}
+            >
+              MENU
+            </Text>
+
+            <TouchableOpacity onPress={() => router.push("../profileMenu/details")}>
+              <Text style={styles.menuText}>Edit profile</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => router.push("../profileMenu/listings")}>
+              <Text style={styles.menuText}>Edit Listings</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => router.push("../profileMenu/about")}>
+              <Text style={styles.menuText}>About Segunda Mano</Text>
+            </TouchableOpacity>
+
+            <View
+              style={{
+                height: 1,
+                backgroundColor: "#eee",
+                marginVertical: 12,
+              }}
+            />
 
             <TouchableOpacity onPress={handleLogout}>
               <Text style={styles.menuLogout}>Log out</Text>

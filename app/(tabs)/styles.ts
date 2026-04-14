@@ -66,6 +66,7 @@ const styles = StyleSheet.create({
     color: '#DC143C',
     marginBottom: 10,
     flexWrap: 'wrap',
+    textAlign: "center",
   },
   dropdown: {
     backgroundColor: 'white',
@@ -332,6 +333,33 @@ const styles = StyleSheet.create({
     
   },
 
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 12,
+    paddingTop: 10,
+  },
+
+  imageScrollContainer: {
+    height: 100,
+  },
+
+  imageScrollContent: {
+    alignItems: "center",
+    paddingHorizontal: 5,
+  },
+
+  infoBlock: {
+    paddingHorizontal: 16,
+    marginTop: 8,
+  },
+
+  value: {
+    marginBottom: 10,
+    color: "#333",
+  },
+
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.5)",
@@ -400,6 +428,7 @@ const styles = StyleSheet.create({
     padding: 20,
     position: "absolute",
     right: 0,
+    paddingTop: 60,
   },
 
   menuText: {
@@ -411,6 +440,66 @@ const styles = StyleSheet.create({
     color: "#fff",
     marginTop: 20,
   },
+
+  backButton: {
+    position: "absolute",
+    top: 50,
+    left: 15,
+    zIndex: 10,
+  },
+
+  listRowLeft: {
+    justifyContent: "flex-start",
+  },
+
+  listContent: {
+    padding: 8,
+    paddingBottom: 80,
+  },
+
+  listItemWrapper: {
+    flex: 1,
+    maxWidth: "50%",
+    paddingHorizontal: 4,
+    marginBottom: 12,
+  },
+
+  formContent: {
+    padding: 16,
+    paddingTop: 80,
+  },
+
+  imagePreview: {
+    width: "100%",
+    height: "100%",
+  },
+
+  imageRemoveBtn: {
+    position: "absolute",
+    top: 5,
+    right: 5,
+    backgroundColor: "rgba(0,0,0,0.7)",
+    borderRadius: 10,
+    paddingHorizontal: 5,
+  },
+
+  imageRemoveText: {
+    color: "#fff",
+  },
+
+  imageAddBox: {
+    width: 80,
+    height: 80,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+  },
+
+  listContentWithTop: {
+  padding: 8,
+  paddingTop: 20,
+  paddingBottom: 80,
+},
 
   userItem: {
     flexDirection: "row",
@@ -455,6 +544,7 @@ const styles = StyleSheet.create({
     color: "#888",
     marginTop: 2,
   },
+
 });
 
 export default styles;
