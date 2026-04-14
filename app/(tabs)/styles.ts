@@ -464,6 +464,14 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
 
+  BoxTitle: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#333",
+    marginTop: 12,
+    marginBottom: 4,
+  },
+
   formContent: {
     padding: 16,
     paddingTop: 80,

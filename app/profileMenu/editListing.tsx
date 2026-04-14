@@ -92,14 +92,15 @@ export default function EditListing() {
     if (!id) return;
 
     await updateDoc(doc(db, "listings", id), {
-      ...data,
+      title: data.title,
+      description: data.description,
       price: Number(data.price),
       images,
       condition,
       category,
     });
 
-    Alert.alert("Success", "Your product has been updated");
+    Alert.alert("Success", "This product has been updated");
     router.back();
   };
 
@@ -108,8 +109,8 @@ export default function EditListing() {
 
     await deleteDoc(doc(db, "listings", id));
 
-    Alert.alert("Deleted", "Your product has been deleted");
-    router.replace("/profileMenu/listings");
+    Alert.alert("Deleted", "This product has been deleted");
+    router.back();
   };
 
   if (loading) {
@@ -127,10 +128,10 @@ export default function EditListing() {
             <Ionicons name="chevron-back" size={28} color="#DC143C" />
         </TouchableOpacity>
 
-        <Text style={styles.title}>Your Products</Text>
+        <Text style={styles.title}>Edit Product Listing</Text>
 
         <View style={{ width: 28 }} />
-        </View>
+      </View>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -184,36 +185,43 @@ export default function EditListing() {
           </ScrollView>
         </View>
 
-        {/* INPUTS */}
-        <CustomInput name="title" control={control} placeholder="Title" />
-        <CustomInput name="price" control={control} placeholder="Price" />
-        <CustomInput
-          name="description"
-          control={control}
-          placeholder="Description"
-          multiline
-        />
+        <View style={{ width: "100%" }}>
+          <Text style={styles.BoxTitle}>Title</Text>
+          <CustomInput name="title" control={control} placeholder="Title" />
 
-        <DropDownPicker
-          open={openCondition}
-          value={condition}
-          items={CONDITIONS.map((i) => ({ label: i, value: i }))}
-          setOpen={setOpenCondition}
-          setValue={setCondition}
-          placeholder="Condition"
-          style={styles.dropdown}
-        />
+          <Text style={styles.BoxTitle}>Price</Text>
+          <CustomInput name="price" control={control} placeholder="Price" />
 
-        <DropDownPicker
-          open={openCategory}
-          value={category}
-          items={CATEGORIES.map((i) => ({ label: i, value: i }))}
-          setOpen={setOpenCategory}
-          setValue={setCategory}
-          placeholder="Category"
-          style={styles.dropdown}
-        />
+          <Text style={styles.BoxTitle}>Description</Text>
+          <CustomInput
+            name="description"
+            control={control}
+            placeholder="Description"
+            multiline
+          />
 
+          <Text style={styles.BoxTitle}>Condition</Text>
+          <DropDownPicker
+            open={openCondition}
+            value={condition}
+            items={CONDITIONS.map((i) => ({ label: i, value: i }))}
+            setOpen={setOpenCondition}
+            setValue={setCondition}
+            placeholder="Condition"
+            style={styles.dropdown}
+          />
+
+          <Text style={styles.BoxTitle}>Category</Text>
+          <DropDownPicker
+            open={openCategory}
+            value={category}
+            items={CATEGORIES.map((i) => ({ label: i, value: i }))}
+            setOpen={setOpenCategory}
+            setValue={setCategory}
+            placeholder="Category"
+            style={styles.dropdown}
+          />
+        </View>
         <View style={{ marginTop: 20, width: "100%" }}>
           <CustomButton text="Update" onPress={handleSubmit(onUpdate)} />
           <View style={{ height: 10 }} />
