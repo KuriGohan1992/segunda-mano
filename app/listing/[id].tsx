@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Image,
   View,
@@ -6,10 +6,10 @@ import {
   FlatList,
   ActivityIndicator,
   TouchableOpacity,
-  StyleSheet,
   Dimensions,
   ScrollView,
   Alert,
+  StyleSheet,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
@@ -39,24 +39,6 @@ export default function ListingDetail() {
   const flatListRef = useRef<FlatList>(null);
   const { user } = useUser();
   const uid = user?.uid;
-
-  const goNext = () => {
-    if (currentImageIndex < images.length - 1) {
-      flatListRef.current?.scrollToIndex({
-        index: currentImageIndex + 1,
-        animated: true,
-      });
-    }
-  };
-
-  const goPrev = () => {
-    if (currentImageIndex > 0) {
-      flatListRef.current?.scrollToIndex({
-        index: currentImageIndex - 1,
-        animated: true,
-      });
-    }
-  };
 
   const handleScroll = (event: any) => {
     const slide = Math.round(
@@ -163,46 +145,31 @@ export default function ListingDetail() {
 
       <ScrollView style={styles.container}>
         <View style={styles.imageContainer}>
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={(e) => {
-              const x = e.nativeEvent.locationX;
-              const width = Dimensions.get("window").width;
-              if (x < width / 2) {
-                goPrev();
-              } else {
-                goNext();
-              }
+          <FlatList
+            ref={flatListRef}
+            data={images.length ? images : [img_placeholder]}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onMomentumScrollEnd={handleScroll}
+            keyExtractor={(_, index) => index.toString()}
+            renderItem={({ item }) => {
+              const uri = item.startsWith?.("http")
+                ? item
+                : `data:image/jpeg;base64,${item}`;
+
+              return (
+                <Image
+                  source={{ uri }}
+                  style={{
+                    width: Dimensions.get("window").width,
+                    height: 420,
+                    resizeMode: "cover",
+                  }}
+                />
+              );
             }}
-          >
-            <FlatList
-              ref={flatListRef}
-              data={images.length ? images : [img_placeholder]}
-              horizontal
-              pagingEnabled
-              showsHorizontalScrollIndicator={false}
-              onMomentumScrollEnd={handleScroll}
-              initialNumToRender={1}
-              maxToRenderPerBatch={1}
-              windowSize={3}
-              keyExtractor={(_, index) => index.toString()}
-              renderItem={({ item }) => {
-                const uri = item.startsWith?.("http")
-                  ? item
-                  : `data:image/jpeg;base64,${item}`;
-                return (
-                  <Image
-                    source={{ uri }}
-                    style={{
-                      width: Dimensions.get("window").width,
-                      height: 420,
-                      resizeMode: "cover",
-                    }}
-                  />
-                );
-              }}
-            />
-          </TouchableOpacity>
+          />
 
           <View style={styles.imageIndicator}>
             <Text style={styles.indicatorText}>

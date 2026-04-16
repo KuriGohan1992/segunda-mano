@@ -9,7 +9,14 @@ import {
   FlatList,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { doc, getDoc, collection, query, where, onSnapshot } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  collection,
+  query,
+  where,
+  onSnapshot,
+} from "firebase/firestore";
 import { db } from "../../firebase";
 import styles from "../(tabs)/styles";
 import { Listing } from "../../type/listing";
@@ -19,11 +26,20 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function SellerProfile() {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
   const { id } = useLocalSearchParams<{ id: string }>();
+
+  const [loading, setLoading] = useState(true);
+
   const [picture, setPicture] = useState("");
   const [username, setUsername] = useState("");
   const [address, setAddress] = useState("");
+
+  const [email, setEmail] = useState("Not Specified");
+  const [gender, setGender] = useState("Not Specified");
+  const [birthday, setBirthday] = useState("Not Specified");
+  const [age, setAge] = useState("Not Specified");
+  const [contactNumber, setContactNumber] = useState("Not Specified");
+
   const [activeTab, setActiveTab] = useState("listings");
   const [userListings, setUserListings] = useState<Listing[]>([]);
 
@@ -41,11 +57,16 @@ export default function SellerProfile() {
 
       if (docSnap.exists()) {
         const d: any = docSnap.data();
-        setUsername(d.username);
-        setAddress(d.address);
-        if (d.picture) {
-          setPicture(d.picture);
-        }
+
+        setUsername(d.username || "Not Specified");
+        setAddress(d.address || "Not Specified");
+        setPicture(d.picture || "");
+
+        setEmail(d.email || "Not Specified");
+        setGender(d.gender || "Not Specified");
+        setBirthday(d.birthday || "Not Specified");
+        setAge(d.age || "Not Specified");
+        setContactNumber(d.contactNumber || "Not Specified");
       }
 
       setLoading(false);
@@ -129,13 +150,10 @@ export default function SellerProfile() {
       </TouchableOpacity>
 
       <View style={styles.profileHeader} />
-      
       <View style={styles.cover} />
 
       <View style={styles.profileSection}>
-        <View>
-          <Image style={styles.avatar} source={getImageSource()} />
-        </View>
+        <Image style={styles.avatar} source={getImageSource()} />
 
         <Text style={styles.usernameText}>@{username}</Text>
         <Text style={styles.ratingText}>No ratings yet.</Text>
@@ -232,20 +250,36 @@ export default function SellerProfile() {
                 </Text>
               </View>
 
-              <Text style={styles.label}>Name</Text>
-              <Text>{username}</Text>
+              <View style={{ paddingHorizontal: 10 }}>
+                <Text style={styles.label}>Name</Text>
+                <Text>{username}</Text>
 
-              <Text style={styles.label}>Gender</Text>
-              <Text>Not Specified</Text>
+                <Text style={styles.label}>Gender</Text>
+                <Text>{gender}</Text>
 
-              <View style={styles.sectionHeader}>
+                <Text style={styles.label}>Birthday</Text>
+                <Text>{birthday}</Text>
+
+                <Text style={styles.label}>Age</Text>
+                <Text>{age}</Text>
+              </View>
+
+              <View style={[styles.sectionHeader, { marginTop: 10 }]}>
                 <Text style={styles.sectionHeaderText}>
                   Contact Information
                 </Text>
               </View>
 
-              <Text style={styles.label}>Address</Text>
-              <Text>{address}</Text>
+              <View style={{ paddingHorizontal: 10 }}>
+                <Text style={styles.label}>Email</Text>
+                <Text>{email}</Text>
+
+                <Text style={styles.label}>Contact Number</Text>
+                <Text>{contactNumber}</Text>
+
+                <Text style={styles.label}>Address</Text>
+                <Text>{address}</Text>
+              </View>
             </View>
           )}
         </ScrollView>

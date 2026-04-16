@@ -11,14 +11,12 @@ import {
   ActivityIndicator,
   FlatList,
 } from "react-native";
-import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import { useUser } from "../../context/UserContext";
 import { useRouter } from "expo-router";
 import {
   doc,
   getDoc,
-  updateDoc,
   collection,
   query,
   where,
@@ -42,14 +40,23 @@ export default function Profile() {
   const [username, setUsername] = useState("");
   const [address, setAddress] = useState("");
 
+  const [gender, setGender] = useState("Not Specified");
+  const [birthday, setBirthday] = useState("Not Specified");
+  const [age, setAge] = useState("Not Specified");
+  const [contactNumber, setContactNumber] = useState("Not Specified");
   const [modalVisible, setModalVisible] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
-  const [tempImage, setTempImage] = useState("");
   const [activeTab, setActiveTab] = useState("listings");
-
   const [userListings, setUserListings] = useState<Listing[]>([]);
 
-  const isOwnProfile = true;
+  const calculateAge = (birthdayStr: string) => {
+    const date = new Date(birthdayStr);
+    if (isNaN(date.getTime())) return "Not Specified";
+
+    const diff = Date.now() - date.getTime();
+    const ageDate = new Date(diff);
+    return Math.abs(ageDate.getUTCFullYear() - 1970).toString();
+  };
 
   useEffect(() => {
     async function getUserDetails() {
@@ -65,11 +72,24 @@ export default function Profile() {
 
       if (docSnap.exists()) {
         const d: any = docSnap.data();
-        setUsername(d.username);
-        setAddress(d.address);
-        if (d.picture) {
-          setPicture(d.picture);
-        }
+
+        setUsername(d.username || "");
+        setAddress(d.address || "");
+        setPicture(d.picture || "");
+
+        setGender(d.gender || "Not Specified");
+
+        const rawBirthday = d.birthday || "Not Specified";
+        setBirthday(rawBirthday);
+
+        const computedAge =
+          rawBirthday !== "Not Specified"
+            ? calculateAge(rawBirthday)
+            : "Not Specified";
+
+        setAge(computedAge);
+
+        setContactNumber(d.contactNumber || "Not Specified");
       }
 
       setLoading(false);
@@ -130,43 +150,6 @@ export default function Profile() {
     return { uri: picture };
   };
 
-  const pickImage = async () => {
-    const permission =
-      await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-    if (!permission.granted) {
-      Alert.alert(
-        "Permission required",
-        "Please allow access to your gallery."
-      );
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.5,
-      base64: true,
-    });
-
-    if (!result.canceled) {
-      const base64Img = `data:image/jpeg;base64,${result.assets[0].base64}`;
-      setTempImage(base64Img);
-    }
-  };
-
-  const saveImage = async () => {
-    if (!uid || !tempImage) return;
-
-    const docRef = doc(db, "users", uid);
-    await updateDoc(docRef, { picture: tempImage });
-
-    setPicture(tempImage);
-    setModalVisible(false);
-    setTempImage("");
-  };
-
   const handleLogout = () => {
     Alert.alert(
       "Confirm Logout",
@@ -194,29 +177,18 @@ export default function Profile() {
   return (
     <View style={styles.container}>
       <View style={styles.profileHeader}>
-        {isOwnProfile && (
-          <TouchableOpacity
-            onPress={() => setMenuVisible(true)}
-            style={styles.menuButton}
-          >
-            <Ionicons name="menu" size={28} color="#fff" />
-          </TouchableOpacity>
-        )}
+        <TouchableOpacity
+          onPress={() => setMenuVisible(true)}
+          style={styles.menuButton}
+        >
+          <Ionicons name="menu" size={28} color="#fff" />
+        </TouchableOpacity>
       </View>
 
       <View style={styles.cover} />
 
       <View style={styles.profileSection}>
-        <View>
-          <Image style={styles.avatar} source={getImageSource()} />
-
-          <TouchableOpacity
-            onPress={() => setModalVisible(true)}
-            style={styles.cameraButton}
-          >
-            <Ionicons name="camera" size={14} color="#fff" />
-          </TouchableOpacity>
-        </View>
+        <Image style={styles.avatar} source={getImageSource()} />
 
         <Text style={styles.usernameText}>@{username}</Text>
         <Text style={styles.ratingText}>No ratings yet.</Text>
@@ -268,19 +240,7 @@ export default function Profile() {
           data={userListings}
           keyExtractor={(item) => item.id}
           numColumns={2}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            padding: 8,
-            paddingBottom: 80,
-          }}
-          columnWrapperStyle={{
-            justifyContent: "flex-start",
-          }}
-          ListEmptyComponent={
-            <View style={styles.centerContent}>
-              <Text>No products available</Text>
-            </View>
-          }
+          contentContainerStyle={{ padding: 8, paddingBottom: 80 }}
           renderItem={({ item }) => (
             <View
               style={{
@@ -318,7 +278,13 @@ export default function Profile() {
                 <Text>{username}</Text>
 
                 <Text style={styles.label}>Gender</Text>
-                <Text>Not Specified</Text>
+                <Text>{gender}</Text>
+
+                <Text style={styles.label}>Birthday</Text>
+                <Text>{birthday}</Text>
+
+                <Text style={styles.label}>Age</Text>
+                <Text>{age}</Text>
               </View>
 
               <View style={[styles.sectionHeader, { marginTop: 10 }]}>
@@ -331,6 +297,9 @@ export default function Profile() {
                 <Text style={styles.label}>Email</Text>
                 <Text>{email}</Text>
 
+                <Text style={styles.label}>Contact Number</Text>
+                <Text>{contactNumber}</Text>
+
                 <Text style={styles.label}>Address</Text>
                 <Text>{address}</Text>
               </View>
@@ -338,49 +307,6 @@ export default function Profile() {
           )}
         </ScrollView>
       )}
-
-      <Modal transparent visible={modalVisible}>
-        <Pressable
-          style={styles.modalOverlay}
-          onPress={() => {
-            setModalVisible(false);
-            setTempImage("");
-          }}
-        >
-          <Pressable
-            onPress={(e) => e.stopPropagation()}
-            style={styles.modalBox}
-          >
-            <TouchableOpacity
-              onPress={pickImage}
-              style={styles.imagePickerCircle}
-            >
-              {tempImage ? (
-                <Image
-                  source={{ uri: tempImage }}
-                  style={styles.previewImage}
-                />
-              ) : (
-                <Text style={styles.plusText}>＋</Text>
-              )}
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={saveImage} style={styles.saveButton}>
-              <Text style={styles.saveText}>Save Photo</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => {
-                setModalVisible(false);
-                setTempImage("");
-              }}
-              style={styles.cancelButton}
-            >
-              <Text>Cancel</Text>
-            </TouchableOpacity>
-          </Pressable>
-        </Pressable>
-      </Modal>
 
       <Modal transparent visible={menuVisible} animationType="fade">
         <Pressable
