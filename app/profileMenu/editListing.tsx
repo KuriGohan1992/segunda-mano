@@ -104,10 +104,26 @@ export default function EditListing() {
   const onDelete = async () => {
     if (!id) return;
 
-    await deleteDoc(doc(db, "listings", id));
-
-    Alert.alert("Deleted", "Your product has been deleted");
-    router.back();
+    Alert.alert(
+      "Delete Listing",
+      "Are you sure you want to delete this product?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            await deleteDoc(doc(db, "listings", id));
+            Alert.alert("Deleted", "Your product has been deleted");
+            router.back();
+          },
+        },
+      ],
+      { cancelable: true }
+    );
   };
 
   if (loading) {
