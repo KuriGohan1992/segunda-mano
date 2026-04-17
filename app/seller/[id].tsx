@@ -64,8 +64,6 @@ export default function SellerProfile() {
 
         setEmail(d.email || "Not Specified");
         setGender(d.gender || "Not Specified");
-        setBirthday(d.birthday || "Not Specified");
-        setAge(d.age || "Not Specified");
         setContactNumber(d.contactNumber || "Not Specified");
       }
 
@@ -257,11 +255,8 @@ export default function SellerProfile() {
                 <Text style={styles.label}>Gender</Text>
                 <Text>{gender}</Text>
 
-                <Text style={styles.label}>Birthday</Text>
-                <Text>{birthday}</Text>
-
-                <Text style={styles.label}>Age</Text>
-                <Text>{age}</Text>
+                <Text style={styles.label}>Address</Text>
+                <Text>{address}</Text>
               </View>
 
               <View style={[styles.sectionHeader, { marginTop: 10 }]}>
@@ -277,8 +272,6 @@ export default function SellerProfile() {
                 <Text style={styles.label}>Contact Number</Text>
                 <Text>{contactNumber}</Text>
 
-                <Text style={styles.label}>Address</Text>
-                <Text>{address}</Text>
               </View>
             </View>
           )}

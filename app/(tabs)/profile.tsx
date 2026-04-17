@@ -16,7 +16,6 @@ import { useUser } from "../../context/UserContext";
 import { useRouter } from "expo-router";
 import {
   doc,
-  getDoc,
   collection,
   query,
   where,
@@ -32,44 +31,24 @@ export default function Profile() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const { user } = useUser();
-
   const uid = user?.uid;
   const email = user?.email;
-
   const [picture, setPicture] = useState("");
   const [username, setUsername] = useState("");
   const [address, setAddress] = useState("");
-
-  const [gender, setGender] = useState("Not Specified");
-  const [birthday, setBirthday] = useState("Not Specified");
-  const [age, setAge] = useState("Not Specified");
-  const [contactNumber, setContactNumber] = useState("Not Specified");
-  const [modalVisible, setModalVisible] = useState(false);
+  const [gender, setGender] = useState("");
+  const [contactNumber, setContactNumber] = useState("");
   const [menuVisible, setMenuVisible] = useState(false);
   const [activeTab, setActiveTab] = useState("listings");
   const [userListings, setUserListings] = useState<Listing[]>([]);
 
-  const calculateAge = (birthdayStr: string) => {
-    const date = new Date(birthdayStr);
-    if (isNaN(date.getTime())) return "Not Specified";
-
-    const diff = Date.now() - date.getTime();
-    const ageDate = new Date(diff);
-    return Math.abs(ageDate.getUTCFullYear() - 1970).toString();
-  };
-
   useEffect(() => {
-    async function getUserDetails() {
-      setLoading(true);
+    if (!uid) {
+      setLoading(false);
+      return;
+    }
 
-      if (!uid) {
-        setLoading(false);
-        return;
-      }
-
-      const docRef = doc(db, "users", uid);
-      const docSnap = await getDoc(docRef);
-
+    const unsub = onSnapshot(doc(db, "users", uid), (docSnap) => {
       if (docSnap.exists()) {
         const d: any = docSnap.data();
 
@@ -78,24 +57,13 @@ export default function Profile() {
         setPicture(d.picture || "");
 
         setGender(d.gender || "Not Specified");
-
-        const rawBirthday = d.birthday || "Not Specified";
-        setBirthday(rawBirthday);
-
-        const computedAge =
-          rawBirthday !== "Not Specified"
-            ? calculateAge(rawBirthday)
-            : "Not Specified";
-
-        setAge(computedAge);
-
         setContactNumber(d.contactNumber || "Not Specified");
       }
 
       setLoading(false);
-    }
+    });
 
-    getUserDetails();
+    return () => unsub();
   }, [uid]);
 
   useEffect(() => {
@@ -280,11 +248,8 @@ export default function Profile() {
                 <Text style={styles.label}>Gender</Text>
                 <Text>{gender}</Text>
 
-                <Text style={styles.label}>Birthday</Text>
-                <Text>{birthday}</Text>
-
-                <Text style={styles.label}>Age</Text>
-                <Text>{age}</Text>
+                <Text style={styles.label}>Address</Text>
+                <Text>{address}</Text>
               </View>
 
               <View style={[styles.sectionHeader, { marginTop: 10 }]}>
@@ -300,8 +265,6 @@ export default function Profile() {
                 <Text style={styles.label}>Contact Number</Text>
                 <Text>{contactNumber}</Text>
 
-                <Text style={styles.label}>Address</Text>
-                <Text>{address}</Text>
               </View>
             </View>
           )}
@@ -325,15 +288,21 @@ export default function Profile() {
               MENU
             </Text>
 
-            <TouchableOpacity onPress={() => router.push("../profileMenu/details")}>
+            <TouchableOpacity
+              onPress={() => router.push("../profileMenu/details")}
+            >
               <Text style={styles.menuText}>Edit profile</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => router.push("../profileMenu/listings")}>
+            <TouchableOpacity
+              onPress={() => router.push("../profileMenu/listings")}
+            >
               <Text style={styles.menuText}>Edit Listings</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => router.push("../profileMenu/about")}>
+            <TouchableOpacity
+              onPress={() => router.push("../profileMenu/about")}
+            >
               <Text style={styles.menuText}>About Segunda Mano</Text>
             </TouchableOpacity>
 
