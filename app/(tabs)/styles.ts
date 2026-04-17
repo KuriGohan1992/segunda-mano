@@ -553,6 +553,44 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
 
+  aboutCard: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 18,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 3,
+  },
+
+  aboutTitle: {
+    fontSize: 22,
+    fontWeight: "800",
+    color: "#DC143C",
+    marginBottom: 10,
+  },
+
+  aboutText: {
+    fontSize: 15,
+    color: "#444",
+    lineHeight: 22,
+    marginBottom: 12,
+  },
+
+  aboutBullet: {
+    fontSize: 14,
+    color: "#444",
+    marginBottom: 5,
+    marginLeft: 8,
+  },
+
+  aboutFooter: {
+    marginTop: 20,
+    textAlign: "center",
+    color: "#888",
+    fontSize: 12,
+  },
+
 });
 
 export default styles;
