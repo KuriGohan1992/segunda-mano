@@ -10,6 +10,8 @@ import {
   ScrollView,
   ActivityIndicator,
   FlatList,
+  TextInput,
+  Linking,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useUser } from "../../context/UserContext";
@@ -39,6 +41,9 @@ export default function Profile() {
   const [gender, setGender] = useState("");
   const [contactNumber, setContactNumber] = useState("");
   const [menuVisible, setMenuVisible] = useState(false);
+  const [contactModalVisible, setContactModalVisible] = useState(false);
+  const [message, setMessage] = useState("");
+
   const [activeTab, setActiveTab] = useState("listings");
   const [userListings, setUserListings] = useState<Listing[]>([]);
 
@@ -132,6 +137,25 @@ export default function Profile() {
       ],
       { cancelable: true }
     );
+  };
+
+  const handleSendSupport = async () => {
+    if (!message.trim()) return;
+
+    const url =
+      `mailto:jadeddragon26@gmail.com` +
+      `?subject=Segunda Mano Support` +
+      `&body=From: ${email}%0A%0AMessage:%0A${message}`;
+
+    const supported = await Linking.canOpenURL(url);
+
+    if (supported) {
+      await Linking.openURL(url);
+      setMessage("");
+      setContactModalVisible(false);
+    } else {
+      Alert.alert("Error", "No email app found on this device.");
+    }
   };
 
   if (loading) {
@@ -288,34 +312,82 @@ export default function Profile() {
               MENU
             </Text>
 
-            <TouchableOpacity
-              onPress={() => router.push("../profileMenu/details")}
-            >
-              <Text style={styles.menuText}>Edit profile</Text>
+            <TouchableOpacity onPress={() => {
+              setMenuVisible(false);
+              setContactModalVisible(true);
+            }}>
+              <Text style={styles.menuText}>Contact Us</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={() => router.push("../profileMenu/listings")}
-            >
+            <TouchableOpacity onPress={() => router.push("../profileMenu/details")}>
+              <Text style={styles.menuText}>Edit Profile</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => router.push("../profileMenu/listings")}>
               <Text style={styles.menuText}>Edit Listings</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={() => router.push("../profileMenu/about")}
-            >
+            <TouchableOpacity onPress={() => router.push("../profileMenu/about")}>
               <Text style={styles.menuText}>About Segunda Mano</Text>
             </TouchableOpacity>
 
-            <View
-              style={{
-                height: 1,
-                backgroundColor: "#eee",
-                marginVertical: 12,
-              }}
-            />
+            <View style={{ height: 1, backgroundColor: "#eee", marginVertical: 12 }} />
 
             <TouchableOpacity onPress={handleLogout}>
               <Text style={styles.menuLogout}>Log out</Text>
+            </TouchableOpacity>
+          </View>
+        </Pressable>
+      </Modal>
+
+      <Modal transparent visible={contactModalVisible} animationType="fade">
+        <Pressable
+          style={styles.menuOverlay}
+          onPress={() => setContactModalVisible(false)}
+        >
+          <View style={[styles.menuPanel, { backgroundColor: "#fff" }]}>
+            <Text style={{ fontSize: 18, fontWeight: "700", marginBottom: 12 }}>
+              Contact Support
+            </Text>
+
+            <TextInput
+              placeholder="Input message"
+              value={message}
+              onChangeText={setMessage}
+              multiline
+              style={{
+                borderWidth: 1,
+                borderColor: "#ddd",
+                borderRadius: 8,
+                padding: 10,
+                minHeight: 100,
+                marginBottom: 12,
+                textAlignVertical: "top",
+              }}
+            />
+
+            <TouchableOpacity
+              onPress={handleSendSupport}
+              style={{
+                backgroundColor: "#DC143C",
+                padding: 12,
+                borderRadius: 8,
+                alignItems: "center",
+              }}
+            >
+              <Text style={{ color: "#fff", fontWeight: "600" }}>
+                Send
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => {
+                setContactModalVisible(false);
+                setMenuVisible(true);
+              }}
+              style={{ marginTop: 10, alignItems: "center" }}
+            >
+              <Text>Cancel</Text>
             </TouchableOpacity>
           </View>
         </Pressable>
