@@ -10,15 +10,14 @@ import {
   ScrollView,
   ActivityIndicator,
   FlatList,
+  TextInput,
+  Linking,
 } from "react-native";
-import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import { useUser } from "../../context/UserContext";
 import { useRouter } from "expo-router";
 import {
   doc,
-  getDoc,
-  updateDoc,
   collection,
   query,
   where,
@@ -34,48 +33,42 @@ export default function Profile() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const { user } = useUser();
-
   const uid = user?.uid;
   const email = user?.email;
-
   const [picture, setPicture] = useState("");
   const [username, setUsername] = useState("");
   const [address, setAddress] = useState("");
-
-  const [modalVisible, setModalVisible] = useState(false);
+  const [gender, setGender] = useState("");
+  const [contactNumber, setContactNumber] = useState("");
   const [menuVisible, setMenuVisible] = useState(false);
-  const [tempImage, setTempImage] = useState("");
-  const [activeTab, setActiveTab] = useState("listings");
+  const [contactModalVisible, setContactModalVisible] = useState(false);
+  const [message, setMessage] = useState("");
 
+  const [activeTab, setActiveTab] = useState("listings");
   const [userListings, setUserListings] = useState<Listing[]>([]);
 
-  const isOwnProfile = true;
-
   useEffect(() => {
-    async function getUserDetails() {
-      setLoading(true);
+    if (!uid) {
+      setLoading(false);
+      return;
+    }
 
-      if (!uid) {
-        setLoading(false);
-        return;
-      }
-
-      const docRef = doc(db, "users", uid);
-      const docSnap = await getDoc(docRef);
-
+    const unsub = onSnapshot(doc(db, "users", uid), (docSnap) => {
       if (docSnap.exists()) {
         const d: any = docSnap.data();
-        setUsername(d.username);
-        setAddress(d.address);
-        if (d.picture) {
-          setPicture(d.picture);
-        }
+
+        setUsername(d.username || "");
+        setAddress(d.address || "");
+        setPicture(d.picture || "");
+
+        setGender(d.gender || "Not Specified");
+        setContactNumber(d.contactNumber || "Not Specified");
       }
 
       setLoading(false);
-    }
+    });
 
-    getUserDetails();
+    return () => unsub();
   }, [uid]);
 
   useEffect(() => {
@@ -130,43 +123,6 @@ export default function Profile() {
     return { uri: picture };
   };
 
-  const pickImage = async () => {
-    const permission =
-      await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-    if (!permission.granted) {
-      Alert.alert(
-        "Permission required",
-        "Please allow access to your gallery."
-      );
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.5,
-      base64: true,
-    });
-
-    if (!result.canceled) {
-      const base64Img = `data:image/jpeg;base64,${result.assets[0].base64}`;
-      setTempImage(base64Img);
-    }
-  };
-
-  const saveImage = async () => {
-    if (!uid || !tempImage) return;
-
-    const docRef = doc(db, "users", uid);
-    await updateDoc(docRef, { picture: tempImage });
-
-    setPicture(tempImage);
-    setModalVisible(false);
-    setTempImage("");
-  };
-
   const handleLogout = () => {
     Alert.alert(
       "Confirm Logout",
@@ -183,6 +139,25 @@ export default function Profile() {
     );
   };
 
+  const handleSendSupport = async () => {
+    if (!message.trim()) return;
+
+    const url =
+      `mailto:jadeddragon26@gmail.com` +
+      `?subject=Segunda Mano Support` +
+      `&body=From: ${email}%0A%0AMessage:%0A${message}`;
+
+    const supported = await Linking.canOpenURL(url);
+
+    if (supported) {
+      await Linking.openURL(url);
+      setMessage("");
+      setContactModalVisible(false);
+    } else {
+      Alert.alert("Error", "No email app found on this device.");
+    }
+  };
+
   if (loading) {
     return (
       <View style={styles.centerContent}>
@@ -194,29 +169,18 @@ export default function Profile() {
   return (
     <View style={styles.container}>
       <View style={styles.profileHeader}>
-        {isOwnProfile && (
-          <TouchableOpacity
-            onPress={() => setMenuVisible(true)}
-            style={styles.menuButton}
-          >
-            <Ionicons name="menu" size={28} color="#fff" />
-          </TouchableOpacity>
-        )}
+        <TouchableOpacity
+          onPress={() => setMenuVisible(true)}
+          style={styles.menuButton}
+        >
+          <Ionicons name="menu" size={28} color="#fff" />
+        </TouchableOpacity>
       </View>
 
       <View style={styles.cover} />
 
       <View style={styles.profileSection}>
-        <View>
-          <Image style={styles.avatar} source={getImageSource()} />
-
-          <TouchableOpacity
-            onPress={() => setModalVisible(true)}
-            style={styles.cameraButton}
-          >
-            <Ionicons name="camera" size={14} color="#fff" />
-          </TouchableOpacity>
-        </View>
+        <Image style={styles.avatar} source={getImageSource()} />
 
         <Text style={styles.usernameText}>@{username}</Text>
         <Text style={styles.ratingText}>No ratings yet.</Text>
@@ -264,39 +228,33 @@ export default function Profile() {
       </View>
 
       {activeTab === "listings" ? (
-        <FlatList
-          data={userListings}
-          keyExtractor={(item) => item.id}
-          numColumns={2}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            padding: 8,
-            paddingBottom: 80,
-          }}
-          columnWrapperStyle={{
-            justifyContent: "flex-start",
-          }}
-          ListEmptyComponent={
-            <View style={styles.centerContent}>
-              <Text>No products available</Text>
-            </View>
-          }
-          renderItem={({ item }) => (
-            <View
-              style={{
-                flex: 1,
-                maxWidth: "50%",
-                paddingHorizontal: 4,
-                marginBottom: 12,
-              }}
-            >
-              <ListingCard
-                item={item}
-                onPress={() => router.push(`/listing/${item.id}`)}
-              />
-            </View>
-          )}
-        />
+        userListings.length === 0 ? (
+          <View style={styles.centerContent}>
+            <Text>No Listings Available</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={userListings}
+            keyExtractor={(item) => item.id}
+            numColumns={2}
+            contentContainerStyle={{ padding: 8, paddingBottom: 80 }}
+            renderItem={({ item }) => (
+              <View
+                style={{
+                  flex: 1,
+                  maxWidth: "50%",
+                  paddingHorizontal: 4,
+                  marginBottom: 12,
+                }}
+              >
+                <ListingCard
+                  item={item}
+                  onPress={() => router.push(`/listing/${item.id}`)}
+                />
+              </View>
+            )}
+          />
+        )
       ) : (
         <ScrollView contentContainerStyle={styles.scrollContent}>
           {activeTab === "reviews" && (
@@ -313,90 +271,129 @@ export default function Profile() {
                 </Text>
               </View>
 
-              <Text style={styles.label}>Name</Text>
-              <Text>{username}</Text>
+              <View style={{ paddingHorizontal: 10 }}>
+                <Text style={styles.label}>Name</Text>
+                <Text>{username}</Text>
 
-              <Text style={styles.label}>Gender</Text>
-              <Text>Not Specified</Text>
+                <Text style={styles.label}>Gender</Text>
+                <Text>{gender}</Text>
 
-              <View style={styles.sectionHeader}>
+                <Text style={styles.label}>Address</Text>
+                <Text>{address}</Text>
+              </View>
+
+              <View style={[styles.sectionHeader, { marginTop: 10 }]}>
                 <Text style={styles.sectionHeaderText}>
                   Contact Information
                 </Text>
               </View>
 
-              <Text style={styles.label}>Email</Text>
-              <Text>{email}</Text>
+              <View style={{ paddingHorizontal: 10 }}>
+                <Text style={styles.label}>Email</Text>
+                <Text>{email}</Text>
 
-              <Text style={styles.label}>Address</Text>
-              <Text>{address}</Text>
+                <Text style={styles.label}>Contact Number</Text>
+                <Text>{contactNumber}</Text>
+
+              </View>
             </View>
           )}
         </ScrollView>
       )}
 
-      <Modal transparent visible={modalVisible}>
-        <Pressable
-          style={styles.modalOverlay}
-          onPress={() => {
-            setModalVisible(false);
-            setTempImage("");
-          }}
-        >
-          <Pressable
-            onPress={(e) => e.stopPropagation()}
-            style={styles.modalBox}
-          >
-            <TouchableOpacity
-              onPress={pickImage}
-              style={styles.imagePickerCircle}
-            >
-              {tempImage ? (
-                <Image
-                  source={{ uri: tempImage }}
-                  style={styles.previewImage}
-                />
-              ) : (
-                <Text style={styles.plusText}>＋</Text>
-              )}
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={saveImage} style={styles.saveButton}>
-              <Text style={styles.saveText}>Save Photo</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => {
-                setModalVisible(false);
-                setTempImage("");
-              }}
-              style={styles.cancelButton}
-            >
-              <Text>Cancel</Text>
-            </TouchableOpacity>
-          </Pressable>
-        </Pressable>
-      </Modal>
-
-      <Modal transparent visible={menuVisible}>
+      <Modal transparent visible={menuVisible} animationType="fade">
         <Pressable
           style={styles.menuOverlay}
           onPress={() => setMenuVisible(false)}
         >
-          <View style={styles.menuPanel}>
-            {[
-              "Account Settings",
-              "Display Settings",
-              "Help and Support",
-              "Settings and Privacy",
-            ].map((item) => (
-              <TouchableOpacity key={item}>
-                <Text style={styles.menuText}>{item}</Text>
-              </TouchableOpacity>
-            ))}
+          <View style={[styles.menuPanel]}>
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: "700",
+                marginBottom: 16,
+                color: "white",
+              }}
+            >
+              MENU
+            </Text>
+
+            <TouchableOpacity onPress={() => {
+              setMenuVisible(false);
+              setContactModalVisible(true);
+            }}>
+              <Text style={styles.menuText}>Contact Us</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => router.push("../profileMenu/details")}>
+              <Text style={styles.menuText}>Edit Profile</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => router.push("../profileMenu/listings")}>
+              <Text style={styles.menuText}>Edit Listings</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => router.push("../profileMenu/about")}>
+              <Text style={styles.menuText}>About Segunda Mano</Text>
+            </TouchableOpacity>
+
+            <View style={{ height: 1, backgroundColor: "#eee", marginVertical: 12 }} />
 
             <TouchableOpacity onPress={handleLogout}>
               <Text style={styles.menuLogout}>Log out</Text>
+            </TouchableOpacity>
+          </View>
+        </Pressable>
+      </Modal>
+
+      <Modal transparent visible={contactModalVisible} animationType="fade">
+        <Pressable
+          style={styles.menuOverlay}
+          onPress={() => setContactModalVisible(false)}
+        >
+          <View style={[styles.menuPanel, { backgroundColor: "#fff" }]}>
+            <Text style={{ fontSize: 18, fontWeight: "700", marginBottom: 12 }}>
+              Contact Support
+            </Text>
+
+            <TextInput
+              placeholder="Input message"
+              value={message}
+              onChangeText={setMessage}
+              multiline
+              style={{
+                borderWidth: 1,
+                borderColor: "#ddd",
+                borderRadius: 8,
+                padding: 10,
+                minHeight: 100,
+                marginBottom: 12,
+                textAlignVertical: "top",
+              }}
+            />
+
+            <TouchableOpacity
+              onPress={handleSendSupport}
+              style={{
+                backgroundColor: "#DC143C",
+                padding: 12,
+                borderRadius: 8,
+                alignItems: "center",
+              }}
+            >
+              <Text style={{ color: "#fff", fontWeight: "600" }}>
+                Send
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => {
+                setContactModalVisible(false);
+                setMenuVisible(true);
+              }}
+              style={{ marginTop: 10, alignItems: "center" }}
+            >
+              <Text>Cancel</Text>
             </TouchableOpacity>
           </View>
         </Pressable>
