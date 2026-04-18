@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState, useCallback } from "react";
 import {
   Image,
   View,
@@ -11,7 +11,7 @@ import {
   Alert,
   StyleSheet,
 } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter, useFocusEffect } from "expo-router";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import {
   arrayRemove,
@@ -47,72 +47,80 @@ export default function ListingDetail() {
     setCurrentImageIndex(slide);
   };
 
-  useEffect(() => {
-    if (!id) {
-      setLoading(false);
-      return;
-    }
+  const fetchListing = async () => {
+    if (!id) return;
+    setLoading(true);
+    const docRef = doc(db, "listings", id);
+    const docSnap = await getDoc(docRef);
 
-    async function fetchListing() {
-      setLoading(true);
-      const docRef = doc(db, "listings", id);
-      const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) {
+      Alert.alert("Listing removed", "This item is no longer available.", [
+    {
+      text: "OK",
+      onPress: () => router.back(),
+    },
+  ]);
 
-      if (!docSnap.exists()) {
-        setListing(null);
-      } else {
-        const d = docSnap.data() as any;
+  setLoading(false);
+  return;
+    } else {
+      const d = docSnap.data() as any;
 
-        const fetchedListing: Listing = {
-          id: docSnap.id,
-          available: d.available ?? true,
-          category: d.category || "",
-          condition: d.condition || "",
-          createdAt:
-            new Date(d.createdAt.seconds * 1000)
-              .toDateString()
-              .slice(4) || new Date().toISOString(),
-          description: d.description || "",
-          images: Array.isArray(d.images) ? d.images : [],
-          thumbnail: Array.isArray(d.images)
-            ? d.images[0]
-            : img_placeholder,
-          location: d.location || "",
-          price: d.price ?? 0,
-          sellerId: d.sellerId || "",
-          title: d.title || "",
-        };
-        setListing(fetchedListing);
+      const fetchedListing: Listing = {
+        id: docSnap.id,
+        available: d.available ?? true,
+        category: d.category || "",
+        condition: d.condition || "",
+        createdAt:
+          new Date(d.createdAt.seconds * 1000)
+            .toDateString()
+            .slice(4) || new Date().toISOString(),
+        description: d.description || "",
+        images: Array.isArray(d.images) ? d.images : [],
+        thumbnail: Array.isArray(d.images)
+          ? d.images[0]
+          : img_placeholder,
+        location: d.location || "",
+        price: d.price ?? 0,
+        sellerId: d.sellerId || "",
+        title: d.title || "",
+      };
 
-        if (uid) {
-          const userRef = doc(db, "users", uid);
-          const userSnap = await getDoc(userRef);
+      setListing(fetchedListing);
 
-          if (userSnap.exists()) {
-            const u = userSnap.data() as any;
-            setInCart(u.carton.includes(id));
-          }
-        }
+      if (uid) {
+        const userRef = doc(db, "users", uid);
+        const userSnap = await getDoc(userRef);
 
-        if (fetchedListing.sellerId) {
-          const sellerRef = doc(db, "users", fetchedListing.sellerId);
-          const sellerSnap = await getDoc(sellerRef);
-
-          if (sellerSnap.exists()) {
-            const d = sellerSnap.data() as any;
-            setSeller(d.username);
-            setPicture(d.picture);
-            setSellerId(fetchedListing.sellerId);
-          } else {
-            setSeller(null);
-          }
+        if (userSnap.exists()) {
+          const u = userSnap.data() as any;
+          setInCart(u.carton.includes(id));
         }
       }
-      setLoading(false);
+
+      if (fetchedListing.sellerId) {
+        const sellerRef = doc(db, "users", fetchedListing.sellerId);
+        const sellerSnap = await getDoc(sellerRef);
+
+        if (sellerSnap.exists()) {
+          const d = sellerSnap.data() as any;
+          setSeller(d.username);
+          setPicture(d.picture);
+          setSellerId(fetchedListing.sellerId);
+        } else {
+          setSeller(null);
+        }
+      }
     }
 
-    fetchListing();
-  }, [id]);
+    setLoading(false);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchListing();
+    }, [id, uid])
+  );
 
   if (loading) {
     return (
@@ -222,69 +230,86 @@ export default function ListingDetail() {
         </View>
       </ScrollView>
 
-      <View style={styles.footer}>
-        <TouchableOpacity
-          style={styles.action}
-          onPress={() => router.push(`/chat/${sellerId}`)}
-        >
-          <Ionicons name="chatbubble-ellipses" size={26} color="#DC143C" />
-          <Text style={styles.label}>Chat with Seller</Text>
-        </TouchableOpacity>
+      {uid !== sellerId ? (
+        <View style={styles.footer}>
+          <TouchableOpacity
+            style={styles.action}
+            onPress={() => router.push(`/chat/${sellerId}`)}
+          >
+            <Ionicons name="chatbubble-ellipses" size={26} color="#DC143C" />
+            <Text style={styles.label}>Chat with Seller</Text>
+          </TouchableOpacity>
 
-        <View style={styles.divider} />
+          <View style={styles.divider} />
 
-        <TouchableOpacity
-          style={styles.action}
-          onPress={async () => {
-            if (loading) return;
-            setLoading(true);
+          <TouchableOpacity
+            style={styles.action}
+            onPress={async () => {
+              if (loading) return;
+              setLoading(true);
 
-            if (uid) {
-              if (inCart) {
-                setInCart(false);
-                await updateDoc(doc(db, "users", uid), {
-                  carton: arrayRemove(id),
-                });
-                Alert.alert(
-                  "Item Removed",
-                  "This item has been removed from your Carton"
-                );
-              } else {
-                setInCart(true);
-                await updateDoc(doc(db, "users", uid), {
-                  carton: arrayUnion(id),
-                });
-                Alert.alert(
-                  "Item Added",
-                  "This item has been added to your Carton"
-                );
+              if (uid) {
+                if (inCart) {
+                  setInCart(false);
+                  await updateDoc(doc(db, "users", uid), {
+                    carton: arrayRemove(id),
+                  });
+                  Alert.alert(
+                    "Item Removed",
+                    "This item has been removed from your Carton"
+                  );
+                } else {
+                  setInCart(true);
+                  await updateDoc(doc(db, "users", uid), {
+                    carton: arrayUnion(id),
+                  });
+                  Alert.alert(
+                    "Item Added",
+                    "This item has been added to your Carton"
+                  );
+                }
               }
-            }
 
-            setLoading(false);
-          }}
-        >
-          <FontAwesome5 size={21} name="box-open" color="#DC143C" />
-          <Text style={styles.label}>
-            {inCart ? "Remove Item" : "Add to Carton"}
-          </Text>
-        </TouchableOpacity>
-
-        <View style={styles.divider} />
-
-        <TouchableOpacity
-          style={styles.primary}
-          onPress={() => router.push("../checkout/checkout")}
-        >
-          <FontAwesome5 name="box" size={21} color="#fff" />
-          <View>
-            <Text style={styles.primaryText}>Box it Now</Text>
-            <Text style={styles.primaryText}>
-              ₱ {Number(listing.price).toLocaleString()}
+              setLoading(false);
+            }}
+          >
+            <FontAwesome5 size={21} name="box-open" color="#DC143C" />
+            <Text style={styles.label}>
+              {inCart ? "Remove Item" : "Add to Carton"}
             </Text>
-          </View>
-        </TouchableOpacity>
-      </View>
+          </TouchableOpacity>
+
+          <View style={styles.divider} />
+
+          <TouchableOpacity
+            style={styles.primary}
+            onPress={() => router.push("../checkout/checkout")}
+          >
+            <FontAwesome5 name="box" size={21} color="#fff" />
+            <View>
+              <Text style={styles.primaryText}>Box it Now</Text>
+              <Text style={styles.primaryText}>
+                ₱ {Number(listing.price).toLocaleString()}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <View style={styles.footer}>
+          <TouchableOpacity
+            style={styles.listingButton}
+            onPress={() =>
+              router.push({
+                pathname: "/profileMenu/editListing",
+                params: { id: listing.id },
+              })
+            }
+          >
+            <FontAwesome5 name="edit" size={21} color="#fff" />
+            <Text style={styles.primaryText}>Edit Listing</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </>
   );
 }
@@ -370,4 +395,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginLeft: 8,
   },
+
+  listingButton: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#DC143C",
+    marginHorizontal: 12,
+    marginBottom: 16,
+    paddingVertical: 12,
+    borderRadius: 8,
+  }
 });

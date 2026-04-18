@@ -228,27 +228,33 @@ export default function Profile() {
       </View>
 
       {activeTab === "listings" ? (
-        <FlatList
-          data={userListings}
-          keyExtractor={(item) => item.id}
-          numColumns={2}
-          contentContainerStyle={{ padding: 8, paddingBottom: 80 }}
-          renderItem={({ item }) => (
-            <View
-              style={{
-                flex: 1,
-                maxWidth: "50%",
-                paddingHorizontal: 4,
-                marginBottom: 12,
-              }}
-            >
-              <ListingCard
-                item={item}
-                onPress={() => router.push(`/listing/${item.id}`)}
-              />
-            </View>
-          )}
-        />
+        userListings.length === 0 ? (
+          <View style={styles.centerContent}>
+            <Text>No Listings Available</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={userListings}
+            keyExtractor={(item) => item.id}
+            numColumns={2}
+            contentContainerStyle={{ padding: 8, paddingBottom: 80 }}
+            renderItem={({ item }) => (
+              <View
+                style={{
+                  flex: 1,
+                  maxWidth: "50%",
+                  paddingHorizontal: 4,
+                  marginBottom: 12,
+                }}
+              >
+                <ListingCard
+                  item={item}
+                  onPress={() => router.push(`/listing/${item.id}`)}
+                />
+              </View>
+            )}
+          />
+        )
       ) : (
         <ScrollView contentContainerStyle={styles.scrollContent}>
           {activeTab === "reviews" && (
