@@ -98,7 +98,6 @@ export default function Carton() {
     if (!searchText) return true;
     return d.title.toLowerCase().includes(searchText.toLowerCase());
   });
-  console.log(filtered)
 
   filter();
 

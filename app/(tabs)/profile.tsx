@@ -182,7 +182,7 @@ export default function Profile() {
       <View style={styles.profileSection}>
         <Image style={styles.avatar} source={getImageSource()} />
 
-        <Text style={styles.usernameText}>@{username}</Text>
+        <Text style={styles.usernameText}>{username}</Text>
         <Text style={styles.ratingText}>No ratings yet.</Text>
       </View>
 

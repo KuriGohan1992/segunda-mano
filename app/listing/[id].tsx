@@ -25,8 +25,10 @@ import { Listing } from "../../type/listing";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { img_placeholder } from "../../constants/img_placeholder";
 import { useUser } from "../../context/UserContext";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ListingDetail() {
+  const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const [seller, setSeller] = useState<string | null>("");
@@ -231,7 +233,7 @@ export default function ListingDetail() {
       </ScrollView>
 
       {uid !== sellerId ? (
-        <View style={styles.footer}>
+        <View style={[styles.footer, { paddingBottom: insets.bottom }]}>
           <TouchableOpacity
             style={styles.action}
             onPress={() => router.push(`/chat/${sellerId}`)}
@@ -358,42 +360,51 @@ const styles = StyleSheet.create({
     textShadowColor: "rgba(0, 0, 0, 0.3)",
     textShadowRadius: 3,
   },
+
   footer: {
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: "#fff",
     borderTopWidth: 0.5,
     borderTopColor: "#eee",
-    height: 80,
-    flexDirection: "row",
-    alignItems: "flex-end",
+    paddingHorizontal: 10,
+    paddingTop: 10,
   },
+
   divider: {
     width: 1,
+    height: 24,
     backgroundColor: "#ddd",
-    height: "40%",
-    marginBottom: 36,
   },
+
   action: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 28,
-    paddingHorizontal: 12,
   },
-  label: { marginTop: 4, fontSize: 12, color: "#333" },
+
+  label: {
+    marginTop: 4,
+    fontSize: 12,
+    color: "#333",
+  },
+
   primary: {
+    flex: 1.5,
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     backgroundColor: "#DC143C",
-    paddingHorizontal: 18,
-    marginLeft: 20,
-    marginBottom: 24,
-    paddingVertical: 8,
+    paddingVertical: 10,
     borderRadius: 8,
+    marginLeft: 10,
   },
+
   primaryText: {
     color: "#fff",
     fontWeight: "700",
     fontSize: 14,
-    marginLeft: 8,
+    marginLeft: 6,
   },
 
   listingButton: {
@@ -403,8 +414,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "#DC143C",
     marginHorizontal: 12,
-    marginBottom: 16,
     paddingVertical: 12,
     borderRadius: 8,
-  }
+  },
 });
