@@ -138,7 +138,15 @@ export default function ListingDetail() {
     );
   }
 
-  const images = listing.images ?? [];
+  const images =
+    listing.images && listing.images.length > 0
+    ? listing.images
+    : [img_placeholder];
+
+  const description =
+    listing.description && listing.description.trim() !== ""
+    ? listing.description
+    : "No description available";
 
   return (
     <>
@@ -155,7 +163,7 @@ export default function ListingDetail() {
         <View style={styles.imageContainer}>
           <FlatList
             ref={flatListRef}
-            data={images.length ? images : [img_placeholder]}
+            data={images}
             horizontal
             pagingEnabled
             showsHorizontalScrollIndicator={false}
@@ -198,7 +206,7 @@ export default function ListingDetail() {
           </Text>
 
           <Text style={styles.field}>Description:</Text>
-          <Text style={styles.desc}>{listing.description}</Text>
+          <Text style={styles.desc}>{description}</Text>
 
           <Text style={styles.field}>Seller:</Text>
 
