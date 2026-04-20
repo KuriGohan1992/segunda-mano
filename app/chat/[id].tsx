@@ -1,7 +1,7 @@
 import { StyleSheet, Keyboard, ScrollView, View, Text, TextInput, Button, TouchableOpacity, Image, KeyboardAvoidingView, Platform } from "react-native";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useState, useRef } from "react";
-import { getDocs, getDoc, doc, collection, addDoc, serverTimestamp, query, onSnapshot, orderBy } from "firebase/firestore";
+import { getDocs, getDoc, doc, collection, addDoc, serverTimestamp, query, onSnapshot, orderBy, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useUser } from "../../context/UserContext";
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -16,7 +16,7 @@ export default function ChatScreen() {
   const [messages, setMessages] = useState<any[]>([]);
   const { id } = useLocalSearchParams<{ id: string }>();
   const otherUserId = id as string;
-  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  // const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   const [otherUser, setOtherUser] = useState<any>(null);
 
@@ -36,20 +36,20 @@ export default function ChatScreen() {
     fetchUser();
   }, [otherUserId]);
 
-  useEffect(() => {
-    const showSub = Keyboard.addListener("keyboardDidShow", (e) => {
-      setKeyboardHeight(e.endCoordinates.height);
-    });
+  // useEffect(() => {
+  //   const showSub = Keyboard.addListener("keyboardDidShow", (e) => {
+  //     setKeyboardHeight(e.endCoordinates.height);
+  //   });
 
-    const hideSub = Keyboard.addListener("keyboardDidHide", () => {
-      setKeyboardHeight(0);
-    });
+  //   const hideSub = Keyboard.addListener("keyboardDidHide", () => {
+  //     setKeyboardHeight(0);
+  //   });
 
-    return () => {
-      showSub.remove();
-      hideSub.remove();
-    };
-  }, []);
+  //   return () => {
+  //     showSub.remove();
+  //     hideSub.remove();
+  //   };
+  // }, []);
 
   useEffect(() => {
     setTimeout(() => {
@@ -63,7 +63,7 @@ export default function ChatScreen() {
       collection(db, "messages"),
       orderBy("createdAt", "asc")
     );
-    const unsubscribe = onSnapshot(q, (snapshot) => {
+    const unsubscribe = onSnapshot(q, async (snapshot) => {
       const msgs = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
@@ -73,8 +73,20 @@ export default function ChatScreen() {
         (msg.senderId === user?.uid && msg.receiverId === otherUserId) ||
         (msg.senderId === otherUserId && msg.receiverId === user?.uid)
       );
-
       setMessages(filteredMsgs);
+
+      const unseenMsgs = filteredMsgs.filter(msg =>
+        msg.receiverId === user?.uid &&
+        msg.senderId === otherUserId &&
+        !msg.seen
+      );
+
+      const updates = unseenMsgs.map(msg =>
+        updateDoc(doc(db, "messages", msg.id), {
+          seen: true,
+        })
+      )
+      await Promise.all(updates);
     });
 
     return () => unsubscribe();
@@ -90,6 +102,7 @@ export default function ChatScreen() {
         senderId: user.uid,
         receiverId: otherUserId,
         createdAt: serverTimestamp(),
+        seen: false,
       });
 
       setText("");

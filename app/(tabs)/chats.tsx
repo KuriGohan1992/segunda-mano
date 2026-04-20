@@ -110,6 +110,7 @@ export default function Chats() {
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => {
             const lastMsg = latestMsgs[item.id];
+            const isUnread = lastMsg && lastMsg.receiverId === user?.uid && !lastMsg.seen;
             return (
             <TouchableOpacity
               style={styles.userItem}
@@ -119,18 +120,18 @@ export default function Chats() {
               style={styles.chatAvatar}
               />
               <View style={{ flex: 1 }}>
-                <Text style={styles.username}>
+                <Text style={[styles.username, isUnread && { fontWeight: "700" }]}>
                   {item.username || item.email}
                 </Text>
                 <Text
-                  style={styles.subtitle}
+                  style={[styles.subtitle, isUnread && { color: "#111", fontWeight: "600" }]}
                   numberOfLines={1}
                   ellipsizeMode="tail"
                 >
                   {lastMsg?.text || "No messages yet"}
                 </Text>
               </View>
-              <Text style={styles.chatTime}>
+              <Text style={[styles.chatTime, isUnread && { color: "#DC143C", fontWeight: "600" }]}>
                 {formatTime(lastMsg?.createdAt)}
               </Text>
             </TouchableOpacity>
