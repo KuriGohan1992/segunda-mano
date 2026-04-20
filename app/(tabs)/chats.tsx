@@ -102,42 +102,69 @@ export default function Chats() {
       <View style={styles.header}>
         <Text style={styles.title}>Chats</Text>
       </View>
-      <View style={styles.feed}>
-        <FlatList
-          data={users.filter(u => u.id !== user?.uid)}
-          keyExtractor={item => item.id}
-          contentContainerStyle={{ paddingHorizontal: 12 }}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => {
-            const lastMsg = latestMsgs[item.id];
-            const isUnread = lastMsg && lastMsg.receiverId === user?.uid && !lastMsg.seen;
-            return (
-            <TouchableOpacity
-              style={styles.userItem}
-              onPress={() => router.push(`/chat/${item.id}`)}
-            >
-              <Image source={ item.picture ? { uri: item.picture } : require("../../assets/profile.png") }
-              style={styles.chatAvatar}
-              />
-              <View style={{ flex: 1 }}>
-                <Text style={[styles.username, isUnread && { fontWeight: "700" }]}>
-                  {item.username || item.email}
+      {userIds.length ? (
+        <View style={styles.feed}>
+          <FlatList
+            data={users.filter(u => u.id !== user?.uid)}
+            keyExtractor={item => item.id}
+            contentContainerStyle={{ paddingHorizontal: 12 }}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item }) => {
+              const lastMsg = latestMsgs[item.id];
+              const isUnread = lastMsg && lastMsg.receiverId === user?.uid && !lastMsg.seen;
+              return (
+              <TouchableOpacity
+                style={styles.userItem}
+                onPress={() => router.push(`/chat/${item.id}`)}
+              >
+                <Image source={ item.picture ? { uri: item.picture } : require("../../assets/profile.png") }
+                style={styles.chatAvatar}
+                />
+                <View style={{ flex: 1 }}>
+                  <Text style={[styles.username, isUnread && { fontWeight: "700" }]}>
+                    {item.username || item.email}
+                  </Text>
+                  <Text
+                    style={[styles.subtitle, isUnread && { color: "#111", fontWeight: "600" }]}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                  >
+                    {lastMsg?.text || "No messages yet"}
+                  </Text>
+                </View>
+                <Text style={[styles.chatTime, isUnread && { color: "#DC143C", fontWeight: "600" }]}>
+                  {formatTime(lastMsg?.createdAt)}
                 </Text>
-                <Text
-                  style={[styles.subtitle, isUnread && { color: "#111", fontWeight: "600" }]}
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
-                >
-                  {lastMsg?.text || "No messages yet"}
-                </Text>
-              </View>
-              <Text style={[styles.chatTime, isUnread && { color: "#DC143C", fontWeight: "600" }]}>
-                {formatTime(lastMsg?.createdAt)}
-              </Text>
-            </TouchableOpacity>
-          )}}
-        />
-      </View>
+              </TouchableOpacity>
+            )}}
+          />
+        </View>
+      ) : (
+        <View style={styles.emptyContainer}>
+          <Image
+            source={require("../../assets/empty-chat.png")}
+            style={styles.emptyImage}
+            resizeMode="contain"
+          />
+
+          <Text style={styles.emptyTitle}>
+            No chats yet
+          </Text>
+
+          <Text style={styles.emptySubtitle}>
+            Start a conversation by messaging a seller
+          </Text>
+
+          <TouchableOpacity
+            style={styles.emptyButton}
+            onPress={() => router.push("/")}
+          >
+            <Text style={styles.emptyButtonText}>
+              Browse Listings
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </SafeAreaView>
   );
 }

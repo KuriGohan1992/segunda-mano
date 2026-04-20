@@ -597,6 +597,46 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
   },
 
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 24,
+  },
+
+  emptyImage: {
+    width: 260,
+    height: 260,
+    marginBottom: 20,
+    opacity: 0.8,
+  },
+
+  emptyTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#111",
+    marginBottom: 6,
+  },
+
+  emptySubtitle: {
+    fontSize: 14,
+    color: "#888",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+
+  emptyButton: {
+    backgroundColor: "#DC143C",
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    borderRadius: 8,
+  },
+
+  emptyButtonText: {
+    color: "#fff",
+    fontWeight: "600",
+  },
+
 });
 
 export default styles;
