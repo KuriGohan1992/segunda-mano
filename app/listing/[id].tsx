@@ -293,7 +293,7 @@ export default function ListingDetail() {
 
           <TouchableOpacity
             style={styles.primary}
-            onPress={() => router.push("../checkout/checkout")}
+            onPress={() => router.push(`../checkout/${listing.id}`)}
           >
             <FontAwesome5 name="box" size={21} color="#fff" />
             <View>
