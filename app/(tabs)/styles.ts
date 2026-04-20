@@ -591,6 +591,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
 
+  chatTime: {
+    fontSize: 11,
+    color: "#888",
+    alignSelf: "flex-start",
+  },
+
 });
 
 export default styles;

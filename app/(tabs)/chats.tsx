@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity, FlatList, Image } from "react-native";
 import { useState, useEffect } from "react";
-import { getDocs, collection, orderBy, query, onSnapshot, getDoc, doc } from "firebase/firestore";
+import { getDocs, collection, orderBy, query, onSnapshot, getDoc, doc, Timestamp } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useUser } from "../../context/UserContext";
 import { useRouter } from "expo-router";
@@ -11,7 +11,38 @@ export default function Chats() {
   const { user } = useUser();
   const [users, setUsers] = useState<any[]>([]);
   const [userIds, setUserIds] = useState<string[]>([]);
+  const [latestMsgs, setLatestMsgs] = useState<any>({});
   const router = useRouter();
+
+  const formatTime = (timestamp: any) => {
+    if (!timestamp?.toDate) return "";
+
+    const date = timestamp.toDate();
+    const now = new Date();
+
+    const diffMs = now.getTime() - date.getTime();
+    const diffDays = diffMs / (1000 * 60 * 60 * 24);
+
+    if (diffDays < 1) {
+      return date.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    }
+
+    if (diffDays < 2) {
+      return "Yesterday";
+    }
+
+    if (diffDays < 7) {
+      return date.toLocaleDateString([], { weekday: "short" });
+    }
+
+    return date.toLocaleDateString([], {
+      month: "short",
+      day: "numeric",
+    });
+  };
 
   useEffect(() => {
     if (!user) return;
@@ -26,18 +57,18 @@ export default function Chats() {
       );
 
       const uniqueUserIds = new Set<string>();
+      const latestMap: any = {};
 
       myMsgs.forEach(msg => {
-        if (msg.senderId !== user.uid) {
-          uniqueUserIds.add(msg.senderId);
-        }
+        const otherId = msg.senderId === user.uid ? msg.receiverId : msg.senderId;
 
-        if (msg.receiverId !== user.uid) {
-          uniqueUserIds.add(msg.receiverId);
-        }
+        uniqueUserIds.add(otherId);
+
+        if (!latestMap[otherId]) latestMap[otherId] = msg;
       });
 
       setUserIds(Array.from(uniqueUserIds));
+      setLatestMsgs(latestMap);
     });
     return () => unsubscribe();
   }, [user]);
@@ -77,7 +108,9 @@ export default function Chats() {
           keyExtractor={item => item.id}
           contentContainerStyle={{ paddingHorizontal: 12 }}
           showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => (
+          renderItem={({ item }) => {
+            const lastMsg = latestMsgs[item.id];
+            return (
             <TouchableOpacity
               style={styles.userItem}
               onPress={() => router.push(`/chat/${item.id}`)}
@@ -85,16 +118,23 @@ export default function Chats() {
               <Image source={ item.picture ? { uri: item.picture } : require("../../assets/profile.png") }
               style={styles.chatAvatar}
               />
-              <View>
+              <View style={{ flex: 1 }}>
                 <Text style={styles.username}>
                   {item.username || item.email}
                 </Text>
-                <Text style={styles.subtitle}>
-                  Latest message placeholder
+                <Text
+                  style={styles.subtitle}
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  {lastMsg?.text || "No messages yet"}
                 </Text>
               </View>
+              <Text style={styles.chatTime}>
+                {formatTime(lastMsg?.createdAt)}
+              </Text>
             </TouchableOpacity>
-          )}
+          )}}
         />
       </View>
     </SafeAreaView>
