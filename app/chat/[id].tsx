@@ -1,4 +1,4 @@
-import { StyleSheet, Keyboard, ScrollView, View, Text, TextInput, Button, TouchableOpacity, Image } from "react-native";
+import { StyleSheet, Keyboard, ScrollView, View, Text, TextInput, Button, TouchableOpacity, Image, KeyboardAvoidingView, Platform } from "react-native";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useState, useRef } from "react";
 import { getDocs, getDoc, doc, collection, addDoc, serverTimestamp, query, onSnapshot, orderBy } from "firebase/firestore";
@@ -101,7 +101,7 @@ export default function ChatScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={{ flex: 1, paddingBottom: keyboardHeight-34}}>
+      <View style={{ flex: 1 }}>
         <View style={styles.chatHeader}>
           <Image
             source={
@@ -144,21 +144,26 @@ export default function ChatScreen() {
             );
           })}
         </ScrollView>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={50}
+        >
+          <View style={styles.inputContainer}>
+            <TextInput
+              ref={inputRef}
+              value={text}
+              onChangeText={setText}
+              placeholder="Type message..."
+              style={styles.input}
+              onSubmitEditing={sendMessage}
+            />
 
-        <View style={styles.inputContainer}>
-          <TextInput
-            ref={inputRef}
-            value={text}
-            onChangeText={setText}
-            placeholder="Type message..."
-            style={styles.input}
-            onSubmitEditing={sendMessage}
-          />
+            <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
+              <MaterialIcons name="send" size={20} color="#dc143c" />
+            </TouchableOpacity>
+          </View>
 
-          <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
-            <MaterialIcons name="send" size={20} color="#dc143c" />
-          </TouchableOpacity>
-        </View>
+        </KeyboardAvoidingView>
 
       </View>
     </SafeAreaView>
