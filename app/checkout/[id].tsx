@@ -3,7 +3,6 @@ import { useLocalSearchParams } from "expo-router";
 import { httpsCallable } from "firebase/functions";
 import { db, functions } from "../../firebase";
 import * as Linking from "expo-linking";
-import { useFieldArray } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
 
@@ -13,6 +12,7 @@ export default function Checkout() {
   const checkout = httpsCallable(functions, "createCheckout");
 
   const handlePay = async () => {
+    if (!listing) return;
     const res = await checkout({
       amount: listing.price*100,
       description: listing.title,
@@ -43,7 +43,7 @@ export default function Checkout() {
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Checkout for item: {listing.title}</Text>
+      <Text>Checkout for item: {listing?.title || "Loading..."}</Text>
 
       <TouchableOpacity
         onPress={handlePay}
