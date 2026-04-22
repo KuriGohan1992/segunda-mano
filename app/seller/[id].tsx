@@ -36,8 +36,6 @@ export default function SellerProfile() {
 
   const [email, setEmail] = useState("Not Specified");
   const [gender, setGender] = useState("Not Specified");
-  const [birthday, setBirthday] = useState("Not Specified");
-  const [age, setAge] = useState("Not Specified");
   const [contactNumber, setContactNumber] = useState("Not Specified");
 
   const [activeTab, setActiveTab] = useState("listings");
@@ -147,7 +145,14 @@ export default function SellerProfile() {
         <Ionicons name="close" size={28} color="#FFF" />
       </TouchableOpacity>
 
-      <View style={styles.profileHeader} />
+      <View style={styles.profileHeader}>
+        <TouchableOpacity
+          onPress={() => router.push(`/chat/${id}`)}
+          style={styles.menuButton}
+        >
+          <Ionicons name="chatbubble" size={28} color="#fff" />
+        </TouchableOpacity>
+      </View>
       <View style={styles.cover} />
 
       <View style={styles.profileSection}>
