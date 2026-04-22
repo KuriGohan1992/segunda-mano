@@ -23,10 +23,13 @@ import { Listing } from "../../type/listing";
 import { img_placeholder } from "../../constants/img_placeholder";
 import ListingCard from "../../components/ListingCard";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useUser } from "../../context/UserContext";
 
 export default function SellerProfile() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { user } = useUser();
+  const uid = user?.uid;
 
   const [loading, setLoading] = useState(true);
 
@@ -74,10 +77,7 @@ export default function SellerProfile() {
   useEffect(() => {
     if (!id) return;
 
-    const q = query(
-      collection(db, "listings"),
-      where("sellerId", "==", id)
-    );
+    const q = query(collection(db, "listings"), where("sellerId", "==", id));
 
     const unsub = onSnapshot(q, (snapshot) => {
       const listings = snapshot.docs.map((doc) => {
@@ -146,12 +146,14 @@ export default function SellerProfile() {
       </TouchableOpacity>
 
       <View style={styles.profileHeader}>
-        <TouchableOpacity
-          onPress={() => router.push(`/chat/${id}`)}
-          style={styles.menuButton}
-        >
-          <Ionicons name="chatbubble" size={28} color="#fff" />
-        </TouchableOpacity>
+        {uid !== id && (
+          <TouchableOpacity
+            onPress={() => router.push(`/chat/${id}`)}
+            style={styles.menuButton}
+          >
+            <Ionicons name="chatbubble" size={28} color="#fff" />
+          </TouchableOpacity>
+        )}
       </View>
       <View style={styles.cover} />
 
