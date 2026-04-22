@@ -27,6 +27,7 @@ import styles from "./styles";
 import { Listing } from "../../type/listing";
 import { img_placeholder } from "../../constants/img_placeholder";
 import ListingCard from "../../components/ListingCard";
+import { ADDRESS } from "@/constants/address";
 
 export default function Profile() {
   const router = useRouter();

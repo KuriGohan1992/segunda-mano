@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { db } from "../../firebase";
 import styles from "../(tabs)/styles";
 import CustomInput from "../../components/CustomInput";
@@ -19,6 +19,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import DropDownPicker from "react-native-dropdown-picker";
 import * as ImagePicker from "expo-image-picker";
 import { useUser } from "../../context/UserContext";
+import { ADDRESS } from "@/constants/address";
 
 export default function Details() {
   const router = useRouter();
@@ -33,6 +34,12 @@ export default function Details() {
   const [gender, setGender] = useState<string | null>(null);
 
   const [openGender, setOpenGender] = useState(false);
+  const [address, setAddress] = useState<string | null>(null);
+  const [openAddress, setOpenAddress] = useState(false);
+
+  function handleSetOpenAddress(v: boolean) {
+    setOpenAddress(v);
+  }
 
   useEffect(() => {
     async function fetchUser() {
@@ -46,7 +53,8 @@ export default function Details() {
 
         setValue("username", d.username || "");
         setValue("contactNumber", d.contactNumber || "");
-
+        
+        setAddress(d.address || "");
         setGender(d.gender || null);
         setPicture(d.picture || "");
       }
@@ -81,6 +89,8 @@ export default function Details() {
   };
 
   const onSave = async (data: any) => {
+    if (loading) return;
+    setLoading(true);
     if (!uid) return;
 
     await updateDoc(doc(db, "users", uid), {
@@ -88,7 +98,21 @@ export default function Details() {
       gender,
       contactNumber: data.contactNumber,
       picture,
+      address
     });
+
+    const q = query(
+      collection(db, "listings"),
+      where("sellerId", "==", uid)
+    )
+
+    const snapshot = await getDocs(q)
+
+    const updates = snapshot.docs.map((docSnap) =>
+      updateDoc(doc(db, "listings", docSnap.id), {
+        location: address
+      })
+    )
 
     Alert.alert(
       "Success",
@@ -100,15 +124,16 @@ export default function Details() {
         },
       ]
     );
+    setLoading(false);
   };
 
-  if (loading) {
-    return (
-      <View style={styles.centerContent}>
-        <Text>Loading...</Text>
-      </View>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <View style={styles.centerContent}>
+  //       <Text>Loading...</Text>
+  //     </View>
+  //   );
+  // }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -122,13 +147,14 @@ export default function Details() {
         <View style={{ width: 28 }} />
       </View>
 
-      <ScrollView
+      {/* <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           padding: 20,
           paddingTop: 10,
         }}
-      >
+      > */}
+      <View style={{ padding: 20, paddingTop: 10 }}>
         <View style={{ alignItems: "center", marginBottom: 20 }}>
           <TouchableOpacity onPress={pickImage}>
             <Image
@@ -163,34 +189,28 @@ export default function Details() {
           control={control}
           placeholder="Contact Number"
         />
-
-        <View
-          style={{
-            zIndex: openGender ? 2000 : 1000,
-            elevation: openGender ? 2000 : 1000,
-          }}
-        >
-          <Text style={styles.BoxTitle}>Gender</Text>
+        <Text style={styles.BoxTitle}>Address</Text>
+        <View style={{ zIndex: 2, elevation: 2 }}>
           <DropDownPicker
-            open={openGender}
-            value={gender}
-            items={[
-              { label: "Male", value: "male" },
-              { label: "Female", value: "female" },
-              { label: "Other", value: "other" },
-            ]}
-            setOpen={setOpenGender}
-            setValue={setGender}
-            placeholder="Select Gender"
+            open={openAddress}
+            value={address}
+            items={ADDRESS.map((i) => ({ label: i, value: i }))}
+            setOpen={handleSetOpenAddress}
+            setValue={setAddress}
+            placeholder="Select Address"
             style={styles.dropdown}
-            listMode="SCROLLVIEW"
+            placeholderStyle={styles.placeholderStyle}
+            listItemLabelStyle={styles.dropdownInput}
+            labelStyle={styles.dropdownInput}
+            listItemContainerStyle={styles.listItemContainerStyle}
+            dropDownContainerStyle={styles.dropdown}
           />
         </View>
 
         <View style={{ marginTop: 20 }}>
           <CustomButton text="Save" onPress={handleSubmit(onSave)} />
         </View>
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }

@@ -108,7 +108,7 @@ const SignUp = () => {
         <DropDownPicker
           open={openAddress}
           value={address}
-          items={ADDRESS.map((i) => ({ label: i.label, value: i.value }))}
+          items={ADDRESS.map((i) => ({ label: i, value: i }))}
           setOpen={handleSetOpenAddress}
           setValue={setAddress}
           placeholder="Select Address"

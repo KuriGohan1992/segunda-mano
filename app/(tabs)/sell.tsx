@@ -108,12 +108,12 @@ export default function Sell() {
         return;
       }
 
-      let userLocation = "";
-      const userRef = doc(db, "users", user.uid);
-      const userSnap = await getDoc(userRef);
-      if (userSnap.exists()) {
-        userLocation = userSnap.data().address || "";
-      }
+      // let userLocation = "";
+      // const userRef = doc(db, "users", user.uid);
+      // const userSnap = await getDoc(userRef);
+      // if (userSnap.exists()) {
+      //   userLocation = userSnap.data().address || "";
+      // }
 
       await addDoc(collection(db, "listings"), {
         available: true,
@@ -123,7 +123,7 @@ export default function Sell() {
         category,
         condition,
         images: imagesBase64,
-        location: userLocation,
+        // location: userLocation,
         sellerId: user.uid,
         createdAt: serverTimestamp(),
       });
