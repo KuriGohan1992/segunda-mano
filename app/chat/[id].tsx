@@ -1,12 +1,34 @@
-import { StyleSheet, Keyboard, ScrollView, View, Text, TextInput, Button, TouchableOpacity, Image, KeyboardAvoidingView, Platform } from "react-native";
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { useState, useRef } from "react";
-import { getDocs, getDoc, doc, collection, addDoc, serverTimestamp, query, onSnapshot, orderBy, updateDoc } from "firebase/firestore";
+import {
+  StyleSheet,
+  Keyboard,
+  ScrollView,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { useState, useRef, useEffect } from "react";
+import {
+  getDocs,
+  getDoc,
+  doc,
+  collection,
+  addDoc,
+  serverTimestamp,
+  query,
+  onSnapshot,
+  orderBy,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "../../firebase";
 import { useUser } from "../../context/UserContext";
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useLocalSearchParams } from "expo-router";
+import * as ImagePicker from "expo-image-picker";
 
 export default function ChatScreen() {
   const inputRef = useRef<TextInput>(null);
@@ -16,10 +38,7 @@ export default function ChatScreen() {
   const [messages, setMessages] = useState<any[]>([]);
   const { id } = useLocalSearchParams<{ id: string }>();
   const otherUserId = id as string;
-  // const [keyboardHeight, setKeyboardHeight] = useState(0);
-
   const [otherUser, setOtherUser] = useState<any>(null);
-
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -59,39 +78,63 @@ export default function ChatScreen() {
 
   useEffect(() => {
     if (!user || !otherUserId) return;
-    const q = query(
-      collection(db, "messages"),
-      orderBy("createdAt", "asc")
-    );
+
+    const q = query(collection(db, "messages"), orderBy("createdAt", "asc"));
+
     const unsubscribe = onSnapshot(q, async (snapshot) => {
-      const msgs = snapshot.docs.map(doc => ({
+      const msgs = snapshot.docs.map((doc) => ({
         id: doc.id,
-        ...doc.data()
+        ...doc.data(),
       }));
-      
-      const filteredMsgs = msgs.filter(msg =>
-        (msg.senderId === user?.uid && msg.receiverId === otherUserId) ||
-        (msg.senderId === otherUserId && msg.receiverId === user?.uid)
+
+      const filteredMsgs = msgs.filter(
+        (msg) =>
+          (msg.senderId === user?.uid && msg.receiverId === otherUserId) ||
+          (msg.senderId === otherUserId && msg.receiverId === user?.uid)
       );
       setMessages(filteredMsgs);
 
-      const unseenMsgs = filteredMsgs.filter(msg =>
-        msg.receiverId === user?.uid &&
-        msg.senderId === otherUserId &&
-        !msg.seen
+      const unseenMsgs = filteredMsgs.filter(
+        (msg) =>
+          msg.receiverId === user?.uid &&
+          msg.senderId === otherUserId &&
+          !msg.seen
       );
 
-      const updates = unseenMsgs.map(msg =>
+      const updates = unseenMsgs.map((msg) =>
         updateDoc(doc(db, "messages", msg.id), {
           seen: true,
         })
-      )
+      );
+
       await Promise.all(updates);
     });
 
     return () => unsubscribe();
   }, [user, otherUserId]);
 
+  const pickImage = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) return;
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      base64: true,
+      quality: 0.6,
+    });
+
+    if (!result.canceled) {
+      const base64 = result.assets[0].base64;
+
+      await addDoc(collection(db, "messages"), {
+        image: base64,
+        senderId: user?.uid,
+        receiverId: otherUserId,
+        createdAt: serverTimestamp(),
+        seen: false,
+      });
+    }
+  };
 
   const sendMessage = async () => {
     if (!user || !text.trim() || !otherUserId) return;
@@ -106,7 +149,6 @@ export default function ChatScreen() {
       });
 
       setText("");
-      console.log("Message sent!");
     } catch (error) {
       console.log("Error:", error);
     }
@@ -150,18 +192,40 @@ export default function ChatScreen() {
                   isMe ? styles.myMessage : styles.otherMessage,
                 ]}
               >
-                <Text style={isMe ? styles.messageTextMe : styles.messageTextOther}>
-                  {msg.text}
-                </Text>
+                {msg.image ? (
+                  <Image
+                    source={{ uri: `data:image/jpeg;base64,${msg.image}` }}
+                    style={{
+                      width: 200,
+                      height: 200,
+                      borderRadius: 10,
+                    }}
+                  />
+                ) : (
+                  <Text
+                    style={
+                      isMe
+                        ? styles.messageTextMe
+                        : styles.messageTextOther
+                    }
+                  >
+                    {msg.text}
+                  </Text>
+                )}
               </View>
             );
           })}
         </ScrollView>
+
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           keyboardVerticalOffset={50}
         >
           <View style={styles.inputContainer}>
+            <TouchableOpacity onPress={pickImage} style={{ marginRight: 8 }}>
+              <MaterialIcons name="add" size={26} color="#DC143C" />
+            </TouchableOpacity>
+
             <TextInput
               ref={inputRef}
               value={text}
