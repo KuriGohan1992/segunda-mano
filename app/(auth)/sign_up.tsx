@@ -10,6 +10,8 @@ import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/
 import { useUser } from '../../context/UserContext'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import styles from './styles'
+import DropDownPicker from 'react-native-dropdown-picker'
+import { ADDRESS } from '@/constants/address'
 
 const EMAIL_REGEX = /^(?=.{1,64}@)(?:"[^"\\\r\n]+"|[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*)@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}$/
 
@@ -18,12 +20,25 @@ const SignUp = () => {
   const [loading, setLoading] = useState(false)
   const {control, handleSubmit, watch, setError, formState: {errors}} = useForm()
   const pwd = watch('password')
+
+  const [address, setAddress] = useState<string | null>(null);
+  const [openAddress, setOpenAddress] = useState(false);
+
+  function handleSetOpenAddress(v: boolean) {
+    setOpenAddress(v);
+  }
   
   const onSignUpPressed = async (data) => {
+    
+    if (!address) {
+      Alert.alert("Error", "Please select an address");
+      return;
+    }
+
     if (loading) return;
     setLoading(true);
 
-    const {username, email, address, password} = data;
+    const {username, email, password} = data;
 
     try {
       const q = query(collection(db, "users"), where("username", "==", username));
@@ -89,17 +104,27 @@ const SignUp = () => {
         control={control}
       />
 
-      <CustomInput
-        name="address"
-        rules={{required: "Address is required"}}
-        placeholder={"Address"}
-        control={control}
-      />
+      <View style={{ zIndex: 2, elevation: 2 }}>
+        <DropDownPicker
+          open={openAddress}
+          value={address}
+          items={ADDRESS.map((i) => ({ label: i.label, value: i.value }))}
+          setOpen={handleSetOpenAddress}
+          setValue={setAddress}
+          placeholder="Select Address"
+          style={styles.dropdown}
+          placeholderStyle={styles.placeholderStyle}
+          listItemLabelStyle={styles.dropdownInput}
+          labelStyle={styles.dropdownInput}
+          listItemContainerStyle={styles.listItemContainerStyle}
+          dropDownContainerStyle={styles.dropdown}
+        />
+      </View>
 
       <CustomInput
         name="password"
         rules={{required: "Password is required"}}
-        placeholder={"Password"}        
+        placeholder={"Password (6+ characters)"}        
         secureTextEntry
         control={control}
       />

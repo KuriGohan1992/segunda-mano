@@ -46,6 +46,32 @@ const styles = StyleSheet.create({
     color: '#fdb075',
     fontWeight: 'bold',
   },
+
+  dropdown: {
+    backgroundColor: 'white',
+    width: '100%',
+
+    borderColor: '#e8e8e8',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginVertical: 5,
+    paddingHorizontal: 12,
+
+  },
+
+  dropdownInput: {
+    fontSize: 16,
+    color: '#333',
+  }, 
+
+  placeholderStyle: {
+    color: '#c5c5c7', fontSize: 16,
+  },
+
+  listItemContainerStyle: { 
+    height: 45, borderBottomColor: '#e8e8e8', borderBottomWidth: 0.5
+  },
+
 })
 
 export default styles
