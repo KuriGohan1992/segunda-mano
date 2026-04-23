@@ -2,6 +2,7 @@ export type Listing = {
   id: string;
   available?: boolean;
   category: string;
+  type: string;
   condition: string;
   createdAt?: string;
   description?: string;

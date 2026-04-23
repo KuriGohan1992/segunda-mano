@@ -39,8 +39,9 @@ export default function Sell() {
   const [openCondition, setOpenCondition] = useState(false);
   const [condition, setCondition] = useState<string | null>(null);
   const { user } = useUser();
+  const [ userLocation, setUserLocation ] = useState<string | null>(null);
   const [imagesBase64, setImagesBase64] = useState<string[]>([]);
-
+  const [mode, setMode] = useState<"sell" | "lf">("sell");
   const pickImage = async () => {
     if (imagesBase64.length >= 10) {
       Alert.alert("Limit reached", "You can upload up to 10 images.");
@@ -108,25 +109,27 @@ export default function Sell() {
         return;
       }
 
-      // let userLocation = "";
-      // const userRef = doc(db, "users", user.uid);
-      // const userSnap = await getDoc(userRef);
-      // if (userSnap.exists()) {
-      //   userLocation = userSnap.data().address || "";
-      // }
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        setUserLocation(userSnap.data().address || "No Location");
+      }
 
       await addDoc(collection(db, "listings"), {
         available: true,
         title,
         price: Number(price),
+        type: mode,
         description: description?.trim() || "",
         category,
         condition,
         images: imagesBase64,
-        // location: userLocation,
+        location: userLocation,
         sellerId: user.uid,
         createdAt: serverTimestamp(),
       });
+
+      console.log(userLocation);
 
       Alert.alert("Success", "Listing added successfully!", [
         {
@@ -158,7 +161,7 @@ export default function Sell() {
           <SafeAreaView
             style={[styles.container, { alignItems: "center", padding: 20 }]}
           >
-            <Text style={styles.title}>List an Item</Text>
+            <Text style={styles.title}>Create a Listing</Text>            
             <View style={{ height: 100 }}>
               <ScrollView
                 horizontal
@@ -200,7 +203,44 @@ export default function Sell() {
                 )}
               </ScrollView>
             </View>
+            
+            <View style={styles.toggleContainer}>
+              <TouchableOpacity
+                onPress={() => setMode("sell")}
+                style={[
+                  styles.toggleButton,
+                  styles.toggleLeft,
+                  mode === "sell" ? styles.toggleActive : styles.toggleInactive
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.toggleText,
+                    mode === "sell" && styles.toggleTextActive
+                  ]}
+                >
+                  For Sale
+                </Text>
+              </TouchableOpacity>
 
+              <TouchableOpacity
+                onPress={() => setMode("lf")}
+                style={[
+                  styles.toggleButton,
+                  styles.toggleRight,
+                  mode === "lf" ? styles.toggleActive : styles.toggleInactive
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.toggleText,
+                    mode === "lf" && styles.toggleTextActive
+                  ]}
+                >
+                  Looking For
+                </Text>
+              </TouchableOpacity>
+            </View>
             <CustomInput
               name="title"
               rules={{ required: "Title is required" }}
@@ -212,7 +252,7 @@ export default function Sell() {
               name="price"
               rules={{ required: "Price is required" }}
               keyboardType="numeric"
-              placeholder="Price"
+              placeholder= {mode === "sell" ? "Price" : "Budget"}
               control={control}
             />
 

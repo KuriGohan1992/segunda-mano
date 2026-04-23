@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
   },
   title: { fontSize: 16, fontWeight: "600" },
-  price: { marginTop: 4, fontSize: 15, fontWeight: "700", color: "#DC143C" },
-  condition: { marginTop: 4, color: "#000", fontSize: 12 },
-  location: { marginTop: 8, color: "#666", fontSize: 12 },
+  price: { marginTop: 4, fontSize: 16, fontWeight: "700", color: "#DC143C" },
+  condition: { marginTop: 4, color: "#000", fontSize: 13 },
+  location: { marginTop: 8, color: "#666", fontSize: 13 },
 });

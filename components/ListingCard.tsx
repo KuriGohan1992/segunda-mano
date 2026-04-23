@@ -10,7 +10,6 @@ type Props = {
 };
 
 export default function ListingCard({ item, onPress }: Props) {
-
   return (
     <Pressable style={styles.card} onPress={() => onPress?.(item)}>
       {(() => {
@@ -20,6 +19,8 @@ export default function ListingCard({ item, onPress }: Props) {
           : `data:image/jpeg;base64,${item.thumbnail}`
         : img_placeholder;
 
+      console.log(item.type, item.id);
+
       return (
         <Image
           source={{ uri: imageUri }}
@@ -28,7 +29,12 @@ export default function ListingCard({ item, onPress }: Props) {
       );
     })()}
       <View style={styles.meta}>
-        <Text numberOfLines={2} style={styles.title}>{item.title}</Text>
+        <Text numberOfLines={2} style={styles.title}>
+          {item.type === "lf" && (
+            <Text style={styles.lfTag}>[LF] </Text>
+          )}
+          {item.title}
+        </Text>
         <Text style={styles.condition}>{item.condition}</Text>
         <Text style={styles.price}>₱ {Number(item.price || 0).toLocaleString()}</Text>
         <Text style={styles.location}>{item.location || ''}</Text>
@@ -63,8 +69,12 @@ const styles = StyleSheet.create({
     padding: 10,
     justifyContent: 'center'
   },
-  title: { fontSize: 14, fontWeight: '600' },
-  price: { marginTop: 4, fontSize: 15, fontWeight: '700', color: '#DC143C' },
-  condition: {marginTop: 4, color: '#000', fontSize: 12},
-  location: { marginTop: 8, color: '#666', fontSize: 12 }
+  title: { fontSize: 16, fontWeight: '600' },
+  price: { marginTop: 4, fontSize: 16, fontWeight: '700', color: '#DC143C' },
+  condition: {marginTop: 4, color: '#000', fontSize: 13},
+  location: { marginTop: 8, color: '#666', fontSize: 13 },
+  lfTag: {
+    color: "#999",      // gray
+    fontWeight: "700",  // slightly bold so it still stands out
+  },
 });
