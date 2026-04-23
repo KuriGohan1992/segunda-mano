@@ -231,34 +231,9 @@ const styles = StyleSheet.create({
     lineHeight: 14,
   },
 
-  profileHeader: {
-    height: 80,
-    backgroundColor: '#DC143C',
-  },
-
-  menuButton: {
-    position: "absolute",
-    right: 20,
-    bottom: 16,
-  },
-
-  cover: {
-    height: 140,
-    backgroundColor: "black",
-  },
-
   profileSection: {
     alignItems: "center",
     marginTop: -45,
-  },
-
-  cameraButton: {
-    position: "absolute",
-    bottom: 0,
-    right: 0,
-    backgroundColor: '#DC143C',
-    borderRadius: 20,
-    padding: 6,
   },
 
   usernameText: {
@@ -273,15 +248,20 @@ const styles = StyleSheet.create({
 
   tabsContainer: {
     marginTop: 20,
+    position: "relative",
   },
 
   tabsRow: {
     flexDirection: "row",
+    width: "100%",
+    position: "relative",
   },
 
   tabItem: {
-    width: SCREEN_WIDTH / 3,
+    flex: 1,
     alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 10,
   },
 
   tabText: {
@@ -300,10 +280,12 @@ const styles = StyleSheet.create({
   },
 
   tabIndicator: {
-    height: 3,
-    width: SCREEN_WIDTH / 3,
-    backgroundColor: '#DC143C',
-  },
+  position: "absolute",
+  bottom: 0,
+  height: 2,
+  backgroundColor: "#DC143C",
+  width: "50%",
+},
 
   scrollContent: {
     flexGrow: 1,
@@ -434,6 +416,20 @@ const styles = StyleSheet.create({
   menuText: {
     color: "#fff",
     marginVertical: 10,
+    fontWeight: "700",
+  },
+
+  menuTitle: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: "#fff",
+    marginBottom: 16,
+  },
+
+  menuDivider: {
+    height: 1,
+    backgroundColor: "#eee",
+    marginVertical: 12,
   },
 
   menuLogout: {
@@ -441,11 +437,37 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 
+  infoText: {
+    fontSize: 14,
+    color: "#555",
+    marginTop: 2,
+  },
+
   backButton: {
     position: "absolute",
     top: 50,
     left: 15,
     zIndex: 10,
+  },
+
+  floatingButton: {
+    position: "absolute",
+    bottom: 25,
+    right: 20,
+
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+
+    backgroundColor: "#DC143C",
+    justifyContent: "center",
+    alignItems: "center",
+
+    elevation: 6,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
   },
 
   listRowLeft: {

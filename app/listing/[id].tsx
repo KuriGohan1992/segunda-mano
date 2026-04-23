@@ -305,9 +305,9 @@ export default function ListingDetail() {
           </TouchableOpacity>
         </View>
       ) : (
-        <View style={styles.footer}>
+        <View style={[styles.footer, { paddingBottom: insets.bottom }]}>
           <TouchableOpacity
-            style={styles.listingButton}
+            style={styles.primary}
             onPress={() =>
               router.push({
                 pathname: "/profileMenu/editListing",
@@ -315,8 +315,11 @@ export default function ListingDetail() {
               })
             }
           >
-            <FontAwesome5 name="edit" size={21} color="#fff" />
-            <Text style={styles.primaryText}>Edit Listing</Text>
+            <FontAwesome5 name="edit" size={20} color="#fff" />
+            
+            <View>
+              <Text style={styles.primaryText}>Edit Listing</Text>
+            </View>
           </TouchableOpacity>
         </View>
       )}

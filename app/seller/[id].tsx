@@ -24,6 +24,7 @@ import { img_placeholder } from "../../constants/img_placeholder";
 import ListingCard from "../../components/ListingCard";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useUser } from "../../context/UserContext";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SellerProfile() {
   const router = useRouter();
@@ -36,22 +37,19 @@ export default function SellerProfile() {
   const [picture, setPicture] = useState("");
   const [username, setUsername] = useState("");
   const [address, setAddress] = useState("");
-
-  const [email, setEmail] = useState("Not Specified");
-  const [gender, setGender] = useState("Not Specified");
-  const [contactNumber, setContactNumber] = useState("Not Specified");
+  const [joinedDate, setJoinedDate] = useState("");
 
   const [activeTab, setActiveTab] = useState("listings");
   const [userListings, setUserListings] = useState<Listing[]>([]);
+
+  const tabs = ["listings", "reviews"];
+  const activeIndex = tabs.indexOf(activeTab);
 
   useEffect(() => {
     async function getSellerDetails() {
       setLoading(true);
 
-      if (!id) {
-        setLoading(false);
-        return;
-      }
+      if (!id) return setLoading(false);
 
       const docRef = doc(db, "users", id);
       const docSnap = await getDoc(docRef);
@@ -59,13 +57,20 @@ export default function SellerProfile() {
       if (docSnap.exists()) {
         const d: any = docSnap.data();
 
-        setUsername(d.username || "Not Specified");
-        setAddress(d.address || "Not Specified");
+        setUsername(d.username || "");
+        setAddress(d.address || "");
         setPicture(d.picture || "");
 
-        setEmail(d.email || "Not Specified");
-        setGender(d.gender || "Not Specified");
-        setContactNumber(d.contactNumber || "Not Specified");
+        if (d.createdAt?.toDate) {
+          const date = d.createdAt.toDate();
+          setJoinedDate(
+            date.toLocaleDateString(undefined, {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })
+          );
+        }
       }
 
       setLoading(false);
@@ -132,41 +137,47 @@ export default function SellerProfile() {
   }
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        onPress={() => router.back()}
-        style={{
-          position: "absolute",
-          top: 40,
-          left: 15,
-          zIndex: 10,
-        }}
-      >
-        <Ionicons name="close" size={28} color="#FFF" />
-      </TouchableOpacity>
+    <SafeAreaView style={styles.container}>
 
-      <View style={styles.profileHeader}>
-        {uid !== id && (
-          <TouchableOpacity
-            onPress={() => router.push(`/chat/${id}`)}
-            style={styles.menuButton}
+      <View style={styles.header}>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={{ flexDirection: "row", alignItems: "center" }}
+        >
+          <Ionicons
+            name="arrow-back"
+            size={28} // 👈 increase to match 24px bold text
+            color="#DC143C"
+            style={{ marginRight: 6 }}
+          />
+
+          <Text
+            style={[
+              styles.title,
+              {
+                marginBottom: 0,
+                textAlign: "left",
+              },
+            ]}
           >
-            <Ionicons name="chatbubble" size={28} color="#fff" />
-          </TouchableOpacity>
-        )}
+            Back
+          </Text>
+        </TouchableOpacity>
       </View>
-      <View style={styles.cover} />
 
-      <View style={styles.profileSection}>
+      <View style={{ flexDirection: "row", paddingHorizontal: 16, paddingTop: 10 }}>
         <Image style={styles.avatar} source={getImageSource()} />
 
-        <Text style={styles.usernameText}>@{username}</Text>
-        <Text style={styles.ratingText}>No ratings yet.</Text>
+        <View style={{ marginLeft: 12, justifyContent: "center" }}>
+          <Text style={styles.usernameText}>{username}</Text>
+          <Text style={styles.infoText}>{address}</Text>
+          <Text style={styles.infoText}>Joined {joinedDate}</Text>
+        </View>
       </View>
 
       <View style={styles.tabsContainer}>
         <View style={styles.tabsRow}>
-          {["listings", "reviews", "about"].map((tab) => (
+          {tabs.map((tab) => (
             <TouchableOpacity
               key={tab}
               style={styles.tabItem}
@@ -190,16 +201,8 @@ export default function SellerProfile() {
           style={[
             styles.tabIndicator,
             {
-              transform: [
-                {
-                  translateX:
-                    activeTab === "listings"
-                      ? 0
-                      : activeTab === "reviews"
-                      ? styles.tabIndicator.width
-                      : styles.tabIndicator.width * 2,
-                },
-              ],
+              width: `${100 / tabs.length}%`,
+              left: `${(activeIndex * 100) / tabs.length}%`,
             },
           ]}
         />
@@ -210,28 +213,14 @@ export default function SellerProfile() {
           data={userListings}
           keyExtractor={(item) => item.id}
           numColumns={2}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            padding: 8,
-            paddingBottom: 80,
-          }}
-          columnWrapperStyle={{
-            justifyContent: "flex-start",
-          }}
-          ListEmptyComponent={
-            <View style={styles.centerContent}>
-              <Text>No products available</Text>
-            </View>
-          }
+          contentContainerStyle={{ padding: 8, paddingBottom: 80 }}
           renderItem={({ item }) => (
-            <View
-              style={{
-                flex: 1,
-                maxWidth: "50%",
-                paddingHorizontal: 4,
-                marginBottom: 12,
-              }}
-            >
+            <View style={{
+              flex: 1,
+              maxWidth: "50%",
+              paddingHorizontal: 4,
+              marginBottom: 12,
+            }}>
               <ListingCard
                 item={item}
                 onPress={() => router.push(`/listing/${item.id}`)}
@@ -241,49 +230,19 @@ export default function SellerProfile() {
         />
       ) : (
         <ScrollView contentContainerStyle={styles.scrollContent}>
-          {activeTab === "reviews" && (
-            <View style={styles.centerContent}>
-              <Text>No ratings yet</Text>
-            </View>
-          )}
-
-          {activeTab === "about" && (
-            <View>
-              <View style={styles.sectionHeader}>
-                <Text style={styles.sectionHeaderText}>
-                  Personal Information
-                </Text>
-              </View>
-
-              <View style={{ paddingHorizontal: 10 }}>
-                <Text style={styles.label}>Name</Text>
-                <Text>{username}</Text>
-
-                <Text style={styles.label}>Gender</Text>
-                <Text>{gender}</Text>
-
-                <Text style={styles.label}>Address</Text>
-                <Text>{address}</Text>
-              </View>
-
-              <View style={[styles.sectionHeader, { marginTop: 10 }]}>
-                <Text style={styles.sectionHeaderText}>
-                  Contact Information
-                </Text>
-              </View>
-
-              <View style={{ paddingHorizontal: 10 }}>
-                <Text style={styles.label}>Email</Text>
-                <Text>{email}</Text>
-
-                <Text style={styles.label}>Contact Number</Text>
-                <Text>{contactNumber}</Text>
-
-              </View>
-            </View>
-          )}
+          <View style={styles.centerContent}>
+            <Text>No ratings yet</Text>
+          </View>
         </ScrollView>
       )}
-    </View>
+      {uid !== id && (
+        <TouchableOpacity
+          style={styles.floatingButton}
+          onPress={() => router.push(`/chat/${id}`)}
+        >
+          <Ionicons name="chatbubble" size={26} color="#fff" />
+        </TouchableOpacity>
+      )}
+    </SafeAreaView>
   );
 }
