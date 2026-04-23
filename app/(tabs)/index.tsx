@@ -3,7 +3,7 @@ import { View, Text, TextInput, FlatList, ActivityIndicator, TouchableOpacity, S
 import { useRouter } from 'expo-router';
 import ListingCard from '../../components/ListingCard';
 import { db } from '../../firebase';
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, where } from 'firebase/firestore';
 import { CATEGORIES } from '../../constants/categories';
 import { Listing } from '../../type/listing';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -40,13 +40,13 @@ export default function Home() {
     let q;
 
     if (value === "price_desc") {
-      q = query(collection(db, 'listings'), orderBy('price', 'desc'))
+      q = query(collection(db, 'listings'), where('available', '==', true), orderBy('price', 'desc'))
     } else if (value === "price_asc") {
-      q = query(collection(db, 'listings'), orderBy('price', 'asc'))
+      q = query(collection(db, 'listings'), where('available', '==', true), orderBy('price', 'asc'))
     } else if (value === "date_asc") {
-      q = query(collection(db, 'listings'), orderBy('createdAt', 'asc'))
+      q = query(collection(db, 'listings'), where('available', '==', true), orderBy('createdAt', 'asc'))
     } else {
-      q = query(collection(db, 'listings'), orderBy('createdAt', 'desc'))
+      q = query(collection(db, 'listings'), where('available', '==', true), orderBy('createdAt', 'desc'))
     }
 
     const unsub = onSnapshot(q, (snapshot) => {
