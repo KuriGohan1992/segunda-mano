@@ -1,11 +1,21 @@
-import { View, Text, TouchableOpacity, FlatList, Image } from "react-native";
+import { View, Text, TouchableOpacity, FlatList, Image, Alert } from "react-native";
 import { useState, useEffect } from "react";
-import { getDocs, collection, orderBy, query, onSnapshot, getDoc, doc, Timestamp } from "firebase/firestore";
+import {
+  collection,
+  orderBy,
+  query,
+  onSnapshot,
+  getDoc,
+  doc,
+  deleteDoc,
+  getDocs,
+} from "firebase/firestore";
 import { db } from "../../firebase";
 import { useUser } from "../../context/UserContext";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styles from "../(tabs)/styles";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function Chats() {
   const { user } = useUser();
@@ -42,6 +52,40 @@ export default function Chats() {
       month: "short",
       day: "numeric",
     });
+  };
+
+  const deleteConversation = async (otherUserId: string) => {
+    Alert.alert(
+      "Delete Conversation",
+      "Are you sure to delete this conversation?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            const q = query(collection(db, "messages"));
+            const snap = await getDocs(q);
+
+            const deletions = snap.docs.map((d) => {
+              const msg = d.data();
+
+              const isBetweenUsers =
+                (msg.senderId === user?.uid && msg.receiverId === otherUserId) ||
+                (msg.senderId === otherUserId && msg.receiverId === user?.uid);
+
+              if (isBetweenUsers) {
+                return deleteDoc(doc(db, "messages", d.id));
+              }
+
+              return null;
+            });
+
+            await Promise.all(deletions);
+          },
+        },
+      ]
+    );
   };
 
   useEffect(() => {
@@ -95,8 +139,6 @@ export default function Chats() {
     if (userIds.length) fetchUsers();
   }, [userIds]);
 
-  console.log(userIds)
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -111,32 +153,77 @@ export default function Chats() {
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => {
               const lastMsg = latestMsgs[item.id];
-              const isUnread = lastMsg && lastMsg.receiverId === user?.uid && !lastMsg.seen;
+
+              const isUnread =
+                lastMsg &&
+                lastMsg.receiverId === user?.uid &&
+                !lastMsg.seen;
+
               return (
-              <TouchableOpacity
-                style={styles.userItem}
-                onPress={() => router.push(`/chat/${item.id}`)}
-              >
-                <Image source={ item.picture ? { uri: item.picture } : require("../../assets/profile.png") }
-                style={styles.chatAvatar}
-                />
-                <View style={{ flex: 1 }}>
-                  <Text style={[styles.username, isUnread && { fontWeight: "700" }]}>
-                    {item.username || item.email}
-                  </Text>
-                  <Text
-                    style={[styles.subtitle, isUnread && { color: "#111", fontWeight: "600" }]}
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                  >
-                    {lastMsg?.text || "No messages yet"}
-                  </Text>
-                </View>
-                <Text style={[styles.chatTime, isUnread && { color: "#DC143C", fontWeight: "600" }]}>
-                  {formatTime(lastMsg?.createdAt)}
-                </Text>
-              </TouchableOpacity>
-            )}}
+                <TouchableOpacity
+                  style={styles.userItem}
+                  onPress={() => router.push(`/chat/${item.id}`)}
+                >
+                  <Image
+                    source={
+                      item.picture
+                        ? { uri: item.picture }
+                        : require("../../assets/profile.png")
+                    }
+                    style={styles.chatAvatar}
+                  />
+
+                  <View style={{ flex: 1 }}>
+                    <Text
+                      style={[
+                        styles.username,
+                        isUnread && { fontWeight: "700" },
+                      ]}
+                    >
+                      {item.username || item.email}
+                    </Text>
+
+                    <Text
+                      style={[
+                        styles.subtitle,
+                        isUnread && {
+                          color: "#111",
+                          fontWeight: "600",
+                        },
+                      ]}
+                      numberOfLines={1}
+                    >
+                      {lastMsg?.image
+                        ? (lastMsg.senderId === user?.uid
+                            ? "You sent an image"
+                            : `${item.username || "User"} sent an image`)
+                        : lastMsg?.text || "No messages yet"}
+                    </Text>
+                  </View>
+
+                  <View style={{ alignItems: "flex-end", justifyContent: "center" }}>
+                    <Text
+                      style={[
+                        styles.chatTime,
+                        isUnread && {
+                          color: "#DC143C",
+                          fontWeight: "600",
+                        },
+                      ]}
+                    >
+                      {formatTime(lastMsg?.createdAt)}
+                    </Text>
+
+                    <TouchableOpacity
+                      onPress={() => deleteConversation(item.id)}
+                      style={{ marginTop: 6 }}
+                    >
+                      <Ionicons name="trash-outline" size={18} color="#999" />
+                    </TouchableOpacity>
+                  </View>
+                </TouchableOpacity>
+              );
+            }}
           />
         </View>
       ) : (

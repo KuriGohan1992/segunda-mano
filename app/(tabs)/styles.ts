@@ -637,6 +637,34 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 
+  chatCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 12,
+
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
+
+  chatContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+  },
+
+  deleteButton: {
+    paddingLeft: 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
 });
 
 export default styles;
