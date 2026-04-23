@@ -213,13 +213,6 @@ export default function Chats() {
                     >
                       {formatTime(lastMsg?.createdAt)}
                     </Text>
-
-                    <TouchableOpacity
-                      onPress={() => deleteConversation(item.id)}
-                      style={{ marginTop: 6 }}
-                    >
-                      <Ionicons name="trash-outline" size={18} color="#999" />
-                    </TouchableOpacity>
                   </View>
                 </TouchableOpacity>
               );
