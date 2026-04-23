@@ -1,33 +1,11 @@
-import {
-  StyleSheet,
-  Keyboard,
-  ScrollView,
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { StyleSheet, ScrollView, View, Text, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, Platform } from "react-native";
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useState, useRef, useEffect } from "react";
-import {
-  getDocs,
-  getDoc,
-  doc,
-  collection,
-  addDoc,
-  serverTimestamp,
-  query,
-  onSnapshot,
-  orderBy,
-  updateDoc,
-} from "firebase/firestore";
+import { getDoc, doc, collection, addDoc, serverTimestamp, query, onSnapshot, orderBy, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useUser } from "../../context/UserContext";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useLocalSearchParams } from "expo-router";
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useLocalSearchParams, useRouter } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 
 export default function ChatScreen() {
@@ -38,7 +16,10 @@ export default function ChatScreen() {
   const [messages, setMessages] = useState<any[]>([]);
   const { id } = useLocalSearchParams<{ id: string }>();
   const otherUserId = id as string;
+
   const [otherUser, setOtherUser] = useState<any>(null);
+
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -79,29 +60,31 @@ export default function ChatScreen() {
   useEffect(() => {
     if (!user || !otherUserId) return;
 
-    const q = query(collection(db, "messages"), orderBy("createdAt", "asc"));
+    const q = query(
+      collection(db, "messages"),
+      orderBy("createdAt", "asc")
+    );
 
     const unsubscribe = onSnapshot(q, async (snapshot) => {
-      const msgs = snapshot.docs.map((doc) => ({
+      const msgs = snapshot.docs.map(doc => ({
         id: doc.id,
-        ...doc.data(),
+        ...doc.data()
       }));
 
-      const filteredMsgs = msgs.filter(
-        (msg) =>
-          (msg.senderId === user?.uid && msg.receiverId === otherUserId) ||
-          (msg.senderId === otherUserId && msg.receiverId === user?.uid)
+      const filteredMsgs = msgs.filter(msg =>
+        (msg.senderId === user?.uid && msg.receiverId === otherUserId) ||
+        (msg.senderId === otherUserId && msg.receiverId === user?.uid)
       );
+
       setMessages(filteredMsgs);
 
-      const unseenMsgs = filteredMsgs.filter(
-        (msg) =>
-          msg.receiverId === user?.uid &&
-          msg.senderId === otherUserId &&
-          !msg.seen
+      const unseenMsgs = filteredMsgs.filter(msg =>
+        msg.receiverId === user?.uid &&
+        msg.senderId === otherUserId &&
+        !msg.seen
       );
 
-      const updates = unseenMsgs.map((msg) =>
+      const updates = unseenMsgs.map(msg =>
         updateDoc(doc(db, "messages", msg.id), {
           seen: true,
         })
@@ -121,6 +104,8 @@ export default function ChatScreen() {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       base64: true,
       quality: 0.6,
+      allowsEditing: true,
+      aspect: [1, 1],
     });
 
     if (!result.canceled) {
@@ -158,6 +143,10 @@ export default function ChatScreen() {
     <SafeAreaView style={styles.container}>
       <View style={{ flex: 1 }}>
         <View style={styles.chatHeader}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <MaterialIcons name="arrow-back" size={24} color="#111" />
+          </TouchableOpacity>
+
           <Image
             source={
               otherUser?.picture
@@ -170,6 +159,8 @@ export default function ChatScreen() {
           <Text style={styles.headerName}>
             {otherUser?.username || "User"}
           </Text>
+
+          {/* You can add more header actions here (e.g., call button, menu, etc.) */}
         </View>
 
         <ScrollView
@@ -192,26 +183,16 @@ export default function ChatScreen() {
                   isMe ? styles.myMessage : styles.otherMessage,
                 ]}
               >
-                {msg.image ? (
+                {msg.image && typeof msg.image === "string" ? (
                   <Image
                     source={{ uri: `data:image/jpeg;base64,${msg.image}` }}
-                    style={{
-                      width: 200,
-                      height: 200,
-                      borderRadius: 10,
-                    }}
+                    style={styles.chatImage}
                   />
-                ) : (
-                  <Text
-                    style={
-                      isMe
-                        ? styles.messageTextMe
-                        : styles.messageTextOther
-                    }
-                  >
+                ) : msg.text ? (
+                  <Text style={isMe ? styles.messageTextMe : styles.messageTextOther}>
                     {msg.text}
                   </Text>
-                )}
+                ) : null}
               </View>
             );
           })}
@@ -298,6 +279,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 
+  chatImage: {
+    width: 200,
+    height: 200,
+    borderRadius: 10,
+    marginTop: 4,
+  },
+
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -340,7 +328,7 @@ const styles = StyleSheet.create({
   chatHeader: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 16,
+    paddingHorizontal: 12,
     paddingVertical: 10,
     backgroundColor: "#fff",
     borderBottomWidth: 1,
@@ -359,5 +347,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     color: "#111",
+  },
+
+  arrow: {
+    position: "absolute",
+    top: 50,
+    left: 15,
+    zIndex: 10,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    borderRadius: 20,
+    padding: 4,
+  },
+  backButton: {
+    marginRight: 8,
+    padding: 4,
   },
 });
