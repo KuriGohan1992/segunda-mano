@@ -671,6 +671,47 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
+  toggleContainer: {
+    flexDirection: "row",
+    paddingHorizontal: 2,
+    marginBottom: 6,
+    marginTop: 12,
+  },
+
+  toggleButton: {
+    flex: 1,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+
+  toggleLeft: {
+    marginRight: 6,
+  },
+
+  toggleRight: {
+    marginLeft: 6,
+  },
+
+  toggleActive: {
+    backgroundColor: "#ffe5ea",
+    borderWidth: 1,
+    borderColor: "#DC143C",
+  },
+
+  toggleInactive: {
+    backgroundColor: "#eee",
+  },
+
+  toggleText: {
+    textAlign: "center",
+    fontWeight: "600",
+    color: "#333",
+  },
+
+  toggleTextActive: {
+    color: "#DC143C",
+  },
+
 });
 
 export default styles;

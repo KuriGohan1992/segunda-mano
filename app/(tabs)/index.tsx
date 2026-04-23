@@ -3,7 +3,7 @@ import { View, Text, TextInput, FlatList, ActivityIndicator, TouchableOpacity, S
 import { useRouter } from 'expo-router';
 import ListingCard from '../../components/ListingCard';
 import { db } from '../../firebase';
-import { collection, query, orderBy, onSnapshot, where } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, where, getDoc, getDocs, updateDoc, doc } from 'firebase/firestore';
 import { CATEGORIES } from '../../constants/categories';
 import { Listing } from '../../type/listing';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -27,6 +27,7 @@ export default function Home() {
   const [category, setCategory] = useState('All');
   const router = useRouter();
 
+  const [mode, setMode] = useState<"sell" | "lf">("sell");
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState<string | null>(null);
   const [items, setItems] = useState([
@@ -37,17 +38,20 @@ export default function Home() {
   ]);
 
   useEffect(() => {
+
     let q;
 
     if (value === "price_desc") {
-      q = query(collection(db, 'listings'), where('available', '==', true), orderBy('price', 'desc'))
+      q = query(collection(db, 'listings'), where('available', '==', true), where('type', '==', mode), orderBy('price', 'desc'))
     } else if (value === "price_asc") {
-      q = query(collection(db, 'listings'), where('available', '==', true), orderBy('price', 'asc'))
+      q = query(collection(db, 'listings'), where('available', '==', true), where('type', '==', mode), orderBy('price', 'asc'))
     } else if (value === "date_asc") {
-      q = query(collection(db, 'listings'), where('available', '==', true), orderBy('createdAt', 'asc'))
+      q = query(collection(db, 'listings'), where('available', '==', true), where('type', '==', mode), orderBy('createdAt', 'asc'))
     } else {
-      q = query(collection(db, 'listings'), where('available', '==', true), orderBy('createdAt', 'desc'))
+      q = query(collection(db, 'listings'), where('available', '==', true), where('type', '==', mode), orderBy('createdAt', 'desc'))
     }
+
+
 
     const unsub = onSnapshot(q, (snapshot) => {
       const docs = snapshot.docs.map(doc => {
@@ -57,6 +61,7 @@ export default function Home() {
           available: d.available ?? true,
           category: d.category || '',
           condition: d.condition || '',
+          type: d.type || "sell",
           createdAt: d.createdAt || new Date().toISOString(),
           description: d.description || '',
           images: Array.isArray(d.images) ? d.images : [],
@@ -73,7 +78,7 @@ export default function Home() {
       console.error('onSnapshot error', err);
       setLoading(false);
     });
-  }, [value]); 
+  }, [value, mode]); 
 
   const filtered = data.filter(d => {
     if (category !== 'All' && d.category !== category) return false;
@@ -138,6 +143,45 @@ export default function Home() {
           listItemContainerStyle={{ paddingVertical: 8, }}
           labelStyle={{ color: 'transparent' }}
           />
+      </View>
+      <View style={{ flexDirection: "row", paddingHorizontal: 12, marginBottom: 6 }}>
+        <TouchableOpacity
+          onPress={() => setMode("sell")}
+          style={{
+            flex: 1,
+            paddingVertical: 8,
+            borderRadius: 8,
+            backgroundColor: mode === "sell" ? "#DC143C" : "#eee",
+            marginRight: 6,
+          }}
+        >
+          <Text style={{
+            textAlign: "center",
+            color: mode === "sell" ? "#fff" : "#333",
+            fontWeight: "600"
+          }}>
+            For Sale
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => setMode("lf")}
+          style={{
+            flex: 1,
+            paddingVertical: 8,
+            borderRadius: 8,
+            backgroundColor: mode === "lf" ? "#DC143C" : "#eee",
+            marginLeft: 6,
+          }}
+        >
+          <Text style={{
+            textAlign: "center",
+            color: mode === "lf" ? "#fff" : "#333",
+            fontWeight: "600"
+          }}>
+            Looking For
+          </Text>
+        </TouchableOpacity>
       </View>
       <FlatList
         horizontal

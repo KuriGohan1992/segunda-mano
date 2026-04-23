@@ -40,6 +40,7 @@ export default function ListingsManager() {
           available: d.available ?? true,
           category: d.category || "",
           condition: d.condition || "",
+          type: d.type || "sell",
           createdAt: d.createdAt || new Date().toISOString(),
           description: d.description || "",
           images: Array.isArray(d.images) ? d.images : [],
@@ -88,7 +89,7 @@ export default function ListingsManager() {
         contentContainerStyle={styles.listContentWithTop}
         ListEmptyComponent={
           <View style={styles.centerContent}>
-            <Text>No products available</Text>
+            <Text>No listings posted</Text>
           </View>
         }
         renderItem={({ item }) => (
