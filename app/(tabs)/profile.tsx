@@ -27,7 +27,7 @@ import styles from "./styles";
 import { Listing } from "../../type/listing";
 import { img_placeholder } from "../../constants/img_placeholder";
 import ListingCard from "../../components/ListingCard";
-import { ADDRESS } from "@/constants/address";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Profile() {
   const router = useRouter();
@@ -38,12 +38,15 @@ export default function Profile() {
   const [picture, setPicture] = useState("");
   const [username, setUsername] = useState("");
   const [address, setAddress] = useState("");
-  const [gender, setGender] = useState("");
-  const [contactNumber, setContactNumber] = useState("");
+  const [joinedDate, setJoinedDate] = useState("Not Available");
+
   const [menuVisible, setMenuVisible] = useState(false);
 
   const [activeTab, setActiveTab] = useState("listings");
   const [userListings, setUserListings] = useState<Listing[]>([]);
+
+  const tabs = ["listings", "reviews", "about"];
+  const activeIndex = tabs.indexOf(activeTab);
 
   useEffect(() => {
     if (!uid) {
@@ -59,8 +62,16 @@ export default function Profile() {
         setAddress(d.address || "");
         setPicture(d.picture || "");
 
-        setGender(d.gender || "Not Specified");
-        setContactNumber(d.contactNumber || "Not Specified");
+        if (d.createdAt?.toDate) {
+          const date = d.createdAt.toDate();
+          setJoinedDate(
+            date.toLocaleDateString(undefined, {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })
+          );
+        }
       }
 
       setLoading(false);
@@ -153,6 +164,13 @@ export default function Profile() {
     }
   };
 
+  const handleMenuPress = (action: () => void) => {
+    setMenuVisible(false);
+    setTimeout(() => {
+      action();
+    }, 100);
+  };
+
   if (loading) {
     return (
       <View style={styles.centerContent}>
@@ -162,65 +180,59 @@ export default function Profile() {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.profileHeader}>
-        <TouchableOpacity
-          onPress={() => setMenuVisible(true)}
-          style={styles.menuButton}
-        >
-          <Ionicons name="menu" size={28} color="#fff" />
+    <SafeAreaView style={styles.container}>
+
+      <View style={styles.header}>
+        <Text style={styles.title}>Profile</Text>
+
+        <TouchableOpacity onPress={() => setMenuVisible(true)}>
+          <Ionicons name="menu" size={26} color="#DC143C" />
         </TouchableOpacity>
       </View>
 
-      <View style={styles.cover} />
-
-      <View style={styles.profileSection}>
+      <View style={{ flexDirection: "row", paddingHorizontal: 16 }}>
         <Image style={styles.avatar} source={getImageSource()} />
 
-        <Text style={styles.usernameText}>{username}</Text>
-        <Text style={styles.ratingText}>No ratings yet.</Text>
+        <View style={{ marginLeft: 12 }}>
+          <Text style={styles.usernameText}>{username}</Text>
+          <Text style={styles.infoText}>{address}</Text>
+          <Text style={styles.infoText}>Joined {joinedDate}</Text>
+        </View>
       </View>
 
       <View style={styles.tabsContainer}>
-        <View style={styles.tabsRow}>
-          {["listings", "reviews", "about"].map((tab) => (
-            <TouchableOpacity
-              key={tab}
-              style={styles.tabItem}
-              onPress={() => setActiveTab(tab)}
+
+      <View style={styles.tabsRow}>
+        {tabs.map((tab) => (
+          <TouchableOpacity
+            key={tab}
+            style={styles.tabItem}
+            onPress={() => setActiveTab(tab)}
+          >
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === tab && styles.activeTabText,
+              ]}
             >
-              <Text
-                style={[
-                  styles.tabText,
-                  activeTab === tab && styles.activeTabText,
-                ]}
-              >
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        <View style={styles.tabLine} />
-
-        <View
-          style={[
-            styles.tabIndicator,
-            {
-              transform: [
-                {
-                  translateX:
-                    activeTab === "listings"
-                      ? 0
-                      : activeTab === "reviews"
-                      ? styles.tabIndicator.width
-                      : styles.tabIndicator.width * 2,
-                },
-              ],
-            },
-          ]}
-        />
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </Text>
+          </TouchableOpacity>
+        ))}
       </View>
+
+      <View style={styles.tabLine} />
+
+      <View
+        style={[
+          styles.tabIndicator,
+          {
+            width: `${100 / tabs.length}%`,
+            left: `${(activeIndex * 100) / tabs.length}%`,
+          },
+        ]}
+      />
+    </View>
 
       {activeTab === "listings" ? (
         userListings.length === 0 ? (
@@ -250,104 +262,80 @@ export default function Profile() {
             )}
           />
         )
-      ) : (
+      ) : activeTab === "reviews" ? (
         <ScrollView contentContainerStyle={styles.scrollContent}>
-          {activeTab === "reviews" && (
-            <View style={styles.centerContent}>
-              <Text>No ratings yet</Text>
-            </View>
-          )}
-
-          {activeTab === "about" && (
-            <View>
-              <View style={styles.sectionHeader}>
-                <Text style={styles.sectionHeaderText}>
-                  Personal Information
-                </Text>
-              </View>
-
-              <View style={{ paddingHorizontal: 10 }}>
-                <Text style={styles.label}>Name</Text>
-                <Text>{username}</Text>
-
-                <Text style={styles.label}>Gender</Text>
-                <Text>{gender}</Text>
-
-                <Text style={styles.label}>Address</Text>
-                <Text>{address}</Text>
-              </View>
-
-              <View style={[styles.sectionHeader, { marginTop: 10 }]}>
-                <Text style={styles.sectionHeaderText}>
-                  Contact Information
-                </Text>
-              </View>
-
-              <View style={{ paddingHorizontal: 10 }}>
-                <Text style={styles.label}>Email</Text>
-                <Text>{email}</Text>
-
-                <Text style={styles.label}>Contact Number</Text>
-                <Text>{contactNumber}</Text>
-
-              </View>
-            </View>
-          )}
+          <View style={styles.centerContent}>
+            <Text>No ratings yet</Text>
+          </View>
         </ScrollView>
-      )}
+      ) : activeTab === "about" ? (
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          <View style={styles.centerContent}>
+            <Text style={{ fontSize: 16, fontWeight: "600", marginBottom: 8 }}>
+              About You
+            </Text>
+            <Text style={{ textAlign: "center", color: "#666" }}>
+              This section will soon contain your activity history, including
+              purchases, sales, and interactions on Segunda Mano.
+            </Text>
+          </View>
+        </ScrollView>
+      ) : null}
 
       <Modal transparent visible={menuVisible} animationType="fade">
         <Pressable
           style={styles.menuOverlay}
           onPress={() => setMenuVisible(false)}
         >
-          <View style={[styles.menuPanel]}>
-            <Text
-              style={{
-                fontSize: 18,
-                fontWeight: "700",
-                marginBottom: 16,
-                color: "white",
-              }}
-            >
-              MENU
-            </Text>
+          <View style={styles.menuPanel}>
+            <Text style={styles.menuTitle}>MENU</Text>
 
             <TouchableOpacity
-              onPress={() => {
-                setMenuVisible(false);
-                handleContactUs();
-              }}
+              onPress={() =>
+                handleMenuPress(handleContactUs)
+              }
             >
               <Text style={styles.menuText}>Contact Us</Text>
             </TouchableOpacity>
-
+            
             <TouchableOpacity
-              onPress={() => router.push("../profileMenu/details")}
+              onPress={() =>
+                handleMenuPress(() => router.push("../profileMenu/details"))
+              }
             >
               <Text style={styles.menuText}>Edit Profile</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => router.push("../profileMenu/listings")}
+              onPress={() =>
+                handleMenuPress(() => router.push("../profileMenu/passwordChange"))
+              }
             >
-              <Text style={styles.menuText}>Edit Listings</Text>
+              <Text style={styles.menuText}>Change Password</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => router.push("../profileMenu/about")}
+              onPress={() =>
+                handleMenuPress(() => router.push("../profileMenu/about"))
+              }
             >
               <Text style={styles.menuText}>About Segunda Mano</Text>
             </TouchableOpacity>
 
-            <View style={{ height: 1, backgroundColor: "#eee", marginVertical: 12 }} />
 
-            <TouchableOpacity onPress={handleLogout}>
-              <Text style={styles.menuLogout}>Log out</Text>
+            <View style={styles.menuDivider} />
+
+            <TouchableOpacity
+              onPress={() =>
+                handleMenuPress(handleLogout)
+              }
+            >
+              <Text style={styles.menuText}>Log out</Text>
             </TouchableOpacity>
           </View>
         </Pressable>
       </Modal>
-    </View>
+
+    </SafeAreaView>
   );
 }
