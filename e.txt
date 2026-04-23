@@ -1,50 +1,623 @@
-2026-04-20T17:46:56.340371Z E createcheckout: Default STARTUP TCP probe failed 1 time consecutively for container "worker" on port 8080. The instance was not started.
-Connection failed with status CANCELLED.
-2026-04-20T17:46:56.822906012Z E createCheckout: {"@type":"type.googleapis.com/google.cloud.audit.AuditLog","status":{"code":3,"message":"Could not create or update Cloud Run service createcheckout, Container Healthcheck failed. Revision 'createcheckout-00012-zux' is not ready and cannot serve traffic. The user-provided container failed to start and listen on the port defined provided by the PORT=8080 environment variable within the allocated timeout. This can happen when the container port is misconfigured or if the timeout is too short. The health check timeout can be extended. Logs for this revision might contain more information.\n\nLogs URL: https://console.cloud.google.com/logs/viewer?project=segunda-mano-51708&resource=cloud_run_revision/service_name/createcheckout/revision_name/createcheckout-00012-zux&advancedFilter=resource.type%3D%22cloud_run_revision%22%0Aresource.labels.service_name%3D%22createcheckout%22%0Aresource.labels.revision_name%3D%22createcheckout-00012-zux%22 \nFor more troubleshooting guidance, see https://cloud.google.com/run/docs/troubleshooting#container-failed-to-start"},"authenticationInfo":{"principalEmail":"chammendez92905@gmail.com","principalSubject":"user:chammendez92905@gmail.com","oauthInfo":{"oauthClientId":"563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com"}},"requestMetadata":{"requestAttributes":{},"destinationAttributes":{}},"serviceName":"cloudfunctions.googleapis.com","methodName":"google.cloud.functions.v2.FunctionService.UpdateFunction","resourceName":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","resourceLocation":{"currentLocations":["us-central1"]}}
-2026-04-20T17:48:51.247172085Z N createCheckout: {"@type":"type.googleapis.com/google.cloud.audit.AuditLog","status":{},"authenticationInfo":{"principalEmail":"chammendez92905@gmail.com","principalSubject":"user:chammendez92905@gmail.com","oauthInfo":{"oauthClientId":"563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com"}},"requestMetadata":{"callerIp":"2001:4453:3bd:be00:b04d:9b08:576:a5c","callerSuppliedUserAgent":"FirebaseCLI/15.15.0,gzip(gfe),gzip(gfe)","requestAttributes":{"time":"2026-04-20T17:48:50.583832595Z","auth":{}},"destinationAttributes":{}},"serviceName":"cloudfunctions.googleapis.com","methodName":"google.cloud.functions.v2.FunctionService.UpdateFunction","authorizationInfo":[{"resource":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","permission":"cloudfunctions.functions.update","granted":true,"resourceAttributes":{"service":"cloudfunctions.googleapis.com","name":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","type":"cloudfunctions.googleapis.com/Function"},"permissionType":"ADMIN_WRITE"}],"resourceName":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","request":{"function":{"service_config":{"available_memory":"256Mi","max_instance_request_concurrency":80,"available_cpu":"1"},"build_config":{"entry_point":"createCheckout","runtime":"nodejs24","source":{}},"labels":{"deployment-callable":"true","deployment-tool":"cli-firebase","firebase-functions-hash":"5247d5dc0d11f4ba7fdd9e2556a5eb061c534743"},"name":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout"},"update_mask":{"paths":["name","build_config.runtime","build_config.entry_point","build_config.source.storage_source.bucket","build_config.source.storage_source.object","build_config.environment_variables","build_config.source_token","service_config.environment_variables","service_config.ingress_settings","service_config.timeout_seconds","service_config.service_account_email","service_config.available_memory","service_config.min_instance_count","service_config.max_instance_count","service_config.max_instance_request_concurrency","service_config.available_cpu","service_config.vpc_connector","service_config.vpc_connector_egress_settings","service_config.direct_vpc_network_interface","service_config.direct_vpc_egress","labels"]},"@type":"type.googleapis.com/google.cloud.functions.v2.UpdateFunctionRequest"},"response":{"@type":"type.googleapis.com/google.longrunning.Operation"},"resourceLocation":{"currentLocations":["us-central1"]}}
-2026-04-20T17:49:30.106468Z I createcheckout: Starting new instance. Reason: DEPLOYMENT_ROLLOUT - Instance started due to traffic shifting between revisions due to deployment, traffic split adjustment, or deployment health check.
-2026-04-20T17:49:32.984303Z I createcheckout: Default STARTUP TCP probe succeeded after 1 attempt for container "worker" on port 8080.
-2026-04-20T17:49:34.061800Z I createcheckout: Starting new instance. Reason: AUTOSCALING - Instance started due to configured scaling factors (e.g. CPU utilization, request throughput, etc.) or no existing capacity for current traffic.
-2026-04-20T17:49:34.738684873Z N createCheckout: {"@type":"type.googleapis.com/google.cloud.audit.AuditLog","status":{},"authenticationInfo":{"principalEmail":"chammendez92905@gmail.com","principalSubject":"user:chammendez92905@gmail.com","oauthInfo":{"oauthClientId":"563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com"}},"requestMetadata":{"requestAttributes":{},"destinationAttributes":{}},"serviceName":"cloudfunctions.googleapis.com","methodName":"google.cloud.functions.v2.FunctionService.UpdateFunction","resourceName":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","response":{"environment":"GEN_2","buildConfig":{"entryPoint":"createCheckout","automaticUpdatePolicy":{},"serviceAccount":"projects/segunda-mano-51708/serviceAccounts/802705068771-compute@developer.gserviceaccount.com","dockerRepository":"projects/segunda-mano-51708/locations/us-central1/repositories/gcf-artifacts","runtime":"nodejs24","dockerRegistry":"ARTIFACT_REGISTRY","source":{}},"name":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","labels":{"firebase-functions-hash":"5247d5dc0d11f4ba7fdd9e2556a5eb061c534743","deployment-callable":"true","deployment-tool":"cli-firebase"},"updateTime":"2026-04-20T17:48:51.232801132Z","url":"https://us-central1-segunda-mano-51708.cloudfunctions.net/createCheckout","state":"ACTIVE","satisfiesPzi":true,"@type":"type.googleapis.com/google.cloud.functions.v2.Function","serviceConfig":{"maxInstanceRequestConcurrency":80,"availableMemory":"256Mi","allTrafficOnLatestRevision":true,"ingressSettings":"ALLOW_ALL","maxInstanceCount":3,"serviceAccountEmail":"802705068771-compute@developer.gserviceaccount.com","timeoutSeconds":60,"uri":"https://createcheckout-ybptaipcpq-uc.a.run.app","availableCpu":"1","revision":"createcheckout-00013-ciz"},"createTime":"2026-04-20T15:38:56.531420927Z"},"resourceLocation":{"currentLocations":["us-central1"]}}
-2026-04-20T17:49:36.460940Z I createcheckout: Default STARTUP TCP probe succeeded after 1 attempt for container "worker" on port 8080.
-2026-04-20T17:51:38.029150Z E createcheckout: 
-2026-04-20T17:51:38.182173Z D createcheckout: {"message":"Callable request verification passed","verifications":{"auth":"VALID","app":"MISSING"}}
-2026-04-20T17:51:38.183622Z E createcheckout: Unhandled error Error: Missing Stripe secret key
-    at /workspace/index.js:6:11
-    at fixedLen (/workspace/node_modules/firebase-functions/lib/v2/providers/https.js:131:34)
-    at /workspace/node_modules/firebase-functions/lib/common/providers/https.js:513:20
-    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
-2026-04-20T17:56:01.998651738Z N createCheckout: {"@type":"type.googleapis.com/google.cloud.audit.AuditLog","status":{},"authenticationInfo":{"principalEmail":"chammendez92905@gmail.com","principalSubject":"user:chammendez92905@gmail.com","oauthInfo":{"oauthClientId":"563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com"}},"requestMetadata":{"callerIp":"2001:4453:3bd:be00:b04d:9b08:576:a5c","callerSuppliedUserAgent":"FirebaseCLI/15.15.0,gzip(gfe),gzip(gfe)","requestAttributes":{"time":"2026-04-20T17:56:01.074305884Z","auth":{}},"destinationAttributes":{}},"serviceName":"cloudfunctions.googleapis.com","methodName":"google.cloud.functions.v2.FunctionService.UpdateFunction","authorizationInfo":[{"resource":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","permission":"cloudfunctions.functions.update","granted":true,"resourceAttributes":{"service":"cloudfunctions.googleapis.com","name":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","type":"cloudfunctions.googleapis.com/Function"},"permissionType":"ADMIN_WRITE"}],"resourceName":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","request":{"@type":"type.googleapis.com/google.cloud.functions.v2.UpdateFunctionRequest","function":{"labels":{"deployment-callable":"true","deployment-tool":"cli-firebase","firebase-functions-hash":"a10b5efc105988d14e1c93e9af4b7b05fb2a8a94"},"service_config":{"max_instance_request_concurrency":80,"available_cpu":"1","available_memory":"256Mi"},"build_config":{"entry_point":"createCheckout","runtime":"nodejs24","source":{}},"name":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout"},"update_mask":{"paths":["name","build_config.runtime","build_config.entry_point","build_config.source.storage_source.bucket","build_config.source.storage_source.object","build_config.environment_variables","build_config.source_token","service_config.environment_variables","service_config.ingress_settings","service_config.timeout_seconds","service_config.service_account_email","service_config.available_memory","service_config.min_instance_count","service_config.max_instance_count","service_config.max_instance_request_concurrency","service_config.available_cpu","service_config.vpc_connector","service_config.vpc_connector_egress_settings","service_config.direct_vpc_network_interface","service_config.direct_vpc_egress","labels"]}},"response":{"@type":"type.googleapis.com/google.longrunning.Operation"},"resourceLocation":{"currentLocations":["us-central1"]}}
-2026-04-20T17:56:41.393233Z I createcheckout: Starting new instance. Reason: DEPLOYMENT_ROLLOUT - Instance started due to traffic shifting between revisions due to deployment, traffic split adjustment, or deployment health check.
-2026-04-20T17:56:43.519148Z I createcheckout: Default STARTUP TCP probe succeeded after 1 attempt for container "worker" on port 8080.
-2026-04-20T17:56:46.661674Z I createcheckout: Starting new instance. Reason: AUTOSCALING - Instance started due to configured scaling factors (e.g. CPU utilization, request throughput, etc.) or no existing capacity for current traffic.
-2026-04-20T17:56:47.479506296Z N createCheckout: {"@type":"type.googleapis.com/google.cloud.audit.AuditLog","status":{},"authenticationInfo":{"principalEmail":"chammendez92905@gmail.com","principalSubject":"user:chammendez92905@gmail.com","oauthInfo":{"oauthClientId":"563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com"}},"requestMetadata":{"requestAttributes":{},"destinationAttributes":{}},"serviceName":"cloudfunctions.googleapis.com","methodName":"google.cloud.functions.v2.FunctionService.UpdateFunction","resourceName":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","response":{"createTime":"2026-04-20T15:38:56.531420927Z","satisfiesPzi":true,"@type":"type.googleapis.com/google.cloud.functions.v2.Function","updateTime":"2026-04-20T17:56:01.986496839Z","serviceConfig":{"availableCpu":"1","ingressSettings":"ALLOW_ALL","revision":"createcheckout-00014-des","uri":"https://createcheckout-ybptaipcpq-uc.a.run.app","maxInstanceRequestConcurrency":80,"maxInstanceCount":3,"allTrafficOnLatestRevision":true,"timeoutSeconds":60,"serviceAccountEmail":"802705068771-compute@developer.gserviceaccount.com","availableMemory":"256Mi"},"name":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","labels":{"deployment-callable":"true","firebase-functions-hash":"a10b5efc105988d14e1c93e9af4b7b05fb2a8a94","deployment-tool":"cli-firebase"},"state":"ACTIVE","buildConfig":{"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/segunda-mano-51708/serviceAccounts/802705068771-compute@developer.gserviceaccount.com","entryPoint":"createCheckout","automaticUpdatePolicy":{},"dockerRepository":"projects/segunda-mano-51708/locations/us-central1/repositories/gcf-artifacts","runtime":"nodejs24","source":{}},"environment":"GEN_2","url":"https://us-central1-segunda-mano-51708.cloudfunctions.net/createCheckout"},"resourceLocation":{"currentLocations":["us-central1"]}}
-2026-04-20T17:56:48.798938Z I createcheckout: Default STARTUP TCP probe succeeded after 1 attempt for container "worker" on port 8080.
-2026-04-20T17:57:08.257520Z E createcheckout: 
-2026-04-20T17:57:08.381584Z D createcheckout: {"message":"Callable request verification passed","verifications":{"auth":"VALID","app":"MISSING"}}
-2026-04-20T17:57:08.382743Z E createcheckout: Unhandled error Error: Missing Stripe secret key
-    at /workspace/index.js:6:11
-    at fixedLen (/workspace/node_modules/firebase-functions/lib/v2/providers/https.js:131:34)
-    at /workspace/node_modules/firebase-functions/lib/common/providers/https.js:513:20
-    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
-2026-04-20T17:59:02.105739151Z N createCheckout: {"@type":"type.googleapis.com/google.cloud.audit.AuditLog","status":{},"authenticationInfo":{"principalEmail":"chammendez92905@gmail.com","principalSubject":"user:chammendez92905@gmail.com","oauthInfo":{"oauthClientId":"563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com"}},"requestMetadata":{"callerIp":"2001:4453:3bd:be00:b04d:9b08:576:a5c","callerSuppliedUserAgent":"FirebaseCLI/15.15.0,gzip(gfe),gzip(gfe)","requestAttributes":{"time":"2026-04-20T17:59:01.290654699Z","auth":{}},"destinationAttributes":{}},"serviceName":"cloudfunctions.googleapis.com","methodName":"google.cloud.functions.v2.FunctionService.UpdateFunction","authorizationInfo":[{"resource":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","permission":"cloudfunctions.functions.update","granted":true,"resourceAttributes":{"service":"cloudfunctions.googleapis.com","name":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","type":"cloudfunctions.googleapis.com/Function"},"permissionType":"ADMIN_WRITE"}],"resourceName":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","request":{"@type":"type.googleapis.com/google.cloud.functions.v2.UpdateFunctionRequest","update_mask":{"paths":["name","build_config.runtime","build_config.entry_point","build_config.source.storage_source.bucket","build_config.source.storage_source.object","build_config.environment_variables","build_config.source_token","service_config.environment_variables","service_config.ingress_settings","service_config.timeout_seconds","service_config.service_account_email","service_config.available_memory","service_config.min_instance_count","service_config.max_instance_count","service_config.max_instance_request_concurrency","service_config.available_cpu","service_config.vpc_connector","service_config.vpc_connector_egress_settings","service_config.direct_vpc_network_interface","service_config.direct_vpc_egress","labels"]},"function":{"name":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","service_config":{"available_cpu":"1","available_memory":"256Mi","max_instance_request_concurrency":80},"build_config":{"entry_point":"createCheckout","runtime":"nodejs24","source":{}},"labels":{"firebase-functions-hash":"875a2dd46e5a9405d303012c3aed061326c5937e","deployment-callable":"true","deployment-tool":"cli-firebase"}}},"response":{"@type":"type.googleapis.com/google.longrunning.Operation"},"resourceLocation":{"currentLocations":["us-central1"]}}
-2026-04-20T17:59:51.015983Z I createcheckout: Starting new instance. Reason: DEPLOYMENT_ROLLOUT - Instance started due to traffic shifting between revisions due to deployment, traffic split adjustment, or deployment health check.
-2026-04-20T17:59:54.427225Z I createcheckout: Default STARTUP TCP probe succeeded after 1 attempt for container "worker" on port 8080.
-2026-04-20T17:59:55.776418Z I createcheckout: Starting new instance. Reason: AUTOSCALING - Instance started due to configured scaling factors (e.g. CPU utilization, request throughput, etc.) or no existing capacity for current traffic.
-2026-04-20T17:59:56.156815143Z N createCheckout: {"@type":"type.googleapis.com/google.cloud.audit.AuditLog","status":{},"authenticationInfo":{"principalEmail":"chammendez92905@gmail.com","principalSubject":"user:chammendez92905@gmail.com","oauthInfo":{"oauthClientId":"563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com"}},"requestMetadata":{"requestAttributes":{},"destinationAttributes":{}},"serviceName":"cloudfunctions.googleapis.com","methodName":"google.cloud.functions.v2.FunctionService.UpdateFunction","resourceName":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","response":{"@type":"type.googleapis.com/google.cloud.functions.v2.Function","updateTime":"2026-04-20T17:59:02.090846710Z","name":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","serviceConfig":{"ingressSettings":"ALLOW_ALL","timeoutSeconds":60,"maxInstanceRequestConcurrency":80,"revision":"createcheckout-00015-poz","uri":"https://createcheckout-ybptaipcpq-uc.a.run.app","availableMemory":"256Mi","allTrafficOnLatestRevision":true,"serviceAccountEmail":"802705068771-compute@developer.gserviceaccount.com","availableCpu":"1","maxInstanceCount":3},"createTime":"2026-04-20T15:38:56.531420927Z","labels":{"firebase-functions-hash":"875a2dd46e5a9405d303012c3aed061326c5937e","deployment-tool":"cli-firebase","deployment-callable":"true"},"url":"https://us-central1-segunda-mano-51708.cloudfunctions.net/createCheckout","buildConfig":{"runtime":"nodejs24","automaticUpdatePolicy":{},"serviceAccount":"projects/segunda-mano-51708/serviceAccounts/802705068771-compute@developer.gserviceaccount.com","dockerRegistry":"ARTIFACT_REGISTRY","entryPoint":"createCheckout","source":{},"dockerRepository":"projects/segunda-mano-51708/locations/us-central1/repositories/gcf-artifacts"},"state":"ACTIVE","environment":"GEN_2","satisfiesPzi":true},"resourceLocation":{"currentLocations":["us-central1"]}}
-2026-04-20T17:59:57.665846Z I createcheckout: Default STARTUP TCP probe succeeded after 1 attempt for container "worker" on port 8080.
-2026-04-20T18:05:12.516402124Z N createCheckout: {"@type":"type.googleapis.com/google.cloud.audit.AuditLog","status":{},"authenticationInfo":{"principalEmail":"chammendez92905@gmail.com","principalSubject":"user:chammendez92905@gmail.com","oauthInfo":{"oauthClientId":"563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com"}},"requestMetadata":{"callerIp":"2001:4453:3bd:be00:b04d:9b08:576:a5c","callerSuppliedUserAgent":"FirebaseCLI/15.15.0,gzip(gfe),gzip(gfe)","requestAttributes":{"time":"2026-04-20T18:05:11.141857065Z","auth":{}},"destinationAttributes":{}},"serviceName":"cloudfunctions.googleapis.com","methodName":"google.cloud.functions.v2.FunctionService.UpdateFunction","authorizationInfo":[{"resource":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","permission":"cloudfunctions.functions.update","granted":true,"resourceAttributes":{"service":"cloudfunctions.googleapis.com","name":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","type":"cloudfunctions.googleapis.com/Function"},"permissionType":"ADMIN_WRITE"}],"resourceName":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","request":{"update_mask":{"paths":["name","build_config.runtime","build_config.entry_point","build_config.source.storage_source.bucket","build_config.source.storage_source.object","build_config.environment_variables","build_config.source_token","service_config.environment_variables","service_config.secret_environment_variables","service_config.ingress_settings","service_config.timeout_seconds","service_config.service_account_email","service_config.available_memory","service_config.min_instance_count","service_config.max_instance_count","service_config.max_instance_request_concurrency","service_config.available_cpu","service_config.vpc_connector","service_config.vpc_connector_egress_settings","service_config.direct_vpc_network_interface","service_config.direct_vpc_egress","labels"]},"@type":"type.googleapis.com/google.cloud.functions.v2.UpdateFunctionRequest","function":{"labels":{"firebase-functions-hash":"57ef33a74c676116f6ec9f678feeb15429e14064","deployment-tool":"cli-firebase","deployment-callable":"true"},"service_config":{"available_cpu":"1","max_instance_request_concurrency":80,"available_memory":"256Mi","secret_environment_variables":[{"key":"PAYMONGO_SECRET_KEY","secret":"PAYMONGO_SECRET_KEY","version":"1","project_id":"segunda-mano-51708"}]},"build_config":{"runtime":"nodejs24","source":{},"entry_point":"createCheckout"},"name":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout"}},"response":{"@type":"type.googleapis.com/google.longrunning.Operation"},"resourceLocation":{"currentLocations":["us-central1"]}}
-2026-04-20T18:06:01.726022Z I createcheckout: Starting new instance. Reason: DEPLOYMENT_ROLLOUT - Instance started due to traffic shifting between revisions due to deployment, traffic split adjustment, or deployment health check.
-2026-04-20T18:06:03.530243Z I createcheckout: Default STARTUP TCP probe succeeded after 1 attempt for container "worker" on port 8080.
-2026-04-20T18:06:05.257503276Z N createCheckout: {"@type":"type.googleapis.com/google.cloud.audit.AuditLog","status":{},"authenticationInfo":{"principalEmail":"chammendez92905@gmail.com","principalSubject":"user:chammendez92905@gmail.com","oauthInfo":{"oauthClientId":"563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com"}},"requestMetadata":{"requestAttributes":{},"destinationAttributes":{}},"serviceName":"cloudfunctions.googleapis.com","methodName":"google.cloud.functions.v2.FunctionService.UpdateFunction","resourceName":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","response":{"url":"https://us-central1-segunda-mano-51708.cloudfunctions.net/createCheckout","satisfiesPzi":true,"buildConfig":{"dockerRepository":"projects/segunda-mano-51708/locations/us-central1/repositories/gcf-artifacts","dockerRegistry":"ARTIFACT_REGISTRY","runtime":"nodejs24","serviceAccount":"projects/segunda-mano-51708/serviceAccounts/802705068771-compute@developer.gserviceaccount.com","entryPoint":"createCheckout","source":{},"automaticUpdatePolicy":{}},"updateTime":"2026-04-20T18:05:12.501926460Z","serviceConfig":{"timeoutSeconds":60,"maxInstanceRequestConcurrency":80,"revision":"createcheckout-00016-muw","serviceAccountEmail":"802705068771-compute@developer.gserviceaccount.com","secretEnvironmentVariables":[{"version":"1","key":"PAYMONGO_SECRET_KEY","projectId":"segunda-mano-51708","secret":"PAYMONGO_SECRET_KEY"}],"uri":"https://createcheckout-ybptaipcpq-uc.a.run.app","allTrafficOnLatestRevision":true,"maxInstanceCount":3,"availableCpu":"1","ingressSettings":"ALLOW_ALL","availableMemory":"256Mi"},"createTime":"2026-04-20T15:38:56.531420927Z","labels":{"deployment-callable":"true","firebase-functions-hash":"57ef33a74c676116f6ec9f678feeb15429e14064","deployment-tool":"cli-firebase"},"@type":"type.googleapis.com/google.cloud.functions.v2.Function","state":"ACTIVE","name":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","environment":"GEN_2"},"resourceLocation":{"currentLocations":["us-central1"]}}
-2026-04-20T18:06:55.738533Z E createcheckout: 
-2026-04-20T18:06:55.845877Z D createcheckout: {"verifications":{"auth":"VALID","app":"MISSING"},"message":"Callable request verification passed"}
-2026-04-20T18:06:55.846780Z ? createcheckout: KEY EXISTS: true
+2026-04-23T05:44:06.738925Z ? createcheckout: REQUEST DATA: {
+  rawRequest: <ref *1> IncomingMessage {
+    _events: {
+      close: [Function (anonymous)],
+      error: undefined,
+      data: undefined,
+      end: [Function (anonymous)],
+      readable: undefined,
+      aborted: undefined
+    },
+    _readableState: ReadableState {
+      highWaterMark: 65536,
+      buffer: [],
+      bufferIndex: 0,
+      length: 0,
+      pipes: [],
+      awaitDrainWriters: null,
+      Symbol(kState): 60295036
+    },
+    _maxListeners: undefined,
+    socket: Socket {
+      connecting: false,
+      _hadError: false,
+      _parent: null,
+      _host: null,
+      _closeAfterHandlingError: false,
+      _events: [Object],
+      _readableState: [ReadableState],
+      _writableState: [WritableState],
+      allowHalfOpen: true,
+      _maxListeners: undefined,
+      _eventsCount: 8,
+      _sockname: null,
+      _pendingData: null,
+      _pendingEncoding: '',
+      server: [Server],
+      _server: [Server],
+      parser: [HTTPParser],
+      on: [Function: socketListenerWrap],
+      addListener: [Function: socketListenerWrap],
+      prependListener: [Function: socketListenerWrap],
+      setEncoding: [Function: socketSetEncoding],
+      _paused: false,
+      _httpMessage: [ServerResponse],
+      timeout: 60000,
+      Symbol(async_id_symbol): 2116,
+      Symbol(kHandle): [TCP],
+      Symbol(lastWriteQueueSize): 0,
+      Symbol(timeout): Timeout {
+        _idleTimeout: 60000,
+        _idlePrev: [TimersList],
+        _idleNext: [TimersList],
+        _idleStart: 1633297,
+        _onTimeout: [Function: bound ],
+        _timerArgs: undefined,
+        _repeat: null,
+        _destroyed: false,
+        Symbol(refed): false,
+        Symbol(kHasPrimitive): false,
+        Symbol(asyncId): 2124,
+        Symbol(triggerId): 2119,
+        Symbol(kAsyncContextFrame): [AsyncContextFrame [Map]]
+      },
+      Symbol(kBuffer): null,
+      Symbol(kBufferCb): null,
+      Symbol(kBufferGen): null,
+      Symbol(shapeMode): true,
+      Symbol(kCapture): false,
+      Symbol(kSetNoDelay): true,
+      Symbol(kSetKeepAlive): false,
+      Symbol(kSetKeepAliveInitialDelay): 0,
+      Symbol(kBytesRead): 0,
+      Symbol(kBytesWritten): 0
+    },
+    httpVersionMajor: 1,
+    httpVersionMinor: 1,
+    httpVersion: '1.1',
+    complete: true,
+    rawHeaders: [
+      'host',
+      'us-central1-segunda-mano-51708.cloudfunctions.net',
+      'accept',
+      '*/*',
+      'content-type',
+      'application/json',
+      'user-agent',
+      'Expo/54.0.6 CFNetwork/3860.100.1 Darwin/25.2.0',
+      'priority',
+      'u=3, i',
+      'accept-language',
+      'en-US,en;q=0.9',
+      'content-length',
+      '68',
+      'authorization',
+      'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjNiMDk1NzQ3YmY4MzMxZWE0YWQ1M2YzNzBjNjMyNjAxNzliMGQyM2EiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vc2VndW5kYS1tYW5vLTUxNzA4IiwiYXVkIjoic2VndW5kYS1tYW5vLTUxNzA4IiwiYXV0aF90aW1lIjoxNzc2OTE5OTEzLCJ1c2VyX2lkIjoiS2V4M3UwVjE1UGRDUmhYcVd5MHNPZ1cxWng3MyIsInN1YiI6IktleDN1MFYxNVBkQ1JoWHFXeTBzT2dXMVp4NzMiLCJpYXQiOjE3NzY5MTk5MTMsImV4cCI6MTc3NjkyMzUxMywiZW1haWwiOiJjaGFtbWVuZGV6OTI5MDVAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImZpcmViYXNlIjp7ImlkZW50aXRpZXMiOnsiZW1haWwiOlsiY2hhbW1lbmRlejkyOTA1QGdtYWlsLmNvbSJdfSwic2lnbl9pbl9wcm92aWRlciI6InBhc3N3b3JkIn19.FZTwwqGwNH02vcu7spQqQ-O-Dup4jGudGgUNMjSgpY4Tx1_dwm9R9dazdug1naNLC_kppL76Je4K5KbF5lAfXcXIwiYVgleLVnI-DaQRZwF5YJeuaPgD662FjE42nhVqW6s577UYojZb7McoBPFPHKbrewQAGL7SISz5H9-MIC85VEXb6_rePkKZQq7mRuaKNsxLxn4uAMaWjpdEdfJBDg5kDbx4dywvv2C3Wx8ox0v5hcfj3MnA56u0CRydDv7Tm0_hrHkrMPMVuEZnbTVfc4KVTHLiZCuZpaYxDr8rApcatG__vQfQZiP4qnAfbdWEhX00nAvOBoHM-pOHI7SHDA',
+      'x-cloud-trace-context',
+      '54fbf96afe0d6ad2b310c185770b5653/8052318487995615317;o=1',
+      'x-forwarded-proto',
+      'https',
+      'traceparent',
+      '00-54fbf96afe0d6ad2b310c185770b5653-6fbf9500774a0855-01',
+      'x-forwarded-for',
+      '2001:4453:3bd:be00:cd58:43a6:a666:2735',
+      'forwarded',
+      'for="[2001:4453:3bd:be00:cd58:43a6:a666:2735]";proto=https',
+      'accept-encoding',
+      'gzip, deflate, br'
+    ],
+    rawTrailers: [],
+    joinDuplicateHeaders: null,
+    aborted: false,
+    upgrade: false,
+    url: '/',
+    method: 'POST',
+    statusCode: null,
+    statusMessage: null,
+    client: Socket {
+      connecting: false,
+      _hadError: false,
+      _parent: null,
+      _host: null,
+      _closeAfterHandlingError: false,
+      _events: [Object],
+      _readableState: [ReadableState],
+      _writableState: [WritableState],
+      allowHalfOpen: true,
+      _maxListeners: undefined,
+      _eventsCount: 8,
+      _sockname: null,
+      _pendingData: null,
+      _pendingEncoding: '',
+      server: [Server],
+      _server: [Server],
+      parser: [HTTPParser],
+      on: [Function: socketListenerWrap],
+      addListener: [Function: socketListenerWrap],
+      prependListener: [Function: socketListenerWrap],
+      setEncoding: [Function: socketSetEncoding],
+      _paused: false,
+      _httpMessage: [ServerResponse],
+      timeout: 60000,
+      Symbol(async_id_symbol): 2116,
+      Symbol(kHandle): [TCP],
+      Symbol(lastWriteQueueSize): 0,
+      Symbol(timeout): Timeout {
+        _idleTimeout: 60000,
+        _idlePrev: [TimersList],
+        _idleNext: [TimersList],
+        _idleStart: 1633297,
+        _onTimeout: [Function: bound ],
+        _timerArgs: undefined,
+        _repeat: null,
+        _destroyed: false,
+        Symbol(refed): false,
+        Symbol(kHasPrimitive): false,
+        Symbol(asyncId): 2124,
+        Symbol(triggerId): 2119,
+        Symbol(kAsyncContextFrame): [AsyncContextFrame [Map]]
+      },
+      Symbol(kBuffer): null,
+      Symbol(kBufferCb): null,
+      Symbol(kBufferGen): null,
+      Symbol(shapeMode): true,
+      Symbol(kCapture): false,
+      Symbol(kSetNoDelay): true,
+      Symbol(kSetKeepAlive): false,
+      Symbol(kSetKeepAliveInitialDelay): 0,
+      Symbol(kBytesRead): 0,
+      Symbol(kBytesWritten): 0
+    },
+    _consuming: true,
+    _dumped: false,
+    next: [Function: next],
+    baseUrl: '',
+    originalUrl: '/',
+    _parsedUrl: Url {
+      protocol: null,
+      slashes: null,
+      auth: null,
+      host: null,
+      port: null,
+      hostname: null,
+      hash: null,
+      search: null,
+      query: null,
+      pathname: '/',
+      path: '/',
+      href: '/',
+      _raw: '/'
+    },
+    params: { '0': '' },
+    query: {},
+    res: ServerResponse {
+      _events: [Object: null prototype],
+      _eventsCount: 4,
+      _maxListeners: undefined,
+      outputData: [],
+      outputSize: 0,
+      writable: true,
+      destroyed: false,
+      _last: false,
+      chunkedEncoding: false,
+      shouldKeepAlive: true,
+      maxRequestsOnConnectionReached: false,
+      _defaultKeepAlive: true,
+      useChunkedEncodingByDefault: true,
+      sendDate: true,
+      _removedConnection: false,
+      _removedContLen: false,
+      _removedTE: false,
+      strictContentLength: false,
+      _contentLength: null,
+      _hasBody: true,
+      _trailer: '',
+      finished: false,
+      _headerSent: false,
+      _closed: false,
+      _header: null,
+      _keepAliveTimeout: 5000,
+      _onPendingData: [Function: bound updateOutgoingData],
+      req: [Circular *1],
+      _sent100: false,
+      _expect_continue: false,
+      _maxRequestsPerSocket: 0,
+      locals: [Object: null prototype],
+      __onFinished: [Function],
+      Symbol(shapeMode): false,
+      Symbol(kCapture): false,
+      Symbol(kBytesWritten): 0,
+      Symbol(kNeedDrain): false,
+      Symbol(corked): 0,
+      Symbol(kChunkedBuffer): [],
+      Symbol(kChunkedLength): 0,
+      Symbol(kSocket): [Socket],
+      Symbol(kOutHeaders): [Object: null prototype],
+      Symbol(errored): null,
+      Symbol(kHighWaterMark): 65536,
+      Symbol(kRejectNonStandardBodyWrites): false,
+      Symbol(kUniqueHeaders): null
+    },
+    body: { data: [Object] },
+    _body: true,
+    length: undefined,
+    _eventsCount: 2,
+    rawBody: <Buffer 7b 22 64 61 74 61 22 3a 7b 22 61 6d 6f 75 6e 74 22 3a 36 35 33 30 30 2c 22 64 65 73 63 72 69 70 74 69 6f 6e 22 3a 22 4f 72 64 65 72 20 66 6f 72 20 5c ... 18 more bytes>,
+    executionId: 'b23psfz70djp',
+    spanId: '8052318487995615317',
+    abortController: AbortController { signal: AbortSignal { aborted: true } },
+    route: Route { path: '/*', stack: [Array], methods: [Object] },
+    Symbol(shapeMode): true,
+    Symbol(kCapture): false,
+    Symbol(kHeaders): {
+      host: 'us-central1-segunda-mano-51708.cloudfunctions.net',
+      accept: '*/*',
+      'content-type': 'application/json',
+      'user-agent': 'Expo/54.0.6 CFNetwork/3860.100.1 Darwin/25.2.0',
+      priority: 'u=3, i',
+      'accept-language': 'en-US,en;q=0.9',
+      'content-length': '68',
+      authorization: 'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjNiMDk1NzQ3YmY4MzMxZWE0YWQ1M2YzNzBjNjMyNjAxNzliMGQyM2EiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vc2VndW5kYS1tYW5vLTUxNzA4IiwiYXVkIjoic2VndW5kYS1tYW5vLTUxNzA4IiwiYXV0aF90aW1lIjoxNzc2OTE5OTEzLCJ1c2VyX2lkIjoiS2V4M3UwVjE1UGRDUmhYcVd5MHNPZ1cxWng3MyIsInN1YiI6IktleDN1MFYxNVBkQ1JoWHFXeTBzT2dXMVp4NzMiLCJpYXQiOjE3NzY5MTk5MTMsImV4cCI6MTc3NjkyMzUxMywiZW1haWwiOiJjaGFtbWVuZGV6OTI5MDVAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImZpcmViYXNlIjp7ImlkZW50aXRpZXMiOnsiZW1haWwiOlsiY2hhbW1lbmRlejkyOTA1QGdtYWlsLmNvbSJdfSwic2lnbl9pbl9wcm92aWRlciI6InBhc3N3b3JkIn19.FZTwwqGwNH02vcu7spQqQ-O-Dup4jGudGgUNMjSgpY4Tx1_dwm9R9dazdug1naNLC_kppL76Je4K5KbF5lAfXcXIwiYVgleLVnI-DaQRZwF5YJeuaPgD662FjE42nhVqW6s577UYojZb7McoBPFPHKbrewQAGL7SISz5H9-MIC85VEXb6_rePkKZQq7mRuaKNsxLxn4uAMaWjpdEdfJBDg5kDbx4dywvv2C3Wx8ox0v5hcfj3MnA56u0CRydDv7Tm0_hrHkrMPMVuEZnbTVfc4KVTHLiZCuZpaYxDr8rApcatG__vQfQZiP4qnAfbdWEhX00nAvOBoHM-pOHI7SHDA',
+      'x-cloud-trace-context': '54fbf96afe0d6ad2b310c185770b5653/8052318487995615317;o=1',
+      'x-forwarded-proto': 'https',
+      traceparent: '00-54fbf96afe0d6ad2b310c185770b5653-6fbf9500774a0855-01',
+      'x-forwarded-for': '2001:4453:3bd:be00:cd58:43a6:a666:2735',
+      forwarded: 'for="[2001:4453:3bd:be00:cd58:43a6:a666:2735]";proto=https',
+      'accept-encoding': 'gzip, deflate, br'
+    },
+    Symbol(kHeadersCount): 28,
+    Symbol(kTrailers): null,
+    Symbol(kTrailersCount): 0
+  },
+  auth: {
+    uid: 'Kex3u0V15PdCRhXqWy0sOgW1Zx73',
+    token: {
+      iss: 'https://securetoken.google.com/segunda-mano-51708',
+      aud: 'segunda-mano-51708',
+      auth_time: 1776919913,
+      user_id: 'Kex3u0V15PdCRhXqWy0sOgW1Zx73',
+      sub: 'Kex3u0V15PdCRhXqWy0sOgW1Zx73',
+      iat: 1776919913,
+      exp: 1776923513,
+      email: 'chammendez92905@gmail.com',
+      email_verified: true,
+      firebase: [Object],
+      uid: 'Kex3u0V15PdCRhXqWy0sOgW1Zx73'
+    },
+    rawToken: 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjNiMDk1NzQ3YmY4MzMxZWE0YWQ1M2YzNzBjNjMyNjAxNzliMGQyM2EiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vc2VndW5kYS1tYW5vLTUxNzA4IiwiYXVkIjoic2VndW5kYS1tYW5vLTUxNzA4IiwiYXV0aF90aW1lIjoxNzc2OTE5OTEzLCJ1c2VyX2lkIjoiS2V4M3UwVjE1UGRDUmhYcVd5MHNPZ1cxWng3MyIsInN1YiI6IktleDN1MFYxNVBkQ1JoWHFXeTBzT2dXMVp4NzMiLCJpYXQiOjE3NzY5MTk5MTMsImV4cCI6MTc3NjkyMzUxMywiZW1haWwiOiJjaGFtbWVuZGV6OTI5MDVAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImZpcmViYXNlIjp7ImlkZW50aXRpZXMiOnsiZW1haWwiOlsiY2hhbW1lbmRlejkyOTA1QGdtYWlsLmNvbSJdfSwic2lnbl9pbl9wcm92aWRlciI6InBhc3N3b3JkIn19.FZTwwqGwNH02vcu7spQqQ-O-Dup4jGudGgUNMjSgpY4Tx1_dwm9R9dazdug1naNLC_kppL76Je4K5KbF5lAfXcXIwiYVgleLVnI-DaQRZwF5YJeuaPgD662FjE42nhVqW6s577UYojZb7McoBPFPHKbrewQAGL7SISz5H9-MIC85VEXb6_rePkKZQq7mRuaKNsxLxn4uAMaWjpdEdfJBDg5kDbx4dywvv2C3Wx8ox0v5hcfj3MnA56u0CRydDv7Tm0_hrHkrMPMVuEZnbTVfc4KVTHLiZCuZpaYxDr8rApcatG__vQfQZiP4qnAfbdWEhX00nAvOBoHM-pOHI7SHDA'
+  },
+  data: { amount: 65300, description: 'Order for "school id ko"' },
+  acceptsStreaming: false
+}
 
-2026-04-20T18:06:55.846925Z ? createcheckout: PAYMONGO ERROR: data is not defined
+2026-04-23T05:58:10.919849190Z N paymongoWebhook: {"@type":"type.googleapis.com/google.cloud.audit.AuditLog","status":{},"authenticationInfo":{"principalEmail":"chammendez92905@gmail.com","principalSubject":"user:chammendez92905@gmail.com","oauthInfo":{"oauthClientId":"563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com"}},"requestMetadata":{"callerIp":"2001:4453:3bd:be00:cd58:43a6:a666:2735","callerSuppliedUserAgent":"FirebaseCLI/15.15.0,gzip(gfe),gzip(gfe)","requestAttributes":{"time":"2026-04-23T05:58:10.375226462Z","auth":{}},"destinationAttributes":{}},"serviceName":"cloudfunctions.googleapis.com","methodName":"google.cloud.functions.v2.FunctionService.CreateFunction","authorizationInfo":[{"resource":"projects/segunda-mano-51708/locations/us-central1/functions/paymongoWebhook","permission":"cloudfunctions.functions.create","granted":true,"resourceAttributes":{"service":"cloudfunctions.googleapis.com","name":"projects/segunda-mano-51708/locations/us-central1/functions/paymongoWebhook","type":"cloudfunctions.googleapis.com/Function"},"permissionType":"ADMIN_WRITE"}],"resourceName":"projects/segunda-mano-51708/locations/us-central1/functions/paymongoWebhook","request":{"@type":"type.googleapis.com/google.cloud.functions.v2.CreateFunctionRequest","function":{"service_config":{"available_cpu":"1","max_instance_request_concurrency":80,"available_memory":"256Mi"},"labels":{"firebase-functions-hash":"b2ab85d83131b6a1902bd337732f4ffb4818733b","deployment-tool":"cli-firebase"},"name":"projects/segunda-mano-51708/locations/us-central1/functions/paymongoWebhook","build_config":{"runtime":"nodejs24","source":{},"entry_point":"paymongoWebhook"}},"parent":"projects/segunda-mano-51708/locations/us-central1"},"response":{"@type":"type.googleapis.com/google.longrunning.Operation"},"resourceLocation":{"currentLocations":["us-central1"]}}
+2026-04-23T05:59:11.042446508Z N createCheckout: {"@type":"type.googleapis.com/google.cloud.audit.AuditLog","status":{},"authenticationInfo":{"principalEmail":"chammendez92905@gmail.com","principalSubject":"user:chammendez92905@gmail.com","oauthInfo":{"oauthClientId":"563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com"}},"requestMetadata":{"callerIp":"2001:4453:3bd:be00:cd58:43a6:a666:2735","callerSuppliedUserAgent":"FirebaseCLI/15.15.0,gzip(gfe),gzip(gfe)","requestAttributes":{"time":"2026-04-23T05:59:10.096874274Z","auth":{}},"destinationAttributes":{}},"serviceName":"cloudfunctions.googleapis.com","methodName":"google.cloud.functions.v2.FunctionService.UpdateFunction","authorizationInfo":[{"resource":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","permission":"cloudfunctions.functions.update","granted":true,"resourceAttributes":{"service":"cloudfunctions.googleapis.com","name":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","type":"cloudfunctions.googleapis.com/Function"},"permissionType":"ADMIN_WRITE"}],"resourceName":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","request":{"function":{"name":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","build_config":{"source_token":"Cldwcm9qZWN0cy84MDI3MDUwNjg3NzEvbG9jYXRpb25zL3VzLWNlbnRyYWwxL2J1aWxkcy83MzUzMWQ3MS0wN2NjLTQ2ZDQtYjhlMy0zOTY3ZTMyOTlmZTkSenVzLWNlbnRyYWwxLWRvY2tlci5wa2cuZGV2L3NlZ3VuZGEtbWFuby01MTcwOC9nY2YtYXJ0aWZhY3RzL3NlZ3VuZGEtLW1hbm8tLTUxNzA4X191cy0tY2VudHJhbDFfX3BheW1vbmdvX3dlYmhvb2s6dmVyc2lvbl8xGOOlzaeuFyJLcHJvamVjdHMvc2VndW5kYS1tYW5vLTUxNzA4L2xvY2F0aW9ucy91cy1jZW50cmFsMS9mdW5jdGlvbnMvcGF5bW9uZ29XZWJob29rKgwIq+qmzwYQ4JyziQMyCG5vZGVqczI0OnYKI2djci5pby9nYWUtcnVudGltZXMvbm9kZWpzMjQ6c3RhYmxlEk91cy1jZW50cmFsMS1kb2NrZXIucGtnLmRldi9zZXJ2ZXJsZXNzLXJ1bnRpbWVzL2dvb2dsZS0yNC1mdWxsL3J1bnRpbWVzL25vZGVqczI0QAE=","source":{},"runtime":"nodejs24","entry_point":"createCheckout"},"service_config":{"max_instance_request_concurrency":80,"available_memory":"256Mi","available_cpu":"1"},"labels":{"deployment-callable":"true","firebase-functions-hash":"b2ab85d83131b6a1902bd337732f4ffb4818733b","deployment-tool":"cli-firebase"}},"update_mask":{"paths":["name","build_config.runtime","build_config.entry_point","build_config.source.storage_source.bucket","build_config.source.storage_source.object","build_config.environment_variables","build_config.source_token","service_config.environment_variables","service_config.ingress_settings","service_config.timeout_seconds","service_config.service_account_email","service_config.available_memory","service_config.min_instance_count","service_config.max_instance_count","service_config.max_instance_request_concurrency","service_config.available_cpu","service_config.vpc_connector","service_config.vpc_connector_egress_settings","service_config.direct_vpc_network_interface","service_config.direct_vpc_egress","labels"]},"@type":"type.googleapis.com/google.cloud.functions.v2.UpdateFunctionRequest"},"response":{"@type":"type.googleapis.com/google.longrunning.Operation"},"resourceLocation":{"currentLocations":["us-central1"]}}
+2026-04-23T06:01:46.114317Z I createcheckout: Starting new instance. Reason: DEPLOYMENT_ROLLOUT - Instance started due to traffic shifting between revisions due to deployment, traffic split adjustment, or deployment health check.
+2026-04-23T06:01:48.536682Z I paymongowebhook: Starting new instance. Reason: DEPLOYMENT_ROLLOUT - Instance started due to traffic shifting between revisions due to deployment, traffic split adjustment, or deployment health check.
+2026-04-23T06:01:49.118516Z I createcheckout: Default STARTUP TCP probe succeeded after 1 attempt for container "worker" on port 8080.
+2026-04-23T06:01:51.749666Z I paymongowebhook: Default STARTUP TCP probe succeeded after 1 attempt for container "worker" on port 8080.
+2026-04-23T06:01:53.355944043Z N paymongoWebhook: {"@type":"type.googleapis.com/google.cloud.audit.AuditLog","status":{},"authenticationInfo":{"principalEmail":"chammendez92905@gmail.com","principalSubject":"user:chammendez92905@gmail.com","oauthInfo":{"oauthClientId":"563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com"}},"requestMetadata":{"requestAttributes":{},"destinationAttributes":{}},"serviceName":"cloudfunctions.googleapis.com","methodName":"google.cloud.functions.v2.FunctionService.CreateFunction","resourceName":"projects/segunda-mano-51708/locations/us-central1/functions/paymongoWebhook","response":{"name":"projects/segunda-mano-51708/locations/us-central1/functions/paymongoWebhook","serviceConfig":{"timeoutSeconds":60,"availableCpu":"1","allTrafficOnLatestRevision":true,"ingressSettings":"ALLOW_ALL","serviceAccountEmail":"802705068771-compute@developer.gserviceaccount.com","revision":"paymongowebhook-00001-fuj","availableMemory":"256Mi","maxInstanceRequestConcurrency":80,"uri":"https://paymongowebhook-ybptaipcpq-uc.a.run.app"},"labels":{"deployment-tool":"cli-firebase","firebase-functions-hash":"b2ab85d83131b6a1902bd337732f4ffb4818733b"},"@type":"type.googleapis.com/google.cloud.functions.v2.Function","buildConfig":{"source":{},"dockerRepository":"projects/segunda-mano-51708/locations/us-central1/repositories/gcf-artifacts","serviceAccount":"projects/segunda-mano-51708/serviceAccounts/802705068771-compute@developer.gserviceaccount.com","runtime":"nodejs24","dockerRegistry":"ARTIFACT_REGISTRY","entryPoint":"paymongoWebhook","automaticUpdatePolicy":{}},"createTime":"2026-04-23T05:58:10.897158789Z","url":"https://us-central1-segunda-mano-51708.cloudfunctions.net/paymongoWebhook","updateTime":"2026-04-23T05:58:10.897158789Z","state":"ACTIVE","environment":"GEN_2","satisfiesPzi":true},"resourceLocation":{"currentLocations":["us-central1"]}}
+2026-04-23T06:01:56.682630856Z N createCheckout: {"@type":"type.googleapis.com/google.cloud.audit.AuditLog","status":{},"authenticationInfo":{"principalEmail":"chammendez92905@gmail.com","principalSubject":"user:chammendez92905@gmail.com","oauthInfo":{"oauthClientId":"563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com"}},"requestMetadata":{"requestAttributes":{},"destinationAttributes":{}},"serviceName":"cloudfunctions.googleapis.com","methodName":"google.cloud.functions.v2.FunctionService.UpdateFunction","resourceName":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","response":{"buildConfig":{"dockerRepository":"projects/segunda-mano-51708/locations/us-central1/repositories/gcf-artifacts","automaticUpdatePolicy":{},"serviceAccount":"projects/segunda-mano-51708/serviceAccounts/802705068771-compute@developer.gserviceaccount.com","dockerRegistry":"ARTIFACT_REGISTRY","entryPoint":"createCheckout","source":{},"runtime":"nodejs24"},"createTime":"2026-04-20T15:38:56.531420927Z","labels":{"firebase-functions-hash":"b2ab85d83131b6a1902bd337732f4ffb4818733b","deployment-tool":"cli-firebase","deployment-callable":"true"},"state":"ACTIVE","serviceConfig":{"uri":"https://createcheckout-ybptaipcpq-uc.a.run.app","availableCpu":"1","allTrafficOnLatestRevision":true,"timeoutSeconds":60,"ingressSettings":"ALLOW_ALL","maxInstanceCount":3,"revision":"createcheckout-00020-qiy","availableMemory":"256Mi","maxInstanceRequestConcurrency":80,"secretEnvironmentVariables":[{"version":"2","secret":"PAYMONGO_SECRET_KEY","projectId":"segunda-mano-51708","key":"PAYMONGO_SECRET_KEY"}],"serviceAccountEmail":"802705068771-compute@developer.gserviceaccount.com"},"url":"https://us-central1-segunda-mano-51708.cloudfunctions.net/createCheckout","environment":"GEN_2","updateTime":"2026-04-23T05:59:11.026529535Z","name":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","satisfiesPzi":true,"@type":"type.googleapis.com/google.cloud.functions.v2.Function"},"resourceLocation":{"currentLocations":["us-central1"]}}
+2026-04-23T06:04:19.433097349Z N createCheckout: {"@type":"type.googleapis.com/google.cloud.audit.AuditLog","status":{},"authenticationInfo":{"principalEmail":"chammendez92905@gmail.com","principalSubject":"user:chammendez92905@gmail.com","oauthInfo":{"oauthClientId":"563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com"}},"requestMetadata":{"callerIp":"2001:4453:3bd:be00:cd58:43a6:a666:2735","callerSuppliedUserAgent":"FirebaseCLI/15.15.0,gzip(gfe),gzip(gfe)","requestAttributes":{"time":"2026-04-23T06:04:18.496796784Z","auth":{}},"destinationAttributes":{}},"serviceName":"cloudfunctions.googleapis.com","methodName":"google.cloud.functions.v2.FunctionService.UpdateFunction","authorizationInfo":[{"resource":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","permission":"cloudfunctions.functions.update","granted":true,"resourceAttributes":{"service":"cloudfunctions.googleapis.com","name":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","type":"cloudfunctions.googleapis.com/Function"},"permissionType":"ADMIN_WRITE"}],"resourceName":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","request":{"update_mask":{"paths":["name","build_config.runtime","build_config.entry_point","build_config.source.storage_source.bucket","build_config.source.storage_source.object","build_config.environment_variables","build_config.source_token","service_config.environment_variables","service_config.ingress_settings","service_config.timeout_seconds","service_config.service_account_email","service_config.available_memory","service_config.min_instance_count","service_config.max_instance_count","service_config.max_instance_request_concurrency","service_config.available_cpu","service_config.vpc_connector","service_config.vpc_connector_egress_settings","service_config.direct_vpc_network_interface","service_config.direct_vpc_egress","labels"]},"function":{"labels":{"deployment-tool":"cli-firebase","firebase-functions-hash":"82679e0625e766f900dcda5f7238c1e10a80e026","deployment-callable":"true"},"build_config":{"source":{},"entry_point":"createCheckout","runtime":"nodejs24"},"service_config":{"max_instance_request_concurrency":80,"available_memory":"256Mi","available_cpu":"1"},"name":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout"},"@type":"type.googleapis.com/google.cloud.functions.v2.UpdateFunctionRequest"},"response":{"@type":"type.googleapis.com/google.longrunning.Operation"},"resourceLocation":{"currentLocations":["us-central1"]}}
+2026-04-23T06:05:12.349488Z I createcheckout: Starting new instance. Reason: DEPLOYMENT_ROLLOUT - Instance started due to traffic shifting between revisions due to deployment, traffic split adjustment, or deployment health check.
+2026-04-23T06:05:15.100619Z I createcheckout: Default STARTUP TCP probe succeeded after 1 attempt for container "worker" on port 8080.
+2026-04-23T06:05:17.038868901Z N createCheckout: {"@type":"type.googleapis.com/google.cloud.audit.AuditLog","status":{},"authenticationInfo":{"principalEmail":"chammendez92905@gmail.com","principalSubject":"user:chammendez92905@gmail.com","oauthInfo":{"oauthClientId":"563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com"}},"requestMetadata":{"requestAttributes":{},"destinationAttributes":{}},"serviceName":"cloudfunctions.googleapis.com","methodName":"google.cloud.functions.v2.FunctionService.UpdateFunction","resourceName":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","response":{"name":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","environment":"GEN_2","satisfiesPzi":true,"buildConfig":{"source":{},"dockerRepository":"projects/segunda-mano-51708/locations/us-central1/repositories/gcf-artifacts","dockerRegistry":"ARTIFACT_REGISTRY","automaticUpdatePolicy":{},"entryPoint":"createCheckout","runtime":"nodejs24","serviceAccount":"projects/segunda-mano-51708/serviceAccounts/802705068771-compute@developer.gserviceaccount.com"},"@type":"type.googleapis.com/google.cloud.functions.v2.Function","labels":{"firebase-functions-hash":"82679e0625e766f900dcda5f7238c1e10a80e026","deployment-callable":"true","deployment-tool":"cli-firebase"},"updateTime":"2026-04-23T06:04:19.418661801Z","state":"ACTIVE","serviceConfig":{"maxInstanceCount":3,"availableCpu":"1","timeoutSeconds":60,"availableMemory":"256Mi","secretEnvironmentVariables":[{"secret":"PAYMONGO_SECRET_KEY","key":"PAYMONGO_SECRET_KEY","version":"2","projectId":"segunda-mano-51708"}],"uri":"https://createcheckout-ybptaipcpq-uc.a.run.app","serviceAccountEmail":"802705068771-compute@developer.gserviceaccount.com","revision":"createcheckout-00021-hod","ingressSettings":"ALLOW_ALL","maxInstanceRequestConcurrency":80,"allTrafficOnLatestRevision":true},"createTime":"2026-04-20T15:38:56.531420927Z","url":"https://us-central1-segunda-mano-51708.cloudfunctions.net/createCheckout"},"resourceLocation":{"currentLocations":["us-central1"]}}
+2026-04-23T06:05:17.215507820Z N paymongoWebhook: {"@type":"type.googleapis.com/google.cloud.audit.AuditLog","status":{},"authenticationInfo":{"principalEmail":"chammendez92905@gmail.com","principalSubject":"user:chammendez92905@gmail.com","oauthInfo":{"oauthClientId":"563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com"}},"requestMetadata":{"callerIp":"2001:4453:3bd:be00:cd58:43a6:a666:2735","callerSuppliedUserAgent":"FirebaseCLI/15.15.0,gzip(gfe),gzip(gfe)","requestAttributes":{"time":"2026-04-23T06:05:16.573617630Z","auth":{}},"destinationAttributes":{}},"serviceName":"cloudfunctions.googleapis.com","methodName":"google.cloud.functions.v2.FunctionService.UpdateFunction","authorizationInfo":[{"resource":"projects/segunda-mano-51708/locations/us-central1/functions/paymongoWebhook","permission":"cloudfunctions.functions.update","granted":true,"resourceAttributes":{"service":"cloudfunctions.googleapis.com","name":"projects/segunda-mano-51708/locations/us-central1/functions/paymongoWebhook","type":"cloudfunctions.googleapis.com/Function"},"permissionType":"ADMIN_WRITE"}],"resourceName":"projects/segunda-mano-51708/locations/us-central1/functions/paymongoWebhook","request":{"update_mask":{"paths":["name","build_config.runtime","build_config.entry_point","build_config.source.storage_source.bucket","build_config.source.storage_source.object","build_config.environment_variables","build_config.source_token","service_config.environment_variables","service_config.ingress_settings","service_config.timeout_seconds","service_config.service_account_email","service_config.available_memory","service_config.min_instance_count","service_config.max_instance_count","service_config.max_instance_request_concurrency","service_config.available_cpu","service_config.vpc_connector","service_config.vpc_connector_egress_settings","service_config.direct_vpc_network_interface","service_config.direct_vpc_egress","labels"]},"@type":"type.googleapis.com/google.cloud.functions.v2.UpdateFunctionRequest","function":{"labels":{"deployment-tool":"cli-firebase","firebase-functions-hash":"82679e0625e766f900dcda5f7238c1e10a80e026"},"service_config":{"max_instance_request_concurrency":80,"available_memory":"256Mi","available_cpu":"1"},"build_config":{"source_token":"Cldwcm9qZWN0cy84MDI3MDUwNjg3NzEvbG9jYXRpb25zL3VzLWNlbnRyYWwxL2J1aWxkcy9kZmFhY2VjMS00YzIzLTRjMmMtOTEyOS05N2EzMDIyY2VlZWMSeXVzLWNlbnRyYWwxLWRvY2tlci5wa2cuZGV2L3NlZ3VuZGEtbWFuby01MTcwOC9nY2YtYXJ0aWZhY3RzL3NlZ3VuZGEtLW1hbm8tLTUxNzA4X191cy0tY2VudHJhbDFfX2NyZWF0ZV9jaGVja291dDp2ZXJzaW9uXzEY46XNp64XIkpwcm9qZWN0cy9zZWd1bmRhLW1hbm8tNTE3MDgvbG9jYXRpb25zL3VzLWNlbnRyYWwxL2Z1bmN0aW9ucy9jcmVhdGVDaGVja291dCoMCJLtps8GEOCu/8QCMghub2RlanMyNDp2CiNnY3IuaW8vZ2FlLXJ1bnRpbWVzL25vZGVqczI0OnN0YWJsZRJPdXMtY2VudHJhbDEtZG9ja2VyLnBrZy5kZXYvc2VydmVybGVzcy1ydW50aW1lcy9nb29nbGUtMjQtZnVsbC9ydW50aW1lcy9ub2RlanMyNEAB","source":{},"entry_point":"paymongoWebhook","runtime":"nodejs24"},"name":"projects/segunda-mano-51708/locations/us-central1/functions/paymongoWebhook"}},"response":{"@type":"type.googleapis.com/google.longrunning.Operation"},"resourceLocation":{"currentLocations":["us-central1"]}}
+2026-04-23T06:05:20.792331Z I paymongowebhook: Starting new instance. Reason: DEPLOYMENT_ROLLOUT - Instance started due to traffic shifting between revisions due to deployment, traffic split adjustment, or deployment health check.
+2026-04-23T06:05:24.073218Z I paymongowebhook: Default STARTUP TCP probe succeeded after 1 attempt for container "worker" on port 8080.
+2026-04-23T06:05:26.169949857Z N paymongoWebhook: {"@type":"type.googleapis.com/google.cloud.audit.AuditLog","status":{},"authenticationInfo":{"principalEmail":"chammendez92905@gmail.com","principalSubject":"user:chammendez92905@gmail.com","oauthInfo":{"oauthClientId":"563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com"}},"requestMetadata":{"requestAttributes":{},"destinationAttributes":{}},"serviceName":"cloudfunctions.googleapis.com","methodName":"google.cloud.functions.v2.FunctionService.UpdateFunction","resourceName":"projects/segunda-mano-51708/locations/us-central1/functions/paymongoWebhook","response":{"updateTime":"2026-04-23T06:05:17.203372951Z","buildConfig":{"serviceAccount":"projects/segunda-mano-51708/serviceAccounts/802705068771-compute@developer.gserviceaccount.com","source":{},"runtime":"nodejs24","automaticUpdatePolicy":{},"dockerRegistry":"ARTIFACT_REGISTRY","entryPoint":"paymongoWebhook","dockerRepository":"projects/segunda-mano-51708/locations/us-central1/repositories/gcf-artifacts"},"serviceConfig":{"ingressSettings":"ALLOW_ALL","availableCpu":"1","uri":"https://paymongowebhook-ybptaipcpq-uc.a.run.app","maxInstanceRequestConcurrency":80,"maxInstanceCount":3,"revision":"paymongowebhook-00002-qan","availableMemory":"256Mi","serviceAccountEmail":"802705068771-compute@developer.gserviceaccount.com","timeoutSeconds":60,"allTrafficOnLatestRevision":true},"createTime":"2026-04-23T05:58:10.897158789Z","labels":{"firebase-functions-hash":"82679e0625e766f900dcda5f7238c1e10a80e026","deployment-tool":"cli-firebase"},"@type":"type.googleapis.com/google.cloud.functions.v2.Function","url":"https://us-central1-segunda-mano-51708.cloudfunctions.net/paymongoWebhook","satisfiesPzi":true,"state":"ACTIVE","environment":"GEN_2","name":"projects/segunda-mano-51708/locations/us-central1/functions/paymongoWebhook"},"resourceLocation":{"currentLocations":["us-central1"]}}
+2026-04-23T06:10:12.789561Z I paymongowebhook: 
+2026-04-23T06:10:13.226562Z W paymongowebhook: 
+2026-04-23T06:15:24.009840Z I createcheckout: 
+2026-04-23T06:15:24.146845Z D createcheckout: {"verifications":{"auth":"VALID","app":"MISSING"},"message":"Callable request verification passed"}
+2026-04-23T06:15:24.148004Z ? createcheckout: KEY EXISTS: true
 
-2026-04-20T18:06:55.847916Z E createcheckout: Unhandled error ReferenceError: functions is not defined
-    at /workspace/index.js:62:5
-    at fixedLen (/workspace/node_modules/firebase-functions/lib/v2/providers/https.js:131:34)
-    at /workspace/node_modules/firebase-functions/lib/common/providers/https.js:513:20
-    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+2026-04-23T06:15:24.155691Z ? createcheckout: REQUEST DATA: {
+  rawRequest: <ref *1> IncomingMessage {
+    _events: {
+      close: [Function (anonymous)],
+      error: undefined,
+      data: undefined,
+      end: [Function (anonymous)],
+      readable: undefined,
+      aborted: undefined
+    },
+    _readableState: ReadableState {
+      highWaterMark: 65536,
+      buffer: [],
+      bufferIndex: 0,
+      length: 0,
+      pipes: [],
+      awaitDrainWriters: null,
+      Symbol(kState): 60295036
+    },
+    _maxListeners: undefined,
+    socket: Socket {
+      connecting: false,
+      _hadError: false,
+      _parent: null,
+      _host: null,
+      _closeAfterHandlingError: false,
+      _events: [Object],
+      _readableState: [ReadableState],
+      _writableState: [WritableState],
+      allowHalfOpen: true,
+      _maxListeners: undefined,
+      _eventsCount: 8,
+      _sockname: null,
+      _pendingData: null,
+      _pendingEncoding: '',
+      server: [Server],
+      _server: [Server],
+      parser: [HTTPParser],
+      on: [Function: socketListenerWrap],
+      addListener: [Function: socketListenerWrap],
+      prependListener: [Function: socketListenerWrap],
+      setEncoding: [Function: socketSetEncoding],
+      _paused: false,
+      _httpMessage: [ServerResponse],
+      timeout: 60000,
+      Symbol(async_id_symbol): 39,
+      Symbol(kHandle): [TCP],
+      Symbol(lastWriteQueueSize): 0,
+      Symbol(timeout): Timeout {
+        _idleTimeout: 60000,
+        _idlePrev: [TimersList],
+        _idleNext: [TimersList],
+        _idleStart: 611020,
+        _onTimeout: [Function: bound ],
+        _timerArgs: undefined,
+        _repeat: null,
+        _destroyed: false,
+        Symbol(refed): false,
+        Symbol(kHasPrimitive): false,
+        Symbol(asyncId): 48,
+        Symbol(triggerId): 0,
+        Symbol(kAsyncContextFrame): [AsyncContextFrame [Map]]
+      },
+      Symbol(kBuffer): null,
+      Symbol(kBufferCb): null,
+      Symbol(kBufferGen): null,
+      Symbol(shapeMode): true,
+      Symbol(kCapture): false,
+      Symbol(kSetNoDelay): true,
+      Symbol(kSetKeepAlive): false,
+      Symbol(kSetKeepAliveInitialDelay): 0,
+      Symbol(kBytesRead): 0,
+      Symbol(kBytesWritten): 0
+    },
+    httpVersionMajor: 1,
+    httpVersionMinor: 1,
+    httpVersion: '1.1',
+    complete: true,
+    rawHeaders: [
+      'host',
+      'us-central1-segunda-mano-51708.cloudfunctions.net',
+      'accept',
+      '*/*',
+      'content-type',
+      'application/json',
+      'user-agent',
+      'Expo/54.0.6 CFNetwork/3860.100.1 Darwin/25.2.0',
+      'priority',
+      'u=3, i',
+      'accept-language',
+      'en-US,en;q=0.9',
+      'content-length',
+      '91',
+      'authorization',
+      'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjNiMDk1NzQ3YmY4MzMxZWE0YWQ1M2YzNzBjNjMyNjAxNzliMGQyM2EiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vc2VndW5kYS1tYW5vLTUxNzA4IiwiYXVkIjoic2VndW5kYS1tYW5vLTUxNzA4IiwiYXV0aF90aW1lIjoxNzc2OTI0Nzg2LCJ1c2VyX2lkIjoidTFwZkoxVHNJV1Q4NzdoYnk4M29CTHRjdkJIMyIsInN1YiI6InUxcGZKMVRzSVdUODc3aGJ5ODNvQkx0Y3ZCSDMiLCJpYXQiOjE3NzY5MjQ3ODYsImV4cCI6MTc3NjkyODM4NiwiZW1haWwiOiJzMjAyMzEwMDYwMkBmaXJzdGFzaWEuZWR1LnBoIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImZpcmViYXNlIjp7ImlkZW50aXRpZXMiOnsiZW1haWwiOlsiczIwMjMxMDA2MDJAZmlyc3Rhc2lhLmVkdS5waCJdfSwic2lnbl9pbl9wcm92aWRlciI6InBhc3N3b3JkIn19.r7-AmyKkgMWoau_cPm8s9nwHuWeAh42nT_5AyJLUXmKF6NcXbNkCRH2Ir_JD8AYc1v4ub9t8m1ZFmE8jk4gyubAhVNqgDR3CyyKgPZtlILd2MvPaSVQJZxm59bikE4GfeIFq5nP-jevgk41zvITvn77LZSyRuMwzQg3ehfXXJKtia_9ZPttySuT-Naphep8yKWd8_ouUE3Gm-aGeNPMgPT3TpEXDpmIrmdJWpSVLl3dxdrJd9fRPiJgXVpRyS0aMZkhTF3z1vh2AFuMW3ueacbG1WQve8vR3QoGWgG-wWdO9ofXPhc8lWDsPIfqyOguLraQy5D6DeoN9uVcGiFz5ew',
+      'x-cloud-trace-context',
+      '636dca37990f0ebffc6e00688265738a/11703644948845210089;o=1',
+      'x-forwarded-proto',
+      'https',
+      'traceparent',
+      '00-636dca37990f0ebffc6e00688265738a-a26bb3128936a9e9-01',
+      'x-forwarded-for',
+      '2001:4453:3bd:be00:cd58:43a6:a666:2735',
+      'forwarded',
+      'for="[2001:4453:3bd:be00:cd58:43a6:a666:2735]";proto=https',
+      'accept-encoding',
+      'gzip, deflate, br'
+    ],
+    rawTrailers: [],
+    joinDuplicateHeaders: null,
+    aborted: false,
+    upgrade: false,
+    url: '/',
+    method: 'POST',
+    statusCode: null,
+    statusMessage: null,
+    client: Socket {
+      connecting: false,
+      _hadError: false,
+      _parent: null,
+      _host: null,
+      _closeAfterHandlingError: false,
+      _events: [Object],
+      _readableState: [ReadableState],
+      _writableState: [WritableState],
+      allowHalfOpen: true,
+      _maxListeners: undefined,
+      _eventsCount: 8,
+      _sockname: null,
+      _pendingData: null,
+      _pendingEncoding: '',
+      server: [Server],
+      _server: [Server],
+      parser: [HTTPParser],
+      on: [Function: socketListenerWrap],
+      addListener: [Function: socketListenerWrap],
+      prependListener: [Function: socketListenerWrap],
+      setEncoding: [Function: socketSetEncoding],
+      _paused: false,
+      _httpMessage: [ServerResponse],
+      timeout: 60000,
+      Symbol(async_id_symbol): 39,
+      Symbol(kHandle): [TCP],
+      Symbol(lastWriteQueueSize): 0,
+      Symbol(timeout): Timeout {
+        _idleTimeout: 60000,
+        _idlePrev: [TimersList],
+        _idleNext: [TimersList],
+        _idleStart: 611020,
+        _onTimeout: [Function: bound ],
+        _timerArgs: undefined,
+        _repeat: null,
+        _destroyed: false,
+        Symbol(refed): false,
+        Symbol(kHasPrimitive): false,
+        Symbol(asyncId): 48,
+        Symbol(triggerId): 0,
+        Symbol(kAsyncContextFrame): [AsyncContextFrame [Map]]
+      },
+      Symbol(kBuffer): null,
+      Symbol(kBufferCb): null,
+      Symbol(kBufferGen): null,
+      Symbol(shapeMode): true,
+      Symbol(kCapture): false,
+      Symbol(kSetNoDelay): true,
+      Symbol(kSetKeepAlive): false,
+      Symbol(kSetKeepAliveInitialDelay): 0,
+      Symbol(kBytesRead): 0,
+      Symbol(kBytesWritten): 0
+    },
+    _consuming: true,
+    _dumped: false,
+    next: [Function: next],
+    baseUrl: '',
+    originalUrl: '/',
+    _parsedUrl: Url {
+      protocol: null,
+      slashes: null,
+      auth: null,
+      host: null,
+      port: null,
+      hostname: null,
+      hash: null,
+      search: null,
+      query: null,
+      pathname: '/',
+      path: '/',
+      href: '/',
+      _raw: '/'
+    },
+    params: { '0': '' },
+    query: {},
+    res: ServerResponse {
+      _events: [Object: null prototype],
+      _eventsCount: 4,
+      _maxListeners: undefined,
+      outputData: [],
+      outputSize: 0,
+      writable: true,
+      destroyed: false,
+      _last: false,
+      chunkedEncoding: false,
+      shouldKeepAlive: true,
+      maxRequestsOnConnectionReached: false,
+      _defaultKeepAlive: true,
+      useChunkedEncodingByDefault: true,
+      sendDate: true,
+      _removedConnection: false,
+      _removedContLen: false,
+      _removedTE: false,
+      strictContentLength: false,
+      _contentLength: null,
+      _hasBody: true,
+      _trailer: '',
+      finished: false,
+      _headerSent: false,
+      _closed: false,
+      _header: null,
+      _keepAliveTimeout: 5000,
+      _onPendingData: [Function: bound updateOutgoingData],
+      req: [Circular *1],
+      _sent100: false,
+      _expect_continue: false,
+      _maxRequestsPerSocket: 0,
+      locals: [Object: null prototype],
+      __onFinished: [Function],
+      Symbol(shapeMode): false,
+      Symbol(kCapture): false,
+      Symbol(kBytesWritten): 0,
+      Symbol(kNeedDrain): false,
+      Symbol(corked): 0,
+      Symbol(kChunkedBuffer): [],
+      Symbol(kChunkedLength): 0,
+      Symbol(kSocket): [Socket],
+      Symbol(kOutHeaders): [Object: null prototype],
+      Symbol(errored): null,
+      Symbol(kHighWaterMark): 65536,
+      Symbol(kRejectNonStandardBodyWrites): false,
+      Symbol(kUniqueHeaders): null
+    },
+    body: { data: [Object] },
+    _body: true,
+    length: undefined,
+    _eventsCount: 2,
+    rawBody: <Buffer 7b 22 64 61 74 61 22 3a 7b 22 61 6d 6f 75 6e 74 22 3a 31 30 30 2c 22 64 65 73 63 72 69 70 74 69 6f 6e 22 3a 22 4f 72 64 65 72 20 66 6f 72 20 5c 22 74 ... 41 more bytes>,
+    executionId: 'b37yc5w1grbj',
+    spanId: '11703644948845210089',
+    abortController: AbortController { signal: AbortSignal { aborted: false } },
+    route: Route { path: '/*', stack: [Array], methods: [Object] },
+    Symbol(shapeMode): true,
+    Symbol(kCapture): false,
+    Symbol(kHeaders): {
+      host: 'us-central1-segunda-mano-51708.cloudfunctions.net',
+      accept: '*/*',
+      'content-type': 'application/json',
+      'user-agent': 'Expo/54.0.6 CFNetwork/3860.100.1 Darwin/25.2.0',
+      priority: 'u=3, i',
+      'accept-language': 'en-US,en;q=0.9',
+      'content-length': '91',
+      authorization: 'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjNiMDk1NzQ3YmY4MzMxZWE0YWQ1M2YzNzBjNjMyNjAxNzliMGQyM2EiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vc2VndW5kYS1tYW5vLTUxNzA4IiwiYXVkIjoic2VndW5kYS1tYW5vLTUxNzA4IiwiYXV0aF90aW1lIjoxNzc2OTI0Nzg2LCJ1c2VyX2lkIjoidTFwZkoxVHNJV1Q4NzdoYnk4M29CTHRjdkJIMyIsInN1YiI6InUxcGZKMVRzSVdUODc3aGJ5ODNvQkx0Y3ZCSDMiLCJpYXQiOjE3NzY5MjQ3ODYsImV4cCI6MTc3NjkyODM4NiwiZW1haWwiOiJzMjAyMzEwMDYwMkBmaXJzdGFzaWEuZWR1LnBoIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImZpcmViYXNlIjp7ImlkZW50aXRpZXMiOnsiZW1haWwiOlsiczIwMjMxMDA2MDJAZmlyc3Rhc2lhLmVkdS5waCJdfSwic2lnbl9pbl9wcm92aWRlciI6InBhc3N3b3JkIn19.r7-AmyKkgMWoau_cPm8s9nwHuWeAh42nT_5AyJLUXmKF6NcXbNkCRH2Ir_JD8AYc1v4ub9t8m1ZFmE8jk4gyubAhVNqgDR3CyyKgPZtlILd2MvPaSVQJZxm59bikE4GfeIFq5nP-jevgk41zvITvn77LZSyRuMwzQg3ehfXXJKtia_9ZPttySuT-Naphep8yKWd8_ouUE3Gm-aGeNPMgPT3TpEXDpmIrmdJWpSVLl3dxdrJd9fRPiJgXVpRyS0aMZkhTF3z1vh2AFuMW3ueacbG1WQve8vR3QoGWgG-wWdO9ofXPhc8lWDsPIfqyOguLraQy5D6DeoN9uVcGiFz5ew',
+      'x-cloud-trace-context': '636dca37990f0ebffc6e00688265738a/11703644948845210089;o=1',
+      'x-forwarded-proto': 'https',
+      traceparent: '00-636dca37990f0ebffc6e00688265738a-a26bb3128936a9e9-01',
+      'x-forwarded-for': '2001:4453:3bd:be00:cd58:43a6:a666:2735',
+      forwarded: 'for="[2001:4453:3bd:be00:cd58:43a6:a666:2735]";proto=https',
+      'accept-encoding': 'gzip, deflate, br'
+    },
+    Symbol(kHeadersCount): 28,
+    Symbol(kTrailers): null,
+    Symbol(kTrailersCount): 0
+  },
+  auth: {
+    uid: 'u1pfJ1TsIWT877hby83oBLtcvBH3',
+    token: {
+      iss: 'https://securetoken.google.com/segunda-mano-51708',
+      aud: 'segunda-mano-51708',
+      auth_time: 1776924786,
+      user_id: 'u1pfJ1TsIWT877hby83oBLtcvBH3',
+      sub: 'u1pfJ1TsIWT877hby83oBLtcvBH3',
+      iat: 1776924786,
+      exp: 1776928386,
+      email: 's2023100602@firstasia.edu.ph',
+      email_verified: true,
+      firebase: [Object],
+      uid: 'u1pfJ1TsIWT877hby83oBLtcvBH3'
+    },
+    rawToken: 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjNiMDk1NzQ3YmY4MzMxZWE0YWQ1M2YzNzBjNjMyNjAxNzliMGQyM2EiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vc2VndW5kYS1tYW5vLTUxNzA4IiwiYXVkIjoic2VndW5kYS1tYW5vLTUxNzA4IiwiYXV0aF90aW1lIjoxNzc2OTI0Nzg2LCJ1c2VyX2lkIjoidTFwZkoxVHNJV1Q4NzdoYnk4M29CTHRjdkJIMyIsInN1YiI6InUxcGZKMVRzSVdUODc3aGJ5ODNvQkx0Y3ZCSDMiLCJpYXQiOjE3NzY5MjQ3ODYsImV4cCI6MTc3NjkyODM4NiwiZW1haWwiOiJzMjAyMzEwMDYwMkBmaXJzdGFzaWEuZWR1LnBoIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImZpcmViYXNlIjp7ImlkZW50aXRpZXMiOnsiZW1haWwiOlsiczIwMjMxMDA2MDJAZmlyc3Rhc2lhLmVkdS5waCJdfSwic2lnbl9pbl9wcm92aWRlciI6InBhc3N3b3JkIn19.r7-AmyKkgMWoau_cPm8s9nwHuWeAh42nT_5AyJLUXmKF6NcXbNkCRH2Ir_JD8AYc1v4ub9t8m1ZFmE8jk4gyubAhVNqgDR3CyyKgPZtlILd2MvPaSVQJZxm59bikE4GfeIFq5nP-jevgk41zvITvn77LZSyRuMwzQg3ehfXXJKtia_9ZPttySuT-Naphep8yKWd8_ouUE3Gm-aGeNPMgPT3TpEXDpmIrmdJWpSVLl3dxdrJd9fRPiJgXVpRyS0aMZkhTF3z1vh2AFuMW3ueacbG1WQve8vR3QoGWgG-wWdO9ofXPhc8lWDsPIfqyOguLraQy5D6DeoN9uVcGiFz5ew'
+  },
+  data: {
+    amount: 100,
+    description: 'Order for "test"',
+    orderId: 'pcW6DhSWbdM4N06dgMLq'
+  },
+  acceptsStreaming: false
+}
+
+2026-04-23T06:16:07.791874Z I paymongowebhook: 
+2026-04-23T06:16:07.837108Z ? paymongowebhook: No orderId found
+
+2026-04-23T06:24:51.123368773Z N createCheckout: {"@type":"type.googleapis.com/google.cloud.audit.AuditLog","status":{},"authenticationInfo":{"principalEmail":"chammendez92905@gmail.com","principalSubject":"user:chammendez92905@gmail.com","oauthInfo":{"oauthClientId":"563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com"}},"requestMetadata":{"callerIp":"2001:4453:3bd:be00:cd58:43a6:a666:2735","callerSuppliedUserAgent":"FirebaseCLI/15.15.0,gzip(gfe),gzip(gfe)","requestAttributes":{"time":"2026-04-23T06:24:50.222989078Z","auth":{}},"destinationAttributes":{}},"serviceName":"cloudfunctions.googleapis.com","methodName":"google.cloud.functions.v2.FunctionService.UpdateFunction","authorizationInfo":[{"resource":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","permission":"cloudfunctions.functions.update","granted":true,"resourceAttributes":{"service":"cloudfunctions.googleapis.com","name":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","type":"cloudfunctions.googleapis.com/Function"},"permissionType":"ADMIN_WRITE"}],"resourceName":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","request":{"@type":"type.googleapis.com/google.cloud.functions.v2.UpdateFunctionRequest","function":{"service_config":{"available_memory":"256Mi","available_cpu":"1","max_instance_request_concurrency":80},"name":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","labels":{"firebase-functions-hash":"4b92bbf4a8f7d1f22e5c9dbbf1b37d11ed5904c2","deployment-callable":"true","deployment-tool":"cli-firebase"},"build_config":{"source":{},"runtime":"nodejs24","entry_point":"createCheckout"}},"update_mask":{"paths":["name","build_config.runtime","build_config.entry_point","build_config.source.storage_source.bucket","build_config.source.storage_source.object","build_config.environment_variables","build_config.source_token","service_config.environment_variables","service_config.ingress_settings","service_config.timeout_seconds","service_config.service_account_email","service_config.available_memory","service_config.min_instance_count","service_config.max_instance_count","service_config.max_instance_request_concurrency","service_config.available_cpu","service_config.vpc_connector","service_config.vpc_connector_egress_settings","service_config.direct_vpc_network_interface","service_config.direct_vpc_egress","labels"]}},"response":{"@type":"type.googleapis.com/google.longrunning.Operation"},"resourceLocation":{"currentLocations":["us-central1"]}}
+2026-04-23T06:25:41.352152556Z N paymongoWebhook: {"@type":"type.googleapis.com/google.cloud.audit.AuditLog","status":{},"authenticationInfo":{"principalEmail":"chammendez92905@gmail.com","principalSubject":"user:chammendez92905@gmail.com","oauthInfo":{"oauthClientId":"563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com"}},"requestMetadata":{"callerIp":"2001:4453:3bd:be00:cd58:43a6:a666:2735","callerSuppliedUserAgent":"FirebaseCLI/15.15.0,gzip(gfe),gzip(gfe)","requestAttributes":{"time":"2026-04-23T06:25:40.583998296Z","auth":{}},"destinationAttributes":{}},"serviceName":"cloudfunctions.googleapis.com","methodName":"google.cloud.functions.v2.FunctionService.UpdateFunction","authorizationInfo":[{"resource":"projects/segunda-mano-51708/locations/us-central1/functions/paymongoWebhook","permission":"cloudfunctions.functions.update","granted":true,"resourceAttributes":{"service":"cloudfunctions.googleapis.com","name":"projects/segunda-mano-51708/locations/us-central1/functions/paymongoWebhook","type":"cloudfunctions.googleapis.com/Function"},"permissionType":"ADMIN_WRITE"}],"resourceName":"projects/segunda-mano-51708/locations/us-central1/functions/paymongoWebhook","request":{"function":{"labels":{"firebase-functions-hash":"4b92bbf4a8f7d1f22e5c9dbbf1b37d11ed5904c2","deployment-tool":"cli-firebase"},"name":"projects/segunda-mano-51708/locations/us-central1/functions/paymongoWebhook","service_config":{"max_instance_request_concurrency":80,"available_memory":"256Mi","available_cpu":"1"},"build_config":{"runtime":"nodejs24","entry_point":"paymongoWebhook","source_token":"Cldwcm9qZWN0cy84MDI3MDUwNjg3NzEvbG9jYXRpb25zL3VzLWNlbnRyYWwxL2J1aWxkcy9kMjAzMzJjZi01ZTBlLTQ1OWMtYjQ5Yy01NjgxNjNiN2Q3MjISeXVzLWNlbnRyYWwxLWRvY2tlci5wa2cuZGV2L3NlZ3VuZGEtbWFuby01MTcwOC9nY2YtYXJ0aWZhY3RzL3NlZ3VuZGEtLW1hbm8tLTUxNzA4X191cy0tY2VudHJhbDFfX2NyZWF0ZV9jaGVja291dDp2ZXJzaW9uXzEY46XNp64XIkpwcm9qZWN0cy9zZWd1bmRhLW1hbm8tNTE3MDgvbG9jYXRpb25zL3VzLWNlbnRyYWwxL2Z1bmN0aW9ucy9jcmVhdGVDaGVja291dCoLCOD2ps8GEND8/WMyCG5vZGVqczI0OnYKI2djci5pby9nYWUtcnVudGltZXMvbm9kZWpzMjQ6c3RhYmxlEk91cy1jZW50cmFsMS1kb2NrZXIucGtnLmRldi9zZXJ2ZXJsZXNzLXJ1bnRpbWVzL2dvb2dsZS0yNC1mdWxsL3J1bnRpbWVzL25vZGVqczI0QAE=","source":{}}},"@type":"type.googleapis.com/google.cloud.functions.v2.UpdateFunctionRequest","update_mask":{"paths":["name","build_config.runtime","build_config.entry_point","build_config.source.storage_source.bucket","build_config.source.storage_source.object","build_config.environment_variables","build_config.source_token","service_config.environment_variables","service_config.ingress_settings","service_config.timeout_seconds","service_config.service_account_email","service_config.available_memory","service_config.min_instance_count","service_config.max_instance_count","service_config.max_instance_request_concurrency","service_config.available_cpu","service_config.vpc_connector","service_config.vpc_connector_egress_settings","service_config.direct_vpc_network_interface","service_config.direct_vpc_egress","labels"]}},"response":{"@type":"type.googleapis.com/google.longrunning.Operation"},"resourceLocation":{"currentLocations":["us-central1"]}}
+2026-04-23T06:25:42.984203Z I createcheckout: Starting new instance. Reason: DEPLOYMENT_ROLLOUT - Instance started due to traffic shifting between revisions due to deployment, traffic split adjustment, or deployment health check.
+2026-04-23T06:25:44.834241Z I paymongowebhook: Starting new instance. Reason: DEPLOYMENT_ROLLOUT - Instance started due to traffic shifting between revisions due to deployment, traffic split adjustment, or deployment health check.
+2026-04-23T06:25:45.190390Z I createcheckout: Default STARTUP TCP probe succeeded after 1 attempt for container "worker" on port 8080.
+2026-04-23T06:25:46.787656566Z N createCheckout: {"@type":"type.googleapis.com/google.cloud.audit.AuditLog","status":{},"authenticationInfo":{"principalEmail":"chammendez92905@gmail.com","principalSubject":"user:chammendez92905@gmail.com","oauthInfo":{"oauthClientId":"563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com"}},"requestMetadata":{"requestAttributes":{},"destinationAttributes":{}},"serviceName":"cloudfunctions.googleapis.com","methodName":"google.cloud.functions.v2.FunctionService.UpdateFunction","resourceName":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","response":{"@type":"type.googleapis.com/google.cloud.functions.v2.Function","environment":"GEN_2","createTime":"2026-04-20T15:38:56.531420927Z","buildConfig":{"dockerRegistry":"ARTIFACT_REGISTRY","serviceAccount":"projects/segunda-mano-51708/serviceAccounts/802705068771-compute@developer.gserviceaccount.com","dockerRepository":"projects/segunda-mano-51708/locations/us-central1/repositories/gcf-artifacts","automaticUpdatePolicy":{},"source":{},"entryPoint":"createCheckout","runtime":"nodejs24"},"url":"https://us-central1-segunda-mano-51708.cloudfunctions.net/createCheckout","satisfiesPzi":true,"serviceConfig":{"maxInstanceCount":3,"uri":"https://createcheckout-ybptaipcpq-uc.a.run.app","ingressSettings":"ALLOW_ALL","allTrafficOnLatestRevision":true,"availableCpu":"1","timeoutSeconds":60,"secretEnvironmentVariables":[{"secret":"PAYMONGO_SECRET_KEY","projectId":"segunda-mano-51708","version":"2","key":"PAYMONGO_SECRET_KEY"}],"revision":"createcheckout-00022-ril","maxInstanceRequestConcurrency":80,"serviceAccountEmail":"802705068771-compute@developer.gserviceaccount.com","availableMemory":"256Mi"},"labels":{"firebase-functions-hash":"4b92bbf4a8f7d1f22e5c9dbbf1b37d11ed5904c2","deployment-tool":"cli-firebase","deployment-callable":"true"},"state":"ACTIVE","name":"projects/segunda-mano-51708/locations/us-central1/functions/createCheckout","updateTime":"2026-04-23T06:24:51.108359358Z"},"resourceLocation":{"currentLocations":["us-central1"]}}
+2026-04-23T06:25:47.882389Z I paymongowebhook: Default STARTUP TCP probe succeeded after 1 attempt for container "worker" on port 8080.
+2026-04-23T06:25:48.932863Z I paymongowebhook: Starting new instance. Reason: AUTOSCALING - Instance started due to configured scaling factors (e.g. CPU utilization, request throughput, etc.) or no existing capacity for current traffic.
+2026-04-23T06:25:49.517225308Z N paymongoWebhook: {"@type":"type.googleapis.com/google.cloud.audit.AuditLog","status":{},"authenticationInfo":{"principalEmail":"chammendez92905@gmail.com","principalSubject":"user:chammendez92905@gmail.com","oauthInfo":{"oauthClientId":"563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com"}},"requestMetadata":{"requestAttributes":{},"destinationAttributes":{}},"serviceName":"cloudfunctions.googleapis.com","methodName":"google.cloud.functions.v2.FunctionService.UpdateFunction","resourceName":"projects/segunda-mano-51708/locations/us-central1/functions/paymongoWebhook","response":{"state":"ACTIVE","@type":"type.googleapis.com/google.cloud.functions.v2.Function","serviceConfig":{"allTrafficOnLatestRevision":true,"timeoutSeconds":60,"availableMemory":"256Mi","uri":"https://paymongowebhook-ybptaipcpq-uc.a.run.app","availableCpu":"1","revision":"paymongowebhook-00003-goq","ingressSettings":"ALLOW_ALL","maxInstanceRequestConcurrency":80,"serviceAccountEmail":"802705068771-compute@developer.gserviceaccount.com","maxInstanceCount":3},"environment":"GEN_2","name":"projects/segunda-mano-51708/locations/us-central1/functions/paymongoWebhook","updateTime":"2026-04-23T06:25:41.338030616Z","satisfiesPzi":true,"buildConfig":{"serviceAccount":"projects/segunda-mano-51708/serviceAccounts/802705068771-compute@developer.gserviceaccount.com","dockerRepository":"projects/segunda-mano-51708/locations/us-central1/repositories/gcf-artifacts","entryPoint":"paymongoWebhook","dockerRegistry":"ARTIFACT_REGISTRY","source":{},"runtime":"nodejs24","automaticUpdatePolicy":{}},"createTime":"2026-04-23T05:58:10.897158789Z","url":"https://us-central1-segunda-mano-51708.cloudfunctions.net/paymongoWebhook","labels":{"firebase-functions-hash":"4b92bbf4a8f7d1f22e5c9dbbf1b37d11ed5904c2","deployment-tool":"cli-firebase"}},"resourceLocation":{"currentLocations":["us-central1"]}}
+2026-04-23T06:25:51.333952Z I paymongowebhook: Default STARTUP TCP probe succeeded after 1 attempt for container "worker" on port 8080.
