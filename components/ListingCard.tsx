@@ -19,7 +19,6 @@ export default function ListingCard({ item, onPress }: Props) {
           : `data:image/jpeg;base64,${item.thumbnail}`
         : img_placeholder;
 
-      console.log(item.type, item.id);
 
       return (
         <Image
