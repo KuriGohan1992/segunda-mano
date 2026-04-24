@@ -49,8 +49,6 @@ export default function Home() {
       q = query(collection(db, 'listings'), where('available', '==', true), where('type', '==', mode), orderBy('createdAt', 'desc'))
     }
 
-
-
     const unsub = onSnapshot(q, (snapshot) => {
       const docs = snapshot.docs.map(doc => {
         const d = doc.data() as any;
