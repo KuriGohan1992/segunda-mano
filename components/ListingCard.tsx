@@ -40,9 +40,9 @@ export default function ListingCard({ item, onPress }: Props) {
       <View style={styles.meta}>
         <Text numberOfLines={2} style={styles.title}>
           {item.type === "lf" && (
-            <Text style={styles.lfTag}>[LF] </Text>
+            <Text style={styles.lfTag}>[LF]</Text>
           )}
-          {item.title})
+          {item.title}
         </Text>
         <Text style={styles.condition}>{item.condition}</Text>
         <Text style={styles.price}>₱ {Number(item.price || 0).toLocaleString()}</Text>

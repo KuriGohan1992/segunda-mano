@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, FlatList, ActivityIndicator, TouchableOpacity, StyleSheet, Dimensions, ScrollView, Image } from 'react-native';
+import { View, Text, TextInput, FlatList, ActivityIndicator, TouchableOpacity, StyleSheet, Dimensions, ScrollView, Image, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import ListingCard from '../../components/ListingCard';
 import { db } from '../../firebase';
-import { collection, query, orderBy, onSnapshot, doc, getDoc } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, doc, getDoc, updateDoc, arrayRemove } from 'firebase/firestore';
 import { CATEGORIES } from '../../constants/categories';
 import { Listing } from '../../type/listing';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -102,6 +102,29 @@ export default function Carton() {
 
   filter();
 
+  const handleRemoveFromCarton = (itemId: string) => {
+    Alert.alert(
+      "Remove Item",
+      "Remove this item from Carton?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Remove",
+          style: "destructive",
+          onPress: async () => {
+            if (!uid) return;
+
+            setCarton(prev => prev.filter(id => id !== itemId));
+
+            await updateDoc(doc(db, "users", uid), {
+              carton: arrayRemove(itemId),
+            });
+          }
+        }
+      ]
+    );
+  };
+
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -194,7 +217,11 @@ export default function Carton() {
               keyExtractor={i => i.id}
               renderItem={({ item }) => (
                 <View style={{ width: CARD_WIDTH, marginHorizontal: CARD_MARGIN }}>
-                  <CartCard item={item} onPress={() => router.push(`/listing/${item.id}`)} />
+                  <CartCard
+                    item={item}
+                    onPress={() => router.push(`/listing/${item.id}`)}
+                    onDelete={() => handleRemoveFromCarton(item.id)}
+                  />
                 </View>
               )}
               numColumns={1}

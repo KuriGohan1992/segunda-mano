@@ -1,41 +1,49 @@
 import React from "react";
-import { View, Text, Image, Pressable, StyleSheet } from "react-native";
+import { View, Text, Image, Pressable, StyleSheet, TouchableOpacity } from "react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { Listing } from "../type/listing";
 import { img_placeholder } from "../constants/img_placeholder";
 
 type Props = {
   item: Listing;
   onPress?: (item: Listing) => void;
+  onDelete?: () => void;
 };
 
-export default function CartCard({ item, onPress }: Props) {
+export default function CartCard({ item, onPress, onDelete }: Props) {
+  const imageUri = item.thumbnail
+    ? item.thumbnail.startsWith("http")
+      ? item.thumbnail
+      : `data:image/jpeg;base64,${item.thumbnail}`
+    : img_placeholder;
+
   return (
     <Pressable style={styles.card} onPress={() => onPress?.(item)}>
-      {(() => {
-        const imageUri = item.thumbnail
-          ? item.thumbnail.startsWith("http")
-            ? item.thumbnail
-            : `data:image/jpeg;base64,${item.thumbnail}`
-          : img_placeholder;
+      
+      <TouchableOpacity
+          style={styles.trashBtn}
+          onPress={(e) => {
+            e.stopPropagation();
+            onDelete?.();
+          }}
+        >
+          <Ionicons name="close" size={18} color="#DC143C" />
+        </TouchableOpacity>
 
-        return (
-          <View style={styles.imageWrapper}>
-            <Image
-              source={{ uri: imageUri }}
-              style={styles.image}
-            />
-            {!item.available && (
-              <View style={styles.overlay}>
-                <View style={styles.badge}>
-                  <Text style={styles.badgeText}>
-                    {item.type === "lf" ? "FOUND" : "SOLD"}
-                  </Text>
-                </View>
-              </View>
-            )}
+      <View style={styles.imageWrapper}>
+        <Image source={{ uri: imageUri }} style={styles.image} />
+
+        {!item.available && (
+          <View style={styles.overlay}>
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>
+                {item.type === "lf" ? "FOUND" : "SOLD"}
+              </Text>
+            </View>
           </View>
-        );
-      })()}
+        )}
+      </View>
+
       <View style={styles.meta}>
         <Text numberOfLines={2} style={styles.title}>
           {item.type === "lf" && (
@@ -43,10 +51,13 @@ export default function CartCard({ item, onPress }: Props) {
           )}
           {item.title}
         </Text>
+
         <Text style={styles.condition}>{item.condition}</Text>
+
         <Text style={styles.price}>
           ₱ {Number(item.price || 0).toLocaleString()}
         </Text>
+
         <Text style={styles.location}>{item.location || ""}</Text>
       </View>
     </Pressable>
@@ -68,6 +79,19 @@ const styles = StyleSheet.create({
     height: 120,
     borderWidth: 2,
     borderColor: "#eee",
+    position: "relative",
+  },
+
+  trashBtn: {
+    position: "absolute",
+    top: 4,
+    right: 4,
+    zIndex: 10,
+    padding: 2,
+  },
+
+  imageWrapper: {
+    position: "relative",
   },
   image: {
     backgroundColor: "black",
@@ -86,17 +110,34 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "flex-start",
   },
-  title: { fontSize: 16, fontWeight: "600" },
-  price: { marginTop: 4, fontSize: 16, fontWeight: "700", color: "#DC143C" },
-  condition: { marginTop: 4, color: "#000", fontSize: 13 },
-  location: { marginTop: 8, color: "#666", fontSize: 13 },
-  lfTag: {
-    color: "#999",     
-    fontWeight: "700", 
+
+  title: {
+    fontSize: 16,
+    fontWeight: "600",
   },
 
-  imageWrapper: {
-    position: "relative",
+  price: {
+    marginTop: 4,
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#DC143C",
+  },
+
+  condition: {
+    marginTop: 4,
+    color: "#000",
+    fontSize: 13,
+  },
+
+  location: {
+    marginTop: 8,
+    color: "#666",
+    fontSize: 13,
+  },
+
+  lfTag: {
+    color: "#999",
+    fontWeight: "700",
   },
 
   overlay: {
@@ -114,8 +155,6 @@ const styles = StyleSheet.create({
     height: 50,
     width: 50,
     backgroundColor: "rgba(0,0,0,0.7)",
-    paddingVertical: 6,
-    // paddingHorizontal: 14,
     borderRadius: 30,
     justifyContent: "center",
     alignItems: "center",
