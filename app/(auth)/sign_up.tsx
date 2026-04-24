@@ -79,10 +79,6 @@ const SignUp = () => {
     console.warn('onPrivacyPolicyPressed')
   }
 
-  const onGooglePressed = () => {
-    console.warn('onGooglePressed')
-  }
-
   const onSignInPressed = () => {
     console.warn('onSignInPressed')
     router.replace("/(auth)")
@@ -145,13 +141,6 @@ const SignUp = () => {
         <Text style={styles.link} onPress={ onTermsOfUsePressed }>Terms of Use</Text> and{" "} 
         <Text style={styles.link} onPress={ onPrivacyPolicyPressed }>Privacy Policy</Text>
       </Text>
-
-      <CustomButton
-        text="Continue with Google"
-        onPress={onGooglePressed}
-        bgColor="#fae9ea"
-        fgColor="#dd4d44"
-      />
 
       <CustomButton
         text="Already have an account? Sign in"
