@@ -15,7 +15,18 @@ exports.createCheckout = functions.https.onCall(async (data, context) => {
       );
     }
 
-    const { amount, description, orderId } = data.data || data;
+    const { 
+      userId,
+      sellerId,
+      listingId,
+      amount,
+      listingName,
+      address,
+      specificAddress,
+      createdAt,
+      description,
+      orderId 
+    } = data.data;
     // const { amount, description, orderId } = data;
     console.log("Order: ", orderId)
 
@@ -44,7 +55,14 @@ exports.createCheckout = functions.https.onCall(async (data, context) => {
             cancel_url: "https://example.com/cancel",
 
             metadata: {
-              orderId: orderId
+              orderId: orderId,
+              userId: userId,
+              sellerId: sellerId,
+              listingId: listingId,
+              amount: amount,
+              listingName: listingName,
+              address: address,
+              specificAddress: specificAddress,
             }
           },
         },
@@ -86,6 +104,7 @@ exports.paymongoWebhook = functions.https.onRequest(async (req, res) => {
 
     if (eventType === "checkout_session.payment.paid") {
       const attributes = event.data?.attributes?.data?.attributes;
+      const metadata = attributes?.metadata || {};
 
       let orderId = attributes?.metadata?.orderId;
 
@@ -99,16 +118,54 @@ exports.paymongoWebhook = functions.https.onRequest(async (req, res) => {
         return res.sendStatus(200);
       }
 
-      await db.collection("orders").doc(orderId).update({
-        status: "Paid",
-        paidAt: admin.firestore.FieldValue.serverTimestamp(),
-      });
-      
-      const orderDoc = await db.collection("orders").doc(orderId).get();
-      const orderData = orderDoc.data();
+      const orderRef = db.collection("orders").doc(orderId);
 
+      const existing = await orderRef.get();
+      if (existing.exists && existing.data().paymentStatus === "PAID") {
+        console.log("Already processed");
+        return res.sendStatus(200);
+      }
+
+      await orderRef.set({
+        userId: metadata.userId,
+        sellerId: metadata.sellerId,
+        listingId: metadata.listingId,
+        amount: metadata.amount ? metadata.amount / 100 : 0,
+        paymentStatus: "PAID",
+        deliveryStatus: "PLACED",
+        paymentMethod: "ONLINE",
+        listingName: metadata.listingName,
+        address: metadata.address,
+        specificAddress: metadata.specificAddress,
+        isCompleted: false,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        paidAt: admin.firestore.FieldValue.serverTimestamp(),
+      }, { merge: true });
+      // await db.collection("orders").doc(orderId).set({
+      //   userId,
+      //   sellerId,
+      //   listingId,
+      //   amount: amount/100,
+      //   paymentStatus: "PAID",
+      //   deliveryStatus: "PLACED",
+      //   paymentMethod: "ONLINE",
+      //   listingName,
+      //   address,
+      //   specificAddress,
+      //   isCompleted,
+      //   createdAt,
+      //   paidAt: admin.firestore.FieldValue.serverTimestamp(),
+      // });
+      
+      // const orderDoc = await db.collection("orders").doc(orderId).get();
+      // const orderData = orderDoc.data();
+      if (!metadata.listingId) {
+        console.log("Missing listingId in metadata");
+        return res.sendStatus(200);
+      }
+       
       await db.collection("listings")
-        .doc(orderData.listingId)
+        .doc(metadata.listingId)
         .update({
           available: false,
         });

@@ -137,26 +137,26 @@ export default function Checkout() {
     console.log(orderId);
 
     try {
-      await setDoc(orderRef, {
-        userId: uid,
-        sellerId: listing.sellerId,
-        listingId: listing.id,
-        amount: total,
-        status: "Pending",
-        paymentMethod,
-        address,
-        specificAddress,
-        createdAt: serverTimestamp(),
-
-      });
-      await updateDoc(doc(db, "users", uid), {
-        specificAddress,
-      });
-
       if (paymentMethod === "COD") {
-        await updateDoc(orderRef, {
-          status: "Confirmed"
-        })
+        await setDoc(orderRef, {
+          userId: uid,
+          sellerId: listing.sellerId,
+          listingId: listing.id,
+          amount: total,
+          paymentStatus: "COD",
+          deliveryStatus: "PLACED",
+          paymentMethod: "COD",
+          listingName: listing.title,
+          address,
+          specificAddress,
+          isCompleted: false,
+          createdAt: serverTimestamp(),
+          paidAt: null,
+        });
+
+        await updateDoc(doc(db, "users", uid), {
+          specificAddress,
+        });
 
         await updateDoc(doc(db, "listings", listing.id), {
           available: false
@@ -170,7 +170,14 @@ export default function Checkout() {
       }
 
       const res: any = await checkout({
+        userId: uid,
+        sellerId: listing.sellerId,
+        listingId: listing.id,
         amount: Math.round(total * 100),
+        listingName: listing.title,
+        address,
+        specificAddress,
+        isCompleted: false,
         description: `Order for "${listing.title}"`,
         orderId: orderId,
       });

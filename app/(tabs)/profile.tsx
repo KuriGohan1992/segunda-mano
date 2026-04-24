@@ -45,7 +45,7 @@ export default function Profile() {
   const [activeTab, setActiveTab] = useState("listings");
   const [userListings, setUserListings] = useState<Listing[]>([]);
 
-  const tabs = ["listings", "reviews", "about"];
+  const tabs = ["listings", "reviews", "my Orders"];
   const activeIndex = tabs.indexOf(activeTab);
 
   useEffect(() => {
@@ -268,7 +268,7 @@ export default function Profile() {
             <Text>No ratings yet</Text>
           </View>
         </ScrollView>
-      ) : activeTab === "about" ? (
+      ) : activeTab === "my Orders" ? (
         <ScrollView contentContainerStyle={styles.scrollContent}>
           <View style={styles.centerContent}>
             <Text style={{ fontSize: 16, fontWeight: "600", marginBottom: 8 }}>
