@@ -103,6 +103,7 @@ export default function SellerProfile() {
           price: d.price ?? 0,
           sellerId: d.sellerId || "",
           title: d.title || "",
+          type: d.type,
         } as Listing;
       });
 
@@ -146,7 +147,7 @@ export default function SellerProfile() {
         >
           <Ionicons
             name="chevron-back"
-            size={28} // 👈 increase to match 24px bold text
+            size={28} 
             color="#DC143C"
             style={{ marginRight: 6 }}
           />

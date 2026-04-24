@@ -19,12 +19,23 @@ export default function ListingCard({ item, onPress }: Props) {
           : `data:image/jpeg;base64,${item.thumbnail}`
         : img_placeholder;
 
-
+      console.log(item.type);
       return (
-        <Image
-          source={{ uri: imageUri }}
-          style={styles.image}
-        />
+        <View style={styles.imageWrapper}>
+          <Image
+            source={{ uri: imageUri }}
+            style={styles.image}
+          />
+          {!item.available && (
+            <View style={styles.overlay}>
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>
+                  {item.type === "lf" ? "FOUND" : "SOLD"}
+                </Text>
+              </View>
+            </View>
+          )}
+        </View>
       );
     })()}
       <View style={styles.meta}>
@@ -32,11 +43,11 @@ export default function ListingCard({ item, onPress }: Props) {
           {item.type === "lf" && (
             <Text style={styles.lfTag}>[LF] </Text>
           )}
-          {item.title}
+          {item.title})
         </Text>
         <Text style={styles.condition}>{item.condition}</Text>
         <Text style={styles.price}>₱ {Number(item.price || 0).toLocaleString()}</Text>
-        <Text style={styles.location}>{item.location || ''}</Text>
+        <Text style={styles.location}>{item.location || 'Missing Location'}</Text>
       </View>
     </Pressable>
   );
@@ -75,5 +86,37 @@ const styles = StyleSheet.create({
   lfTag: {
     color: "#999",      
     fontWeight: "700",  
+  },
+
+  imageWrapper: {
+    position: "relative",
+  },
+
+  overlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(255,255,255,0.5)",
+  },
+
+  badge: {
+    height: 60,
+    width: 60,
+    backgroundColor: "rgba(0,0,0,0.7)",
+    paddingVertical: 6,
+    // paddingHorizontal: 14,
+    borderRadius: 30,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  badgeText: {
+    color: "#fff",
+    fontWeight: "700",
+    fontSize: 11,
   },
 });

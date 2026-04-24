@@ -39,7 +39,6 @@ export default function Sell() {
   const [openCondition, setOpenCondition] = useState(false);
   const [condition, setCondition] = useState<string | null>(null);
   const { user } = useUser();
-  const [ userLocation, setUserLocation ] = useState<string | null>(null);
   const [imagesBase64, setImagesBase64] = useState<string[]>([]);
   const [mode, setMode] = useState<"sell" | "lf">("sell");
   const pickImage = async () => {
@@ -111,9 +110,7 @@ export default function Sell() {
 
       const userRef = doc(db, "users", user.uid);
       const userSnap = await getDoc(userRef);
-      if (userSnap.exists()) {
-        setUserLocation(userSnap.data().address || "No Location");
-      }
+      const location = userSnap.exists() ? userSnap.data().address : "Missing Location"
 
       await addDoc(collection(db, "listings"), {
         available: true,
@@ -124,12 +121,10 @@ export default function Sell() {
         category,
         condition,
         images: imagesBase64,
-        location: userLocation,
+        location: location,
         sellerId: user.uid,
         createdAt: serverTimestamp(),
       });
-
-      console.log(userLocation);
 
       Alert.alert("Success", "Listing added successfully!", [
         {

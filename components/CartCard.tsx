@@ -18,7 +18,23 @@ export default function CartCard({ item, onPress }: Props) {
             : `data:image/jpeg;base64,${item.thumbnail}`
           : img_placeholder;
 
-        return <Image source={{ uri: imageUri }} style={styles.image} />;
+        return (
+          <View style={styles.imageWrapper}>
+            <Image
+              source={{ uri: imageUri }}
+              style={styles.image}
+            />
+            {!item.available && (
+              <View style={styles.overlay}>
+                <View style={styles.badge}>
+                  <Text style={styles.badgeText}>
+                    {item.type === "lf" ? "FOUND" : "SOLD"}
+                  </Text>
+                </View>
+              </View>
+            )}
+          </View>
+        );
       })()}
       <View style={styles.meta}>
         <Text numberOfLines={2} style={styles.title}>
@@ -77,5 +93,37 @@ const styles = StyleSheet.create({
   lfTag: {
     color: "#999",     
     fontWeight: "700", 
+  },
+
+  imageWrapper: {
+    position: "relative",
+  },
+
+  overlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(255,255,255,0.5)",
+  },
+
+  badge: {
+    height: 50,
+    width: 50,
+    backgroundColor: "rgba(0,0,0,0.7)",
+    paddingVertical: 6,
+    // paddingHorizontal: 14,
+    borderRadius: 30,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  badgeText: {
+    color: "#fff",
+    fontWeight: "700",
+    fontSize: 9,
   },
 });

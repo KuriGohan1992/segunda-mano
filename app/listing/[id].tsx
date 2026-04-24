@@ -51,6 +51,31 @@ export default function ListingDetail() {
     );
     setCurrentImageIndex(slide);
   };
+
+  const onMark = async () => {
+    if (!id) return;
+    Alert.alert(
+      "Resolve Listing", 
+      `This will mark the item as ${isLF ? "found" : "sold"} and close this listing permanently.`,
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: isLF ? "Mark as Found" : "Mark as Sold",
+          style: "destructive",
+          onPress: async () => {
+            await updateDoc(doc(db, "listings", id), {
+              available: false
+            });
+              setListing(prev => prev ? { ...prev, available: false } : prev);
+          }
+        }
+      ],
+      { cancelable: true }
+    )
+  }
   const onDelete = async () => {
     if (!id) return;
 
@@ -208,14 +233,27 @@ export default function ListingDetail() {
                 : `data:image/jpeg;base64,${item}`;
 
               return (
-                <Image
-                  source={{ uri }}
-                  style={{
-                    width: Dimensions.get("window").width,
-                    height: 420,
-                    resizeMode: "cover",
-                  }}
-                />
+                <View style={{ width: Dimensions.get("window").width, height: 420 }}>
+                  <Image
+                    source={{ uri }}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      resizeMode: "cover",
+                      opacity: !listing.available ? 0.5 : 1,
+                    }}
+                  />
+
+                  {!listing.available && (
+                    <View style={styles.soldOverlay}>
+                      <View style={styles.soldBadge}>
+                        <Text style={styles.soldText}>
+                          {listing.type === "lf" ? "FOUND" : "SOLD"}
+                        </Text>
+                      </View>
+                    </View>
+                  )}
+                </View>
               );
             }}
           />
@@ -241,7 +279,7 @@ export default function ListingDetail() {
           <Text style={styles.field}>Description:</Text>
           <Text style={styles.desc}>{description}</Text>
 
-          <Text style={styles.field}>Seller:</Text>
+          <Text style={styles.field}>{isLF ? "Buyer" : "Seller"}:</Text>
 
           <TouchableOpacity
             onPress={() => router.push(`/seller/${sellerId}`)}
@@ -270,110 +308,134 @@ export default function ListingDetail() {
           </TouchableOpacity>
         </View>
       </ScrollView>
-
-      {uid !== sellerId ? (
-        <View style={[styles.footer, { paddingBottom: insets.bottom }]}>
-          <TouchableOpacity
-            style={styles.action}
-            onPress={() => router.push(`/chat/${sellerId}`)}
-          >
-            <Ionicons name="chatbubble-ellipses" size={26} color="#DC143C" />
-            <Text style={styles.label}>Chat with {isLF ? "Poster" : "Seller"}</Text>
-          </TouchableOpacity>
-
-          <View style={styles.divider} />
-
-          <TouchableOpacity
-            style={styles.action}
-            onPress={async () => {
-              if (loading) return;
-              setLoading(true);
-
-              if (uid) {
-                if (inCart) {
-                  setInCart(false);
-                  await updateDoc(doc(db, "users", uid), {
-                    carton: arrayRemove(id),
-                  });
-                  Alert.alert(
-                    "Item Removed",
-                    "This item has been removed from your Carton"
-                  );
-                } else {
-                  setInCart(true);
-                  await updateDoc(doc(db, "users", uid), {
-                    carton: arrayUnion(id),
-                  });
-                  Alert.alert(
-                    "Item Added",
-                    "This item has been added to your Carton"
-                  );
-                }
-              }
-
-              setLoading(false);
-            }}
-          >
-            <FontAwesome5 size={21} name="box-open" color="#DC143C" />
-            <Text style={styles.label}>
-              {inCart ? "Remove Item" : "Add to Carton"}
-            </Text>
-          </TouchableOpacity>
-            {!isLF && (
-            <>
-              <View style={styles.divider} />
+      {listing.available ? (
+        <>
+          {uid !== sellerId ? (
+            <View style={[styles.footer, { paddingBottom: insets.bottom }]}>
               <TouchableOpacity
-                style={styles.primary}
-                onPress={() => router.push(`../checkout/${listing.id}`)}
+                style={styles.action}
+                onPress={() => router.push(`/chat/${sellerId}`)}
               >
-                <FontAwesome5 name="box" size={21} color="#fff" />
+                <Ionicons name="chatbubble-ellipses" size={26} color="#DC143C" />
+                <Text style={styles.label}>Chat with {isLF ? "Buyer" : "Seller"}</Text>
+              </TouchableOpacity>
+
+              <View style={styles.divider} />
+
+              <TouchableOpacity
+                style={styles.action}
+                onPress={async () => {
+                  if (loading) return;
+                  setLoading(true);
+
+                  if (uid) {
+                    if (inCart) {
+                      setInCart(false);
+                      await updateDoc(doc(db, "users", uid), {
+                        carton: arrayRemove(id),
+                      });
+                      Alert.alert(
+                        "Item Removed",
+                        "This item has been removed from your Carton"
+                      );
+                    } else {
+                      setInCart(true);
+                      await updateDoc(doc(db, "users", uid), {
+                        carton: arrayUnion(id),
+                      });
+                      Alert.alert(
+                        "Item Added",
+                        "This item has been added to your Carton"
+                      );
+                    }
+                  }
+
+                  setLoading(false);
+                }}
+              >
+                <FontAwesome5 size={21} name="box-open" color="#DC143C" />
+                <Text style={styles.label}>
+                  {inCart ? "Remove Item" : "Add to Carton"}
+                </Text>
+              </TouchableOpacity>
+                {!isLF && (
+                <>
+                  <View style={styles.divider} />
+                  <TouchableOpacity
+                    style={styles.primary}
+                    onPress={() => router.push(`../checkout/${listing.id}`)}
+                  >
+                    <FontAwesome5 name="box" size={21} color="#fff" />
+                    <View>
+                      <Text style={styles.primaryText}>Box it Now</Text>
+                      <Text style={styles.primaryText}>
+                        ₱ {Number(listing.price).toLocaleString()}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                </>
+              )}
+            </View>
+          ) : (
+            <View style={[styles.footer, { paddingBottom: insets.bottom }]}>
+              <TouchableOpacity
+                style={styles.action}
+                onPress={() =>
+                  router.push({
+                    pathname: "/profileMenu/editListing",
+                    params: { id: listing.id },
+                  })
+                }
+              >            
+                <MaterialIcons name="mode-edit" size={26} color="#DC143C" />
+                <Text style={styles.label}>Edit Listing</Text>
+              </TouchableOpacity>
+
+              <View style={styles.divider} />
+
+              <TouchableOpacity style={styles.action} onPress={onDelete}>
+                <MaterialIcons size={26} name="delete" color="#DC143C" />
+                <Text style={styles.label}>
+                  Delete Listing
+                </Text>
+              </TouchableOpacity>
+
+              <View style={styles.divider} />
+
+              <TouchableOpacity
+                style={[styles.primary, {paddingVertical: 15, flex: isLF ? 1.6 : 1.5}]}
+                onPress={onMark}
+              >
+                <MaterialDesignIcons name="check-decagram" size={26} color="#fff" />
                 <View>
-                  <Text style={styles.primaryText}>Box it Now</Text>
-                  <Text style={styles.primaryText}>
-                    ₱ {Number(listing.price).toLocaleString()}
-                  </Text>
+                  <Text style={styles.primaryText}>Mark as {isLF ? "Found" : "Sold"}</Text>
                 </View>
               </TouchableOpacity>
-            </>
-          )}
-        </View>
-      ) : (
-        <View style={[styles.footer, { paddingBottom: insets.bottom }]}>
-          <TouchableOpacity
-            style={styles.action}
-            onPress={() =>
-              router.push({
-                pathname: "/profileMenu/editListing",
-                params: { id: listing.id },
-              })
-            }
-          >            
-            <MaterialIcons name="mode-edit" size={26} color="#DC143C" />
-            <Text style={styles.label}>Edit Listing</Text>
-          </TouchableOpacity>
-
-          <View style={styles.divider} />
-
-          <TouchableOpacity style={styles.action} onPress={onDelete}>
-            <MaterialIcons size={26} name="delete" color="#DC143C" />
-            <Text style={styles.label}>
-              Delete Listing
-            </Text>
-          </TouchableOpacity>
-
-          <View style={styles.divider} />
-
-          <TouchableOpacity
-            style={[styles.primary, {paddingVertical: 15, flex: isLF ? 1.6 : 1.5}]}
-            onPress={() => router.push(`../checkout/${listing.id}`)}
-          >
-            <MaterialDesignIcons name="check-decagram" size={26} color="#fff" />
-            <View>
-              <Text style={styles.primaryText}>Mark as {isLF ? "Found" : "Sold"}</Text>
             </View>
-          </TouchableOpacity>
-        </View>
+          )}
+        </>
+      ) : (
+        <>
+          {uid !== sellerId ? (
+            <View style={[styles.footer, { paddingBottom: insets.bottom }]}>
+              <View style={[styles.soldPrimary, {paddingVertical: 15}]}>
+                <Text style={styles.soldPrimaryText}>This listing is no longer available</Text>
+              </View>
+            </View>
+          ) : (
+            <View style={[styles.footer, { paddingBottom: insets.bottom }]}>
+              <TouchableOpacity style={styles.action} onPress={onDelete}>
+                <MaterialIcons size={26} name="delete" color="#DC143C" />
+                <Text style={styles.label}>
+                  Delete Listing
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </>
       )}
+
+
     </>
   );
 }
@@ -469,6 +531,26 @@ const styles = StyleSheet.create({
     marginLeft: 6,
   },
 
+  soldPrimary: {
+    flex: 1.5,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#eee",
+    borderWidth: 1,
+    borderColor: "#f5c2c7",
+    paddingVertical: 10,
+    borderRadius: 8,
+    marginHorizontal: 12,
+  },
+
+  soldPrimaryText: {
+    color: "#333",
+    fontWeight: "700",
+    fontSize: 14,
+    marginLeft: 6,
+  },
+
   listingButton: {
     flex: 1,
     flexDirection: "row",
@@ -478,5 +560,31 @@ const styles = StyleSheet.create({
     marginHorizontal: 12,
     paddingVertical: 12,
     borderRadius: 8,
+  },
+
+  soldOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  soldBadge: {
+    height: 80,
+    width: 80,
+    backgroundColor: "rgba(0,0,0,0.7)",
+    paddingVertical: 6,
+    // paddingHorizontal: 16,
+    borderRadius: 40,
+
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  soldText: {
+    color: "#fff",
+    fontWeight: "700",
+    fontSize: 14,
   },
 });
