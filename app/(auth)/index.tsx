@@ -67,7 +67,11 @@ const SignIn = () => {
   const onSignUpPressed = () => {
     console.warn('onSignUpPressed')
     router.replace("sign_up")
-  } 
+  }
+
+  const HandleGuestLogin = () => {
+    router.replace("Guest_mode/guest")
+  }
 
   return (
     <KeyboardAvoidingView
@@ -117,10 +121,18 @@ const SignIn = () => {
             />
 
             <CustomButton
+              text="Log in on guest mode"
+              onPress={HandleGuestLogin}
+              bgColor="#fae9ea"
+              fgColor="#dd4d44"
+            />
+
+            <CustomButton
               text="Don't have an account yet? Sign Up"
               onPress={onSignUpPressed}
               type="TERTIARY"
             />
+
           </SafeAreaView>
         </View>
       </TouchableWithoutFeedback>
