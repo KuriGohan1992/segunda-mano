@@ -58,12 +58,6 @@ const SignIn = () => {
     router.push("forgot_password")
   }
 
-  const onGooglePressed = () => {
-    console.warn('onGooglePressed')
-    // const provider = new firebase.auth.GoogleAuthProvider();
-    // auth.signInWithPopup(provider);
-  }
-
   const onSignUpPressed = () => {
     console.warn('onSignUpPressed')
     router.replace("sign_up")
@@ -114,14 +108,7 @@ const SignIn = () => {
             />
 
             <CustomButton
-              text="Continue with Google"
-              onPress={onGooglePressed}
-              bgColor="#fae9ea"
-              fgColor="#dd4d44"
-            />
-
-            <CustomButton
-              text="Log in on guest mode"
+              text="Continue as Guest"
               onPress={HandleGuestLogin}
               bgColor="#fae9ea"
               fgColor="#dd4d44"
