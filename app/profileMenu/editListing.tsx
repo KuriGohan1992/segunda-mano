@@ -33,6 +33,7 @@ export default function EditListing() {
   const [condition, setCondition] = useState<string | null>(null);
   const [category, setCategory] = useState<string | null>(null);
 
+  const [mode, setMode] = useState<"sell" | "lf">("sell");
   const [openCondition, setOpenCondition] = useState(false);
   const [openCategory, setOpenCategory] = useState(false);
 
@@ -49,6 +50,7 @@ export default function EditListing() {
         setValue("title", data.title);
         setValue("price", String(data.price));
         setValue("description", data.description);
+        setMode(data.type);
 
         setImages(data.images || []);
         setCondition(data.condition);
@@ -93,37 +95,13 @@ export default function EditListing() {
       description: data.description,
       price: Number(data.price),
       images,
+      type: mode,
       condition,
       category,
     });
 
     Alert.alert("Success", "Your product has been updated");
     router.back();
-  };
-
-  const onDelete = async () => {
-    if (!id) return;
-
-    Alert.alert(
-      "Delete Listing",
-      "Are you sure you want to delete this product?",
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: async () => {
-            await deleteDoc(doc(db, "listings", id));
-            Alert.alert("Deleted", "Your product has been deleted");
-            router.back();
-          },
-        },
-      ],
-      { cancelable: true }
-    );
   };
 
   if (loading) {
@@ -141,7 +119,7 @@ export default function EditListing() {
           <Ionicons name="chevron-back" size={28} color="#DC143C" />
         </TouchableOpacity>
 
-        <Text style={styles.title}>Edit an item</Text>
+        <Text style={styles.title}>Edit your listing</Text>
 
         <View style={{ width: 28 }} />
       </View>
@@ -197,7 +175,43 @@ export default function EditListing() {
             </TouchableOpacity>
           </ScrollView>
         </View>
+        <View style={styles.toggleContainer}>
+          <TouchableOpacity
+            onPress={() => setMode("sell")}
+            style={[
+              styles.toggleButton,
+              styles.toggleLeft,
+              mode === "sell" ? styles.toggleActive : styles.toggleInactive
+            ]}
+          >
+            <Text
+              style={[
+                styles.toggleText,
+                mode === "sell" && styles.toggleTextActive
+              ]}
+            >
+              For Sale
+            </Text>
+          </TouchableOpacity>
 
+          <TouchableOpacity
+            onPress={() => setMode("lf")}
+            style={[
+              styles.toggleButton,
+              styles.toggleRight,
+              mode === "lf" ? styles.toggleActive : styles.toggleInactive
+            ]}
+          >
+            <Text
+              style={[
+                styles.toggleText,
+                mode === "lf" && styles.toggleTextActive
+              ]}
+            >
+              Looking For
+            </Text>
+          </TouchableOpacity>
+        </View>
         <Text style={styles.BoxTitle}>Title</Text>
         <CustomInput name="title" control={control} placeholder="Title" />
 
@@ -215,7 +229,7 @@ export default function EditListing() {
         <View
           style={{
             width: "100%",
-            marginBottom: openCondition ? 180 : 10,
+            marginBottom: openCondition ? 180 : 0,
           }}
         >
           <Text style={styles.BoxTitle}>Condition</Text>
@@ -232,13 +246,18 @@ export default function EditListing() {
             listMode="SCROLLVIEW"
             dropDownDirection="BOTTOM"
             style={styles.dropdown}
+            placeholderStyle={styles.placeholderStyle}
+            listItemLabelStyle={styles.dropdownInput}
+            labelStyle={styles.dropdownInput}
+            listItemContainerStyle={styles.listItemContainerStyle}
+            dropDownContainerStyle={styles.dropdown}
           />
         </View>
 
         <View
           style={{
             width: "100%",
-            marginBottom: openCategory ? 180 : 10,
+            marginBottom: openCategory ? 180 : 0,
           }}
         >
           <Text style={styles.BoxTitle}>Category</Text>
@@ -255,13 +274,17 @@ export default function EditListing() {
             listMode="SCROLLVIEW"
             dropDownDirection="BOTTOM"
             style={styles.dropdown}
+            placeholderStyle={styles.placeholderStyle}
+            listItemLabelStyle={styles.dropdownInput}
+            labelStyle={styles.dropdownInput}
+            listItemContainerStyle={styles.listItemContainerStyle}
+            dropDownContainerStyle={styles.dropdown}
           />
         </View>
 
-        <View style={{ marginTop: 20, width: "100%" }}>
+        <View style={{marginTop: 4, width: "100%" }}>
           <CustomButton text="Update" onPress={handleSubmit(onUpdate)} />
           <View style={{ height: 10 }} />
-          <CustomButton text="Delete" onPress={onDelete} />
         </View>
       </ScrollView>
     </SafeAreaView>

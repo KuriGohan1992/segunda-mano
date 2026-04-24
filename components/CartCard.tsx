@@ -22,6 +22,9 @@ export default function CartCard({ item, onPress }: Props) {
       })()}
       <View style={styles.meta}>
         <Text numberOfLines={2} style={styles.title}>
+          {item.type === "lf" && (
+            <Text style={styles.lfTag}>[LF] </Text>
+          )}
           {item.title}
         </Text>
         <Text style={styles.condition}>{item.condition}</Text>
@@ -71,4 +74,8 @@ const styles = StyleSheet.create({
   price: { marginTop: 4, fontSize: 16, fontWeight: "700", color: "#DC143C" },
   condition: { marginTop: 4, color: "#000", fontSize: 13 },
   location: { marginTop: 8, color: "#666", fontSize: 13 },
+  lfTag: {
+    color: "#999",     
+    fontWeight: "700", 
+  },
 });

@@ -144,7 +144,7 @@ export default function Home() {
           labelStyle={{ color: 'transparent' }}
           />
       </View>
-      <View style={{ flexDirection: "row", paddingHorizontal: 12, marginBottom: 6 }}>
+      <View style={{ flexDirection: "row", paddingHorizontal: 12, marginVertical: 6 }}>
         <TouchableOpacity
           onPress={() => setMode("sell")}
           style={{

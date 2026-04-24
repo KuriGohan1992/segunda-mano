@@ -16,6 +16,7 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import {
   arrayRemove,
   arrayUnion,
+  deleteDoc,
   doc,
   getDoc,
   updateDoc,
@@ -26,6 +27,8 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { img_placeholder } from "../../constants/img_placeholder";
 import { useUser } from "../../context/UserContext";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
 
 export default function ListingDetail() {
   const insets = useSafeAreaInsets();
@@ -47,6 +50,30 @@ export default function ListingDetail() {
       event.nativeEvent.contentOffset.x / Dimensions.get("window").width
     );
     setCurrentImageIndex(slide);
+  };
+  const onDelete = async () => {
+    if (!id) return;
+
+    Alert.alert(
+      "Delete Listing",
+      "Are you sure you want to delete this product?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            await deleteDoc(doc(db, "listings", id));
+            Alert.alert("Deleted", "Your product has been deleted");
+            router.back();
+          },
+        },
+      ],
+      { cancelable: true }
+    );
   };
 
   const fetchListing = async () => {
@@ -73,6 +100,7 @@ export default function ListingDetail() {
         available: d.available ?? true,
         category: d.category || "",
         condition: d.condition || "",
+        type: d.type,
         createdAt:
           new Date(d.createdAt.seconds * 1000)
             .toDateString()
@@ -149,6 +177,9 @@ export default function ListingDetail() {
     listing.description && listing.description.trim() !== ""
     ? listing.description
     : "No description available";
+
+  const isOwner = uid === sellerId
+  const isLF = listing.type === "lf";
 
   return (
     <>
@@ -247,7 +278,7 @@ export default function ListingDetail() {
             onPress={() => router.push(`/chat/${sellerId}`)}
           >
             <Ionicons name="chatbubble-ellipses" size={26} color="#DC143C" />
-            <Text style={styles.label}>Chat with Seller</Text>
+            <Text style={styles.label}>Chat with {isLF ? "Poster" : "Seller"}</Text>
           </TouchableOpacity>
 
           <View style={styles.divider} />
@@ -288,37 +319,57 @@ export default function ListingDetail() {
               {inCart ? "Remove Item" : "Add to Carton"}
             </Text>
           </TouchableOpacity>
-
-          <View style={styles.divider} />
-
-          <TouchableOpacity
-            style={styles.primary}
-            onPress={() => router.push(`../checkout/${listing.id}`)}
-          >
-            <FontAwesome5 name="box" size={21} color="#fff" />
-            <View>
-              <Text style={styles.primaryText}>Box it Now</Text>
-              <Text style={styles.primaryText}>
-                ₱ {Number(listing.price).toLocaleString()}
-              </Text>
-            </View>
-          </TouchableOpacity>
+            {!isLF && (
+            <>
+              <View style={styles.divider} />
+              <TouchableOpacity
+                style={styles.primary}
+                onPress={() => router.push(`../checkout/${listing.id}`)}
+              >
+                <FontAwesome5 name="box" size={21} color="#fff" />
+                <View>
+                  <Text style={styles.primaryText}>Box it Now</Text>
+                  <Text style={styles.primaryText}>
+                    ₱ {Number(listing.price).toLocaleString()}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </>
+          )}
         </View>
       ) : (
         <View style={[styles.footer, { paddingBottom: insets.bottom }]}>
           <TouchableOpacity
-            style={styles.primary}
+            style={styles.action}
             onPress={() =>
               router.push({
                 pathname: "/profileMenu/editListing",
                 params: { id: listing.id },
               })
             }
+          >            
+            <MaterialIcons name="mode-edit" size={26} color="#DC143C" />
+            <Text style={styles.label}>Edit Listing</Text>
+          </TouchableOpacity>
+
+          <View style={styles.divider} />
+
+          <TouchableOpacity style={styles.action} onPress={onDelete}>
+            <MaterialIcons size={26} name="delete" color="#DC143C" />
+            <Text style={styles.label}>
+              Delete Listing
+            </Text>
+          </TouchableOpacity>
+
+          <View style={styles.divider} />
+
+          <TouchableOpacity
+            style={[styles.primary, {paddingVertical: 15, flex: isLF ? 1.6 : 1.5}]}
+            onPress={() => router.push(`../checkout/${listing.id}`)}
           >
-            <FontAwesome5 name="edit" size={20} color="#fff" />
-            
+            <MaterialDesignIcons name="check-decagram" size={26} color="#fff" />
             <View>
-              <Text style={styles.primaryText}>Edit Listing</Text>
+              <Text style={styles.primaryText}>Mark as {isLF ? "Found" : "Sold"}</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -408,7 +459,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#DC143C",
     paddingVertical: 10,
     borderRadius: 8,
-    marginLeft: 10,
+    marginHorizontal: 12,
   },
 
   primaryText: {

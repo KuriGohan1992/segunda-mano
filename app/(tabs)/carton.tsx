@@ -62,6 +62,7 @@ export default function Carton() {
           available: d.available ?? true,
           category: d.category || '',
           condition: d.condition || '',
+          type: d.type,
           createdAt: d.createdAt || new Date().toISOString(),
           description: d.description || '',
           images: Array.isArray(d.images) ? d.images : [],

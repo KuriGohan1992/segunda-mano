@@ -145,7 +145,7 @@ export default function SellerProfile() {
           style={{ flexDirection: "row", alignItems: "center" }}
         >
           <Ionicons
-            name="arrow-back"
+            name="chevron-back"
             size={28} // 👈 increase to match 24px bold text
             color="#DC143C"
             style={{ marginRight: 6 }}

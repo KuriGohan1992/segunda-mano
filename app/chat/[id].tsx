@@ -27,6 +27,7 @@ import { useUser } from "../../context/UserContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function ChatScreen() {
   const inputRef = useRef<TextInput>(null);
@@ -142,25 +143,25 @@ export default function ChatScreen() {
     <SafeAreaView style={styles.container}>
       <View style={{ flex: 1 }}>
         <View style={styles.chatHeader}>
-          <TouchableOpacity
-            onPress={() => router.back()}
-            style={styles.backButton}
-          >
-            <MaterialIcons name="arrow-back" size={24} color="#111" />
+          <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+            <Ionicons name="chevron-back" size={28} color="#DC143C" />
           </TouchableOpacity>
 
-          <Image
-            source={
-              otherUser?.picture
-                ? { uri: otherUser.picture }
-                : require("../../assets/profile.png")
-            }
-            style={styles.headerAvatar}
-          />
+          <TouchableOpacity style={{flex: 1, flexDirection: "row", alignItems: "center"}} onPress={() => router.push(`/seller/${otherUser.id}`)}>
+            <Image
+              source={
+                otherUser?.picture
+                  ? { uri: otherUser.picture }
+                  : require("../../assets/profile.png")
+              }
+              style={styles.headerAvatar}
+            />
 
-          <Text style={styles.headerName}>
-            {otherUser?.username || "User"}
-          </Text>
+            <Text style={styles.headerName}>
+              {otherUser?.username || "User"}
+            </Text>
+          </TouchableOpacity>
+
         </View>
 
         <ScrollView

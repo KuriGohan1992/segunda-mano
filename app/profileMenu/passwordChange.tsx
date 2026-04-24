@@ -2,5 +2,5 @@ import UnderDevelopment from "../../components/UnderDevelopment";
 
 
 export default function Checkout() {
-  return (UnderDevelopment("Forget Password"))
+  return (UnderDevelopment("Change Password"))
 }

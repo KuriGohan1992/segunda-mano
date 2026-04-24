@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
   condition: {marginTop: 4, color: '#000', fontSize: 13},
   location: { marginTop: 8, color: '#666', fontSize: 13 },
   lfTag: {
-    color: "#999",      // gray
-    fontWeight: "700",  // slightly bold so it still stands out
+    color: "#999",      
+    fontWeight: "700",  
   },
 });

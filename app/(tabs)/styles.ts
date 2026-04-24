@@ -309,6 +309,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 
+  aboutSectionHeader: {
+    color: "#333",
+    fontWeight: "bold",
+  },
+
   label: {
     marginTop: 10,
     color: "gray",
@@ -490,8 +495,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     color: "#333",
-    marginTop: 12,
-    marginBottom: 4,
+    marginTop: 6,
+    marginBottom: 2,
+    marginLeft: 1,
   },
 
   formContent: {
@@ -551,9 +557,9 @@ const styles = StyleSheet.create({
   },
 
   chatAvatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 60,
+    height: 60,
+    borderRadius: 95,
     backgroundColor: "#e0e0e0",
     marginRight: 12,
   },
@@ -564,19 +570,19 @@ const styles = StyleSheet.create({
   },
 
   username: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: "600",
     color: "#111",
   },
 
   subtitle: {
-    fontSize: 13,
+    fontSize: 14,
     color: "#888",
     marginTop: 2,
   },
 
   aboutCard: {
-    backgroundColor: "#fff",
+    backgroundColor: 'rgba(255,255,255,0.8)',
     borderRadius: 16,
     padding: 18,
     shadowColor: "#000",
