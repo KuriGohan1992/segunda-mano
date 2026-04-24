@@ -152,7 +152,10 @@ export default function Sell() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-        <View style={{ flex: 1 }}>
+        <ScrollView
+          style={{ flex: 1 }}
+          showsVerticalScrollIndicator={false}
+        >
           <SafeAreaView
             style={[styles.container, { alignItems: "center", padding: 20 }]}
           >
@@ -305,7 +308,7 @@ export default function Sell() {
               onPress={handleSubmit(addListingPressed)}
             />
           </SafeAreaView>
-        </View>
+        </ScrollView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
