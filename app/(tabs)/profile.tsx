@@ -21,6 +21,7 @@ import {
   query,
   where,
   onSnapshot,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "../../firebase";
 import styles from "./styles";
@@ -28,6 +29,7 @@ import { Listing } from "../../type/listing";
 import { img_placeholder } from "../../constants/img_placeholder";
 import ListingCard from "../../components/ListingCard";
 import { SafeAreaView } from "react-native-safe-area-context";
+import OrderCard from "@/components/OrderCard";
 
 export default function Profile() {
   const router = useRouter();
@@ -39,7 +41,7 @@ export default function Profile() {
   const [username, setUsername] = useState("");
   const [address, setAddress] = useState("");
   const [joinedDate, setJoinedDate] = useState("Not Available");
-
+  const [orders, setOrders] = useState<any[]>([]);
   const [menuVisible, setMenuVisible] = useState(false);
 
   const [activeTab, setActiveTab] = useState("listings");
@@ -112,6 +114,31 @@ export default function Profile() {
       });
 
       setUserListings(listings);
+    });
+
+    return () => unsub();
+  }, [uid]);
+
+  useEffect(() => {
+    if (!uid) return;
+
+    const q = query(
+      collection(db, "orders"),
+      where("userId", "==", uid)
+    );
+
+    const unsub = onSnapshot(q, (snapshot) => {
+      const data = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      // optional: sort latest first
+      data.sort((a: any, b: any) => {
+        return (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0);
+      });
+
+      setOrders(data);
     });
 
     return () => unsub();
@@ -241,6 +268,7 @@ export default function Profile() {
           </View>
         ) : (
           <FlatList
+            key="grid"
             data={userListings}
             keyExtractor={(item) => item.id}
             numColumns={2}
@@ -269,18 +297,41 @@ export default function Profile() {
           </View>
         </ScrollView>
       ) : activeTab === "my Orders" ? (
-        <ScrollView contentContainerStyle={styles.scrollContent}>
+        orders.length === 0 ? (
           <View style={styles.centerContent}>
-            <Text style={{ fontSize: 16, fontWeight: "600", marginBottom: 8 }}>
-              About You
-            </Text>
-            <Text style={{ textAlign: "center", color: "#666" }}>
-              This section will soon contain your activity history, including
-              purchases, sales, and interactions on Segunda Mano.
-            </Text>
+            <Text>No orders yet</Text>
           </View>
-        </ScrollView>
-      ) : null}
+        ) : (
+          <FlatList
+            data={orders}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={{ padding: 10, paddingBottom: 80 }}
+            renderItem={({ item }) => (
+              <OrderCard
+                item={item}
+                onCancel={async () => {
+                  Alert.alert(
+                    "Cancel Order",
+                    "Are you sure you want to cancel this order?",
+                    [
+                      { text: "No" },
+                      {
+                        text: "Yes",
+                        style: "destructive",
+                        onPress: async () => {
+                          await updateDoc(doc(db, "orders", item.id), {
+                            deliveryStatus: "CANCELLED",
+                          });
+                        },
+                      },
+                    ]
+                  );
+                }}
+              />
+            )}
+          />
+        )
+      ) : null }
 
       <Modal transparent visible={menuVisible} animationType="fade">
         <Pressable

@@ -109,14 +109,14 @@ export default function ListingDetail() {
 
     if (!docSnap.exists()) {
       Alert.alert("Listing removed", "This item is no longer available.", [
-    {
-      text: "OK",
-      onPress: () => router.back(),
-    },
-  ]);
+      {
+        text: "OK",
+        onPress: () => router.back(),
+      },
+      ]);
 
-  setLoading(false);
-  return;
+      setLoading(false);
+      return;
     } else {
       const d = docSnap.data() as any;
 

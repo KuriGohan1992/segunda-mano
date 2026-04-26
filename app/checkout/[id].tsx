@@ -134,7 +134,7 @@ export default function Checkout() {
 
     const orderRef = doc(collection(db, "orders"));
     const orderId = orderRef.id;
-    console.log(orderId);
+    // console.log(orderId);
 
     try {
       if (paymentMethod === "COD") {
