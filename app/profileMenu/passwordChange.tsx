@@ -44,7 +44,6 @@ export default function ChangePasswordScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
       
-      {/* HEADER */}
       <View
         style={{
           flexDirection: "row",
@@ -71,7 +70,6 @@ export default function ChangePasswordScreen() {
         </Text>
       </View>
 
-      {/* CONTENT */}
       <View style={{ padding: 16 }}>
         <CustomInput
           name="password"
