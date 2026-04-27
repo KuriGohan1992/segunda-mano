@@ -21,8 +21,8 @@ export default function RatingScreen() {
   const [productName, setProductName] = useState("Loading...");
   const [sellerName, setSellerName] = useState("Loading...");
 
-  const [productRating, setProductRating] = useState(1);
-  const [sellerRating, setSellerRating] = useState(1);
+  const [productRating, setProductRating] = useState(5);
+  const [sellerRating, setSellerRating] = useState(5);
   
 
   const { control, handleSubmit: formSubmit } = useForm();
@@ -84,37 +84,22 @@ export default function RatingScreen() {
   const renderStars = (
     rating: number,
     setRating: (value: number) => void
-    ) => {
+  ) => {
     return (
         <View style={styles.starRow}>
-        {[1, 2, 3, 4, 5].map((i) => {
-            const isFilled = i <= rating;
-
-            return (
-            <TouchableOpacity
-                key={i}
-                onPress={() => {
-                if (rating === i && i === 1) return;
-
-                if (rating === i) {
-                    setRating(i - 1);
-                } else {
-                    setRating(i);
-                }
-                }}
-            >
-                <Ionicons
-                name={isFilled ? "star" : "star-outline"}
+        {[1, 2, 3, 4, 5].map((i) => (
+            <TouchableOpacity key={i} onPress={() => setRating(i)}>
+            <Ionicons
+                name={i <= rating ? "star" : "star-outline"}
                 size={28}
                 color="#DC143C"
                 style={{ marginRight: 6 }}
-                />
+            />
             </TouchableOpacity>
-            );
-        })}
+        ))}
         </View>
     );
-    };
+  };
 
   const handleSubmit = async (data: any) => {
     try {
