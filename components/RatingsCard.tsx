@@ -4,7 +4,6 @@ import {
   Text,
   Image,
   StyleSheet,
-  Pressable,
 } from "react-native";
 import { img_placeholder } from "../constants/img_placeholder";
 import { db } from "@/firebase";
@@ -20,7 +19,6 @@ export default function RatingCard({ item }: any) {
 
     const fetchData = async () => {
       try {
-        // 🔹 Listing (for image + name fallback if needed)
         const listingRef = doc(db, "listings", item.listingId);
         const listingSnap = await getDoc(listingRef);
 
@@ -29,7 +27,6 @@ export default function RatingCard({ item }: any) {
           setImgUrl(d.images?.[0] || d.thumbnail || null);
         }
 
-        // 🔹 Buyer (review author)
         if (item.userId) {
           const userRef = doc(db, "users", item.userId);
           const userSnap = await getDoc(userRef);
@@ -37,7 +34,7 @@ export default function RatingCard({ item }: any) {
           if (userSnap.exists() && isMounted) {
             const u = userSnap.data();
             setBuyerName(u.username || "Unknown");
-            setBuyerImage(u.profilePic || null);
+            setBuyerImage(u.picture || null);
           }
         }
       } catch (err) {
@@ -52,19 +49,15 @@ export default function RatingCard({ item }: any) {
     };
   }, [item.listingId, item.userId]);
 
-  const imageUri = imgUrl
-    ? imgUrl.startsWith("http")
-      ? imgUrl
-      : `data:image/jpeg;base64,${imgUrl}`
-    : img_placeholder;
+  const buyerUri =
+    buyerImage && buyerImage !== ""
+      ? buyerImage.startsWith("http")
+        ? buyerImage
+        : buyerImage.startsWith("data:image")
+        ? buyerImage
+        : `data:image/jpeg;base64,${buyerImage}`
+      : null;
 
-  const buyerUri = buyerImage
-    ? buyerImage.startsWith("http")
-      ? buyerImage
-      : `data:image/jpeg;base64,${buyerImage}`
-    : img_placeholder;
-
-  // ⭐ Render stars (READ ONLY)
   const renderStars = (rating: number) => {
     return (
       <View style={styles.starRow}>
@@ -78,38 +71,38 @@ export default function RatingCard({ item }: any) {
   };
 
   return (
-    <Pressable style={styles.card}>
-      <View style={styles.row}>
+    <View style={styles.card}>
+      <View style={styles.topRow}>
         
-        {/* PRODUCT IMAGE */}
-        <Image source={{ uri: imageUri }} style={styles.image} />
+        <View style={styles.leftHeader}>
+          <Image
+            source={buyerUri ? { uri: buyerUri } : img_placeholder}
+            style={styles.avatar}
+          />
 
-        <View style={styles.meta}>
-          
-          {/* PRODUCT NAME */}
-          <Text numberOfLines={1} style={styles.title}>
-            {item.listingName}
-          </Text>
-
-          {/* BROUGHT BY */}
-          <View style={styles.buyerRow}>
-            <Image source={{ uri: buyerUri }} style={styles.avatar} />
-            <Text style={styles.party}>
-              Brought by {buyerName || "Unknown"}
+          <View style={{ marginLeft: 10 }}>
+            <Text style={styles.name}>
+              {buyerName || "Unknown"}{" "}
+              <Text style={styles.listingName}>
+                ({item.listingName || "Unknown Item"})
+              </Text>
             </Text>
+
+            {renderStars(item.sellerRating)}
           </View>
-
-          {/* STARS */}
-          {renderStars(item.productRating)}
-
-          {/* REVIEW TEXT */}
-          <Text numberOfLines={2} style={styles.review}>
-            {item.review}
-          </Text>
-
         </View>
+
+        <Text style={styles.date}>
+          {item.updatedAt
+            ? new Date(item.updatedAt.seconds * 1000).toLocaleDateString()
+            : ""}
+        </Text>
       </View>
-    </Pressable>
+
+      <Text style={styles.description}>
+        {item.review}
+      </Text>
+    </View>
   );
 }
 
@@ -118,57 +111,50 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 12,
     marginBottom: 12,
+    marginHorizontal: 0,
+    padding: 10,
     borderWidth: 1,
     borderColor: "#eee",
-    overflow: "hidden",
   },
 
-  row: {
+  topRow: {
     flexDirection: "row",
-    height: 120,
+    justifyContent: "space-between",
+    alignItems: "flex-start",
   },
 
-  image: {
-    width: 120,
-    height: "100%",
-    resizeMode: "cover",
-    backgroundColor: "#eee",
-  },
-
-  meta: {
+  leftHeader: {
+    flexDirection: "row",
     flex: 1,
-    padding: 10,
-    justifyContent: "center",
-  },
-
-  title: {
-    fontSize: 15,
-    fontWeight: "600",
-  },
-
-  buyerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 4,
+    marginRight: 8,
   },
 
   avatar: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    marginRight: 6,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
     backgroundColor: "#ccc",
   },
 
-  party: {
-    fontSize: 12,
-    color: "#444",
-    fontWeight: "600",
+  name: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#222",
+  },
+
+  listingName: {
+    fontSize: 13,
+    color: "#777",
+    fontWeight: "400",
+  },
+
+  date: {
+    fontSize: 11,
+    color: "#999",
   },
 
   starRow: {
     flexDirection: "row",
-    marginTop: 4,
   },
 
   star: {
@@ -177,9 +163,10 @@ const styles = StyleSheet.create({
     marginRight: 2,
   },
 
-  review: {
-    marginTop: 6,
-    fontSize: 12,
-    color: "#666",
+  description: {
+    marginTop: 10,
+    fontSize: 13,
+    color: "#555",
+    lineHeight: 18,
   },
 });

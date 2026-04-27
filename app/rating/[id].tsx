@@ -39,8 +39,6 @@ export default function RatingScreen() {
 
   const [productName, setProductName] = useState("Loading...");
   const [sellerName, setSellerName] = useState("Loading...");
-
-  const [productRating, setProductRating] = useState(5);
   const [sellerRating, setSellerRating] = useState(5);
 
   useEffect(() => {
@@ -99,7 +97,6 @@ export default function RatingScreen() {
         if (!snap.empty) {
           const data = snap.docs[0].data();
 
-          setProductRating(data.productRating ?? 5);
           setSellerRating(data.sellerRating ?? 5);
           setValue("review", data.review ?? "");
         }
@@ -129,7 +126,6 @@ export default function RatingScreen() {
       await setDoc(ratingRef, {
         listingId: orderData.listingId,
         listingName: productName, // ✅ ADD THIS LINE
-        productRating,
         review: reviewText,
         sellerId: orderData.sellerId,
         sellerRating,
@@ -186,11 +182,10 @@ export default function RatingScreen() {
         <Text style={styles.label}>Product</Text>
         <Text style={styles.name}>{productName}</Text>
 
-        {renderStars(productRating, setProductRating)}
-
         <Text style={[styles.label, { marginTop: 20 }]}>Seller</Text>
         <Text style={styles.name}>{sellerName}</Text>
 
+        <Text style={[styles.label, { marginTop: 20 }]}>Your Rating</Text>
         {renderStars(sellerRating, setSellerRating)}
 
         <Text style={[styles.label, { marginTop: 20 }]}>Your Review</Text>
@@ -261,7 +256,6 @@ const styles = StyleSheet.create({
 
   starRow: {
     flexDirection: "row",
-    marginTop: 4,
   },
 
   button: {

@@ -44,10 +44,11 @@ export default function Profile() {
   const [joinedDate, setJoinedDate] = useState("Not Available");
   const [orders, setOrders] = useState<any[]>([]);
   const [menuVisible, setMenuVisible] = useState(false);
-
   const [activeTab, setActiveTab] = useState("listings");
   const [userListings, setUserListings] = useState<Listing[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
+  const [sellerAvgRating, setSellerAvgRating] = useState<number | null>(null);
+  const [ratingCount, setRatingCount] = useState<number>(0);
 
   const tabs = ["listings", "reviews", "my Orders"];
   const activeIndex = tabs.indexOf(activeTab);
@@ -55,6 +56,57 @@ export default function Profile() {
 
 
   const { tab } = useLocalSearchParams();
+
+  // ⭐ NEW: seller rating fetch (FIXED)
+  useEffect(() => {
+    if (!uid) return;
+
+    const q = query(
+      collection(db, "ratings"),
+      where("sellerId", "==", uid)
+    );
+
+    const unsub = onSnapshot(q, (snapshot) => {
+      if (snapshot.empty) {
+        setSellerAvgRating(null);
+        setRatingCount(0);
+        return;
+      }
+
+      let total = 0;
+
+      snapshot.docs.forEach((doc) => {
+        const data = doc.data();
+        total += data.sellerRating || 0;
+      });
+
+      const avg = total / snapshot.docs.length;
+
+      setSellerAvgRating(avg);
+      setRatingCount(snapshot.docs.length);
+    });
+
+    return () => unsub();
+  }, [uid]);
+
+  // ⭐ FIXED star renderer (uses value not setter)
+  const renderStars = (rating: number) => {
+    return (
+      <View style={{ flexDirection: "row"}}>
+        {[1, 2, 3, 4, 5].map((i) => (
+          <Text
+            key={i}
+            style={{
+              color: i <= Math.round(rating) ? "#DC143C" : "#ccc",
+              fontSize: 16,
+            }}
+          >
+            ★
+          </Text>
+        ))}
+      </View>
+    );
+  };
 
   useEffect(() => {
     if (tab) {
@@ -281,6 +333,20 @@ export default function Profile() {
 
         <View style={{ marginLeft: 12 }}>
           <Text style={styles.usernameText}>{username}</Text>
+
+          {sellerAvgRating === null ? (
+            <Text style={{ fontSize: 12, color: "#777" }}>
+              No ratings yet
+            </Text>
+          ) : (
+            <View style={{ flexDirection: "row", alignItems: "center", marginTop: 4 }}>
+              {renderStars(sellerAvgRating)}
+              <Text style={[styles.infoText, { marginLeft: 6 }]}>
+                {sellerAvgRating.toFixed(1)} ({ratingCount})
+              </Text>
+            </View>
+          )}
+
           <Text style={styles.infoText}>{address}</Text>
           <Text style={styles.infoText}>Joined {joinedDate}</Text>
         </View>
