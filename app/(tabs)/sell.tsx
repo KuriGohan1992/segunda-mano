@@ -155,6 +155,7 @@ export default function Sell() {
         <ScrollView
           style={{ flex: 1 }}
           showsVerticalScrollIndicator={false}
+          nestedScrollEnabled={true}
         >
           <SafeAreaView
             style={[styles.container, { alignItems: "center", padding: 20 }]}
@@ -268,6 +269,9 @@ export default function Sell() {
                 labelStyle={styles.dropdownInput}
                 listItemContainerStyle={styles.listItemContainerStyle}
                 dropDownContainerStyle={styles.dropdown}
+                listMode="SCROLLVIEW"
+                nestedScrollEnabled={true}
+                
               />
             </View>
 
@@ -293,6 +297,8 @@ export default function Sell() {
                 labelStyle={styles.dropdownInput}
                 listItemContainerStyle={styles.listItemContainerStyle}
                 dropDownContainerStyle={styles.dropdown}
+                listMode="SCROLLVIEW"
+                nestedScrollEnabled={true}
               />
             </View>
 
