@@ -23,7 +23,6 @@
         "backgroundColor": "#ffffff",
         "softwareKeyboardLayoutMode": "pan"
       },
-
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.cham.segundamano"
@@ -42,9 +41,14 @@
           }
         }
       ],
-      "@react-native-firebase/app",
-      "@react-native-firebase/auth",
+
       "expo-secure-store"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "24fc2d59-a5e4-4a63-9f0a-1adc2f09ece0"
+      }
+    }
   }
 }
