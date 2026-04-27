@@ -239,7 +239,6 @@ const styles = StyleSheet.create({
   usernameText: {
     fontSize: 18,
     fontWeight: "bold",
-    marginTop: 8,
   },
 
   ratingText: {
