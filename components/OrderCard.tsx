@@ -11,13 +11,16 @@ import { img_placeholder } from "../constants/img_placeholder";
 import { db } from "@/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { router } from "expo-router";
+import { useUser } from "@/context/UserContext";
 
 export default function OrderCard({ item, onCancel }: any) {
   const [imgUrl, setImgUrl] = useState<string | null>(null);
   const [sellerName, setSellerName] = useState<string | null>(null);
   const [condition, setCondition] = useState<string | null>(null);
-
-  const canCancel = item.deliveryStatus === "PLACED";
+  const { user } = useUser();
+  const isSeller = item.sellerId === user?.uid;
+  const canCancel = item.deliveryStatus === "PLACED" && item.paymentMethod === "COD";
+  const [buyerName, setBuyerName] = useState<string | null>(null);
 
   const formatDate = (timestamp: any) => {
     if (!timestamp) return "";
@@ -25,12 +28,28 @@ export default function OrderCard({ item, onCancel }: any) {
     return date.toLocaleDateString();
   };
 
+  const getPartyText = () => {
+    const isDone = ["DELIVERED", "COMPLETED"].includes(item.deliveryStatus);
+    const isCancelled = item.deliveryStatus === "CANCELLED";
+
+    if (isSeller) {
+      if (isCancelled) return `Buyer: ${buyerName || "Unknown"}`;
+      return isDone
+        ? `Sold to: ${buyerName || "Unknown"}`
+        : `Selling to: ${buyerName || "Unknown"}`;
+    } else {
+      if (isCancelled) return `Seller: ${sellerName || "Unknown"}`;
+      return isDone
+        ? `Bought from: ${sellerName || "Unknown"}`
+        : `Buying from: ${sellerName || "Unknown"}`;
+    }
+  };
+
   useEffect(() => {
     let isMounted = true;
 
     const fetchListing = async () => {
       try {
-        // fetch listing
         const docRef = doc(db, "listings", item.listingId);
         const docSnap = await getDoc(docRef);
 
@@ -40,7 +59,14 @@ export default function OrderCard({ item, onCancel }: any) {
           setCondition(d.condition || null);
         }
 
-        // fetch seller
+        if (item.userId) {
+          const bRef = doc(db, "users", item.userId);
+          const bSnap = await getDoc(bRef);
+          if (bSnap.exists() && isMounted) {
+            setBuyerName(bSnap.data()?.username || null);
+          }
+      }
+
         if (item.sellerId) {
           const sRef = doc(db, "users", item.sellerId);
           const sSnap = await getDoc(sRef);
@@ -81,6 +107,9 @@ export default function OrderCard({ item, onCancel }: any) {
             {item.listingName}
           </Text>
 
+          <Text style={styles.party}>{getPartyText()}</Text>
+
+
           {/* CONDITION */}
           <Text style={styles.condition}>
             {condition || "No condition"}
@@ -109,7 +138,7 @@ export default function OrderCard({ item, onCancel }: any) {
         <View style={{ flexDirection: "row", gap: 8 }}>
           
           {/* CANCEL BUTTON */}
-          {item.deliveryStatus === "PLACED" && (
+          {canCancel && (
             <TouchableOpacity style={styles.cBtn} onPress={onCancel}>
               <Text style={styles.cText}>Cancel Order</Text>
             </TouchableOpacity>
@@ -195,7 +224,7 @@ const styles = StyleSheet.create({
 
   status: {
     fontWeight: "700",
-    color: "#333",
+    color: "#dc143c",
   },
 
   cancel: {
@@ -244,5 +273,10 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 13,
   },
-
+  party: {
+    marginTop: 4,
+    fontSize: 12,
+    color: "#444",
+    fontWeight: "600",
+  },
 });

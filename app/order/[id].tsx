@@ -5,15 +5,17 @@ import {
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { img_placeholder } from "@/constants/img_placeholder";
 import { DEV_STATUS } from "@/constants/dev_status";
+import { useUser } from "@/context/UserContext";
 
 export default function OrderDetails() {
   const router = useRouter();
@@ -27,6 +29,33 @@ export default function OrderDetails() {
   const [condition, setCondition] = useState<string | null>(null);
   const [price, setPrice] = useState<number | null>(null);
   const [sellerName, setSellerName]  = useState<string | null>(null);
+  const [buyerName, setBuyerName] = useState<string | null>(null);
+
+  const { user } = useUser();
+  const isSeller = order?.sellerId === user?.uid;
+  const isBuyer = user?.uid === order?.userId;
+
+  const canCancel = order?.deliveryStatus === "PLACED" && order.paymentMethod === "COD";
+
+  const canComplete = order?.deliveryStatus === "DELIVERED" && isBuyer;
+
+  const getPartyText = () => {
+    const status = order.deliveryStatus;
+    const isDone = ["DELIVERED", "COMPLETED"].includes(status);
+    const isCancelled = status === "CANCELLED";
+
+    if (isSeller) {
+      if (isCancelled) return `Buyer: ${buyerName || "Unknown"}`;
+      return isDone
+        ? `Sold to: ${buyerName || "Unknown"}`
+        : `Selling to: ${buyerName || "Unknown"}`;
+    } else {
+      if (isCancelled) return `Seller: ${sellerName || "Unknown"}`;
+      return isDone
+        ? `Bought from: ${sellerName || "Unknown"}`
+        : `Buying from: ${sellerName || "Unknown"}`;
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -56,6 +85,15 @@ export default function OrderDetails() {
             setCondition(d.condition)
             setPrice(d.price)
 
+          }
+        }
+
+        if (orderData.userId) {
+          const bRef = doc(db, "users", orderData.userId);
+          const bSnap = await getDoc(bRef);
+
+          if (bSnap.exists()) {
+            setBuyerName(bSnap.data()?.username || null);
           }
         }
         
@@ -126,9 +164,8 @@ export default function OrderDetails() {
           <Text style={styles.orderPrice}>
             ₱ {price}
           </Text>
-
-          <Text style={styles.orderSeller}>
-            {sellerName}
+          <Text style={styles.party}>
+            {getPartyText()}
           </Text>
         </View>
 
@@ -194,8 +231,64 @@ export default function OrderDetails() {
             </Text>
         </View>
 
-        </View>
-      
+      </View>
+      <View style={styles.actions}>
+  
+        {canCancel && (
+          <TouchableOpacity
+            style={styles.completeBtn}
+            onPress={async () => {
+                  Alert.alert( 
+                    "Cancel Order",
+                    "Are you sure you want to cancel this order?",
+                    [
+                      { text: "No" },
+                      {
+                        text: "Yes",
+                        style: "destructive",
+                        onPress: async () => {
+                          await updateDoc(doc(db, "orders", id as string), {
+                            deliveryStatus: "CANCELLED",
+                          });
+                        },
+                      },
+                    ]
+                  );
+                }}
+          >
+            <Text style={styles.completeText}>Cancel Order</Text>
+          </TouchableOpacity>
+        )}
+
+        {/* COMPLETE (BUYER ONLY) */}
+        {canComplete && (
+          <TouchableOpacity
+            style={styles.completeBtn}
+            onPress={async () => {
+              try {
+                await updateDoc(doc(db, "orders", id as string), {
+                  deliveryStatus: "CANCELLED",
+                });
+                if (order.listingId) {
+                  await updateDoc(doc(db, "listings", order.listingId), {
+                    available: true,
+                  });
+                }
+                Alert.alert(
+                  "Order Cancelled",
+                  "Your order has been cancelled successfully."
+                );
+              } catch (err) {
+                console.log(err);
+                Alert.alert("Error", "Failed to cancel order");
+              }
+            }}
+          >
+            <Text style={styles.completeText}>Complete Order</Text>
+          </TouchableOpacity>
+        )}
+
+      </View>
     </SafeAreaView>
   );
 }
@@ -310,5 +403,43 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: "#eee",
     marginTop: 15,
+  },
+  party: {
+    fontSize: 14,
+    color: "#444",
+    fontWeight: "600",
+    marginTop: 4,
+  },
+
+  actions: {
+    marginTop: 20,
+    gap: 10,
+  },
+
+  // cancelBtn: {
+  //   backgroundColor: "#fff",
+  //   borderWidth: 1,
+  //   borderColor: "#DC143C",
+  //   paddingVertical: 12,
+  //   borderRadius: 8,
+  // },
+
+  // cancelText: {
+  //   color: "#DC143C",
+  //   textAlign: "center",
+  //   fontWeight: "700",
+  // },
+
+  completeBtn: {
+    backgroundColor: "#DC143C",
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+
+  completeText: {
+    color: "#fff",
+    textAlign: "center",
+    fontWeight: "700",
+    fontSize: 16,
   },
 });

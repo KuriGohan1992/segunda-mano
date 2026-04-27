@@ -13,10 +13,10 @@ export const UserProvider = ({children} : {children: ReactNode}) => {
   const [user, setUser] = useState<User | null>(null);
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
-      setUser(firebaseUser); // sets user automatically if logged in
+      setUser(firebaseUser); 
     });
 
-    return () => unsubscribe(); // clean up listener
+    return () => unsubscribe(); 
   }, []);
   return (
     <UserContext.Provider value={{ user, setUser }}>

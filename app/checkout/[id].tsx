@@ -164,7 +164,7 @@ export default function Checkout() {
         Alert.alert(
           "Order placed successfully", 
           "Your order will be processed shortly.",
-          [{ text: "OK", onPress: () => router.replace("/(tabs)/profile") }]
+          [{ text: "OK", onPress: () => router.replace("/(tabs)/profile?tab=my Orders") }]
         );
         return;
       }

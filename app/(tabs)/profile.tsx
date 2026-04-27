@@ -14,7 +14,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useUser } from "../../context/UserContext";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import {
   doc,
   collection,
@@ -49,6 +49,16 @@ export default function Profile() {
 
   const tabs = ["listings", "reviews", "my Orders"];
   const activeIndex = tabs.indexOf(activeTab);
+
+
+
+  const { tab } = useLocalSearchParams();
+
+  useEffect(() => {
+    if (tab) {
+      setActiveTab(tab as string);
+    }
+  }, [tab]);
 
   useEffect(() => {
     if (!uid) {
@@ -122,26 +132,53 @@ export default function Profile() {
   useEffect(() => {
     if (!uid) return;
 
-    const q = query(
+    let buyerOrders: any[] = [];
+    let sellerOrders: any[] = [];
+
+    const buyerQuery = query(
       collection(db, "orders"),
       where("userId", "==", uid)
     );
 
-    const unsub = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+    const sellerQuery = query(
+      collection(db, "orders"),
+      where("sellerId", "==", uid)
+    );
 
-      // optional: sort latest first
-      data.sort((a: any, b: any) => {
+    const mergeAndSet = () => {
+      const merged = [...buyerOrders, ...sellerOrders];
+
+      const unique = Array.from(
+        new Map(merged.map((o) => [o.id, o])).values()
+      );
+
+      unique.sort((a: any, b: any) => {
         return (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0);
       });
 
-      setOrders(data);
+      setOrders(unique);
+    };
+
+    const unsubBuyer = onSnapshot(buyerQuery, (snapshot) => {
+      buyerOrders = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      mergeAndSet();
     });
 
-    return () => unsub();
+    const unsubSeller = onSnapshot(sellerQuery, (snapshot) => {
+      sellerOrders = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      mergeAndSet();
+    });
+
+    return () => {
+      unsubBuyer();
+      unsubSeller();
+    };
   }, [uid]);
 
   const getImageSource = () => {
@@ -319,10 +356,24 @@ export default function Profile() {
                         text: "Yes",
                         style: "destructive",
                         onPress: async () => {
-                          await updateDoc(doc(db, "orders", item.id), {
-                            deliveryStatus: "CANCELLED",
-                          });
-                        },
+                          try {
+                            await updateDoc(doc(db, "orders", item.id), {
+                              deliveryStatus: "CANCELLED",
+                            });
+                            if (item.listingId) {
+                              await updateDoc(doc(db, "listings", item.listingId), {
+                                available: true,
+                              });
+                            }
+                            Alert.alert(
+                              "Order Cancelled",
+                              "Your order has been cancelled successfully."
+                            );
+                          } catch (err) {
+                            console.log(err);
+                            Alert.alert("Error", "Failed to cancel order");
+                          }
+                        }
                       },
                     ]
                   );
