@@ -6,10 +6,11 @@ import {
   StyleSheet,
   TouchableOpacity,
   Pressable,
+  Alert,
 } from "react-native";
 import { img_placeholder } from "../constants/img_placeholder";
 import { db } from "@/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { router } from "expo-router";
 
 export default function OrderCard({ item, onCancel }: any) {
@@ -67,6 +68,23 @@ export default function OrderCard({ item, onCancel }: any) {
       : `data:image/jpeg;base64,${imgUrl}`
     : img_placeholder;
 
+  const handleComplete = async () => {
+    try {
+      const orderRef = doc(db, "orders", item.id);
+
+      await updateDoc(orderRef, {
+        deliveryStatus: "COMPLETED",
+        isCompleted: true,
+        hasReviewed : false,
+      });
+
+      Alert.alert("Success", "Order marked as completed.");
+    } catch (err) {
+      console.log(err);
+      Alert.alert("Error", "Failed to complete order.");
+    }
+  };
+
   return (
     <Pressable
       style={styles.card}
@@ -119,14 +137,31 @@ export default function OrderCard({ item, onCancel }: any) {
           {item.deliveryStatus === "DELIVERED" && (
             <TouchableOpacity
               style={styles.cBtn}
-              onPress={() => {
-                // you’ll wire this later
-              }}
+              onPress={handleComplete}
             >
               <Text style={styles.cText}>Complete Order</Text>
             </TouchableOpacity>
           )}
 
+          {/* ADD REVIEW */}
+          {item.deliveryStatus === "COMPLETED" && item.hasReviewed === false && (
+            <TouchableOpacity
+              style={styles.cBtn}
+              onPress={() => router.push(`/rating/${item.id}`)}
+            >
+              <Text style={styles.cText}>Add Review</Text>
+            </TouchableOpacity>
+          )}
+
+          {/* EDIT REVIEW */}
+          {item.deliveryStatus === "COMPLETED" && item.hasReviewed === true && (
+            <TouchableOpacity
+              style={styles.cBtn}
+              onPress={() => router.push(`/rating/${item.id}`)}
+            >
+              <Text style={styles.cText}>Edit Review</Text>
+            </TouchableOpacity>
+          )}
 
         </View>
       </View>
