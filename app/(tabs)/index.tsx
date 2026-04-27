@@ -102,6 +102,7 @@ export default function Home() {
           {/* <Ionicons name="filter-sharp" size={26} color='#DC143C' /> */}
         </TouchableOpacity>
         <DropDownPicker
+        
           open={open}
           value={value}
           items={items}

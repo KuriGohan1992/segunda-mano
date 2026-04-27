@@ -221,111 +221,119 @@ export default function Checkout() {
         <View style={{ width: 28 }} />
       </View>
 
-      <View style={styles.checkoutRow}>
+      <ScrollView
+          style={{ flex: 1 }}
+          showsVerticalScrollIndicator={false}
+          nestedScrollEnabled={true}
+        >
+        <View style={styles.checkoutRow}>
 
-        <Image
-          source={{ uri: imageUri }}
-          style={styles.checkoutImage}
+          <Image
+            source={{ uri: imageUri }}
+            style={styles.checkoutImage}
+          />
+
+          <View style={styles.checkoutMeta}>
+            <Text numberOfLines={2} style={styles.checkoutTitle}>
+              {listing.title}
+            </Text>
+
+            <Text style={styles.checkoutCondition}>
+              {listing.condition}
+            </Text>
+
+            <Text style={styles.checkoutPrice}>
+              ₱ {listing.price}
+            </Text>
+
+            <Text style={styles.checkoutSeller}>
+              {sellerName}
+            </Text>
+          </View>
+
+        </View>
+
+        <View style={styles.divider} />
+
+        <Text style={styles.section}>Delivery Address</Text>
+
+        <TextInput
+          placeholder="House No. / Street / Barangay"
+          value={specificAddress}
+          onChangeText={setSpecificAddress}
+          style={styles.input}
         />
 
-        <View style={styles.checkoutMeta}>
-          <Text numberOfLines={2} style={styles.checkoutTitle}>
-            {listing.title}
-          </Text>
+        <View style={{ zIndex: 2, elevation: 2 }}>
+          <DropDownPicker
+            open={openAddress}
+            value={address}
+            listMode="SCROLLVIEW"
+            items={ADDRESS.map((i) => ({ label: i, value: i }))}
+            setOpen={handleSetOpenAddress}
+            setValue={setAddress}
+            placeholder="Select Address"
+            style={styles.dropdown}
+            placeholderStyle={styles.placeholderStyle}
+            listItemLabelStyle={styles.dropdownInput}
+            labelStyle={styles.dropdownInput}
+            listItemContainerStyle={styles.listItemContainerStyle}
+            dropDownContainerStyle={styles.dropdown}
+          />
+        </View>
 
-          <Text style={styles.checkoutCondition}>
-            {listing.condition}
-          </Text>
+        <View style={styles.divider} />
 
-          <Text style={styles.checkoutPrice}>
-            ₱ {listing.price}
-          </Text>
+        <Text style={styles.section}>Payment Method</Text>
 
-          <Text style={styles.checkoutSeller}>
-            {sellerName}
+        <TouchableOpacity
+          style={[styles.option, paymentMethod === "COD" && styles.selected]}
+          onPress={() => setPaymentMethod("COD")}
+        >
+          <Text style={styles.optionText}>Cash on Delivery</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.option, paymentMethod === "ONLINE" && styles.selected]}
+          onPress={() => setPaymentMethod("ONLINE")}
+        >
+          <Text style={styles.optionText}>QRPH (Gcash, Maya, etc...)</Text>
+        </TouchableOpacity>
+
+        <View style={styles.divider} />
+
+        <Text style={styles.section}>Summary</Text>
+
+        <View style={styles.row}>
+          <Text style={styles.smallText}>Item</Text>
+          <Text style={styles.smallText}>₱ {listing.price}</Text>
+        </View>
+
+        <View style={styles.row}>
+          <Text style={styles.smallText}>Admin Fee (1%)</Text>
+          <Text style={styles.smallText}>₱ {adminFee}</Text>
+        </View>
+
+        <View style={styles.row}>
+          <Text style={styles.smallText}>Shipping</Text>
+          <Text style={styles.smallText}>₱ {shippingFee}</Text>
+        </View>
+
+        <View style={[styles.row, { marginTop: 10 }]}>
+          <Text style={ [styles.smallText, { fontWeight: "bold" }]}>Total</Text>
+          <Text style={ [styles.smallText, { fontWeight: "bold", color: "#DC143C" }]}>
+            ₱ {total}
           </Text>
         </View>
 
-      </View>
+        <TouchableOpacity style={styles.button} onPress={handlePay}>
+          <Text style={{ color: "#fff", textAlign: "center", fontWeight: "700", fontSize: 16}}>
+            {paymentMethod === "COD" ? "Place Order" : "Pay Now"}
+          </Text>
+        </TouchableOpacity>
 
-      <View style={styles.divider} />
+      </ScrollView>
 
-      <Text style={styles.section}>Delivery Address</Text>
-
-      <TextInput
-        placeholder="House No. / Street / Barangay"
-        value={specificAddress}
-        onChangeText={setSpecificAddress}
-        style={styles.input}
-      />
-
-      <View style={{ zIndex: 2, elevation: 2 }}>
-        <DropDownPicker
-          open={openAddress}
-          value={address}
-          listMode="SCROLLVIEW"
-          items={ADDRESS.map((i) => ({ label: i, value: i }))}
-          setOpen={handleSetOpenAddress}
-          setValue={setAddress}
-          placeholder="Select Address"
-          style={styles.dropdown}
-          placeholderStyle={styles.placeholderStyle}
-          listItemLabelStyle={styles.dropdownInput}
-          labelStyle={styles.dropdownInput}
-          listItemContainerStyle={styles.listItemContainerStyle}
-          dropDownContainerStyle={styles.dropdown}
-        />
-      </View>
-
-      <View style={styles.divider} />
-
-      <Text style={styles.section}>Payment Method</Text>
-
-      <TouchableOpacity
-        style={[styles.option, paymentMethod === "COD" && styles.selected]}
-        onPress={() => setPaymentMethod("COD")}
-      >
-        <Text style={styles.optionText}>Cash on Delivery</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={[styles.option, paymentMethod === "ONLINE" && styles.selected]}
-        onPress={() => setPaymentMethod("ONLINE")}
-      >
-        <Text style={styles.optionText}>QRPH (Gcash, Maya, etc...)</Text>
-      </TouchableOpacity>
-
-      <View style={styles.divider} />
-
-      <Text style={styles.section}>Summary</Text>
-
-      <View style={styles.row}>
-        <Text style={styles.smallText}>Item</Text>
-        <Text style={styles.smallText}>₱ {listing.price}</Text>
-      </View>
-
-      <View style={styles.row}>
-        <Text style={styles.smallText}>Admin Fee (1%)</Text>
-        <Text style={styles.smallText}>₱ {adminFee}</Text>
-      </View>
-
-      <View style={styles.row}>
-        <Text style={styles.smallText}>Shipping</Text>
-        <Text style={styles.smallText}>₱ {shippingFee}</Text>
-      </View>
-
-      <View style={[styles.row, { marginTop: 10 }]}>
-        <Text style={ [styles.smallText, { fontWeight: "bold" }]}>Total</Text>
-        <Text style={ [styles.smallText, { fontWeight: "bold", color: "#DC143C" }]}>
-          ₱ {total}
-        </Text>
-      </View>
-
-      <TouchableOpacity style={styles.button} onPress={handlePay}>
-        <Text style={{ color: "#fff", textAlign: "center", fontWeight: "700", fontSize: 16}}>
-          {paymentMethod === "COD" ? "Place Order" : "Pay Now"}
-        </Text>
-      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -419,7 +427,7 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    marginTop: 12,
+    marginTop: 16,
     backgroundColor: "#DC143C",
     padding: 14,
     borderRadius: 10,
