@@ -77,11 +77,11 @@ export default function About() {
             <Text style={styles.aboutText}>
               This application was developed as a school project for the subject{" "}
               <Text style={{ fontWeight: "600" }}>
-                [Your Subject Here]
+                CSSE101
               </Text>{" "}
               under the guidance of{" "}
               <Text style={{ fontWeight: "600" }}>
-                [Instructor Name]
+                Sir Farley L. Abrigo
               </Text>.
             </Text>
 
@@ -96,16 +96,19 @@ export default function About() {
             <Text style={styles.aboutSectionHeader}>Developers</Text>
 
             <Text style={styles.aboutBullet}>
-              • [Your Name] – Frontend & Backend Development
+              • Charl Emmanuel E. Mendez – Frontend & Backend
             </Text>
             <Text style={styles.aboutBullet}>
-              • [Member 2] – UI/UX Design
+              • Jade Michael S. Garcia – Frontend & Backend (Asst.)
             </Text>
             <Text style={styles.aboutBullet}>
-              • [Member 3] – Database & Testing
+              • Jethro G. Mamplata – UI/UX Design
             </Text>
             <Text style={styles.aboutBullet}>
-              • [Member 4] – Documentation
+              • Charls Anthony A. Gatchalian – Database & Testing
+            </Text>
+            <Text style={styles.aboutBullet}>
+              • Kriztan V. Sumbillo – Documentation
             </Text>
 
             {/* 🔥 EXTRA TOUCH */}
