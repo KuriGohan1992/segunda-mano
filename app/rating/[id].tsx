@@ -15,9 +15,12 @@ import CustomInput from "@/components/CustomInput";
 import {
   doc,
   getDoc,
-  updateDoc,
-  addDoc,
+  query,
+  where,
+  getDocs,
   collection,
+  addDoc,
+  updateDoc,
   serverTimestamp,
 } from "firebase/firestore";
 import { db } from "@/firebase";
@@ -28,7 +31,7 @@ export default function RatingScreen() {
   const { id } = useLocalSearchParams();
   const { user } = useUser();
 
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, setValue } = useForm({
     defaultValues: {
       review: "",
     },
@@ -72,6 +75,41 @@ export default function RatingScreen() {
 
     fetchData();
   }, [id]);
+
+  useEffect(() => {
+    const fetchExistingReview = async () => {
+      if (!id || !user?.uid) return;
+
+      try {
+        const orderRef = doc(db, "orders", id as string);
+        const orderSnap = await getDoc(orderRef);
+
+        if (!orderSnap.exists()) return;
+
+        const orderData = orderSnap.data();
+
+        const q = query(
+          collection(db, "ratings"),
+          where("userId", "==", user.uid),
+          where("listingId", "==", orderData.listingId)
+        );
+
+        const snap = await getDocs(q);
+
+        if (!snap.empty) {
+          const data = snap.docs[0].data();
+
+          setProductRating(data.productRating ?? 5);
+          setSellerRating(data.sellerRating ?? 5);
+          setValue("review", data.review ?? "");
+        }
+      } catch (err) {
+        console.log("fetch review error", err);
+      }
+    };
+
+    fetchExistingReview();
+  }, [id, user]);
 
   const onSubmit = async (data: any) => {
     try {
