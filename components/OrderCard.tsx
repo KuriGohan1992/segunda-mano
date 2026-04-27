@@ -121,7 +121,7 @@ export default function OrderCard({ item, onCancel }: any) {
 
         <View style={styles.meta}>
           {/* TITLE */}
-          <Text numberOfLines={2} style={styles.title}>
+          <Text numberOfLines={1} style={styles.title}>
             {item.listingName}
           </Text>
 

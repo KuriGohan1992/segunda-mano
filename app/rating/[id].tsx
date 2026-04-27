@@ -5,80 +5,104 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/firebase";
-import CustomInput from "@/components/CustomInput";
 import { useForm } from "react-hook-form";
+import CustomInput from "@/components/CustomInput";
+import {
+  doc,
+  getDoc,
+  updateDoc,
+  addDoc,
+  collection,
+  serverTimestamp,
+} from "firebase/firestore";
+import { db } from "@/firebase";
+import { useUser } from "@/context/UserContext";
 
 export default function RatingScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
+  const { user } = useUser();
+
+  const { control, handleSubmit } = useForm({
+    defaultValues: {
+      review: "",
+    },
+  });
 
   const [productName, setProductName] = useState("Loading...");
   const [sellerName, setSellerName] = useState("Loading...");
 
   const [productRating, setProductRating] = useState(5);
   const [sellerRating, setSellerRating] = useState(5);
-  
-
-  const { control, handleSubmit: formSubmit } = useForm();
 
   useEffect(() => {
     const fetchData = async () => {
-        try {
-        if (!id) return;
+      if (!id) return;
 
-        //Get ORDER
+      try {
         const orderRef = doc(db, "orders", id as string);
         const orderSnap = await getDoc(orderRef);
 
-        if (!orderSnap.exists()) {
-            console.log("Order not found");
-            return;
-        }
+        if (!orderSnap.exists()) return;
 
         const orderData = orderSnap.data() as any;
 
-        //Get LISTING (product)
-        if (orderData.listingId) {
-            const listingRef = doc(db, "listings", orderData.listingId);
-            const listingSnap = await getDoc(listingRef);
+        const listingRef = doc(db, "listings", orderData.listingId);
+        const listingSnap = await getDoc(listingRef);
 
-            if (listingSnap.exists()) {
-            const listingData = listingSnap.data() as any;
-            setProductName(listingData.title || "Unnamed Product");
-            }
+        if (listingSnap.exists()) {
+          setProductName(listingSnap.data()?.title || "Unknown Product");
         }
 
-        //Get SELLER
-        if (orderData.sellerId) {
-            const sellerRef = doc(db, "users", orderData.sellerId);
-            const sellerSnap = await getDoc(sellerRef);
+        const sellerRef = doc(db, "users", orderData.sellerId);
+        const sellerSnap = await getDoc(sellerRef);
 
-            if (sellerSnap.exists()) {
-            const sellerData = sellerSnap.data() as any;
-            setSellerName(sellerData.username || "Unknown Seller");
-            }
+        if (sellerSnap.exists()) {
+          setSellerName(sellerSnap.data()?.username || "Unknown Seller");
         }
-
-        } catch (err) {
-        console.log("Fetch error:", err);
-        }
+      } catch (err) {
+        console.log(err);
+      }
     };
 
     fetchData();
-    }, [id]);
+  }, [id]);
 
-  const handleProductStar = (i: number) => {
-    setProductRating((prev) => (prev === i ? 0 : i));
-  };
+  const onSubmit = async (data: any) => {
+    try {
+      const reviewText = data.review;
 
-  const handleSellerStar = (i: number) => {
-    setSellerRating((prev) => (prev === i ? 0 : i));
+      const orderRef = doc(db, "orders", id as string);
+      const orderSnap = await getDoc(orderRef);
+
+      if (!orderSnap.exists()) return;
+
+      const orderData = orderSnap.data() as any;
+
+      await addDoc(collection(db, "ratings"), {
+        listingId: orderData.listingId,
+        productRating,
+        review: reviewText,
+        sellerId: orderData.sellerId,
+        sellerRating,
+        userId: user?.uid,
+        createdAt: serverTimestamp(),
+      });
+
+      await updateDoc(orderRef, {
+        hasReviewed: true,
+      });
+
+      router.back();
+    } catch (err) {
+      console.log("submit error", err);
+      Alert.alert("Error in submitting a review, please try again.")
+    }
   };
 
   const renderStars = (
@@ -86,34 +110,19 @@ export default function RatingScreen() {
     setRating: (value: number) => void
   ) => {
     return (
-        <View style={styles.starRow}>
+      <View style={styles.starRow}>
         {[1, 2, 3, 4, 5].map((i) => (
-            <TouchableOpacity key={i} onPress={() => setRating(i)}>
+          <TouchableOpacity key={i} onPress={() => setRating(i)}>
             <Ionicons
-                name={i <= rating ? "star" : "star-outline"}
-                size={28}
-                color="#DC143C"
-                style={{ marginRight: 6 }}
+              name={i <= rating ? "star" : "star-outline"}
+              size={28}
+              color="#DC143C"
+              style={{ marginRight: 6 }}
             />
-            </TouchableOpacity>
+          </TouchableOpacity>
         ))}
-        </View>
+      </View>
     );
-  };
-
-  const handleSubmit = async (data: any) => {
-    try {
-      console.log({
-        productRating,
-        sellerRating,
-        reviewText: data.review,
-      });
-
-      // 🔽 Firebase logic later
-
-    } catch (err) {
-      console.log("submit error", err);
-    }
   };
 
   return (
@@ -137,16 +146,14 @@ export default function RatingScreen() {
         <Text style={styles.label}>Product</Text>
         <Text style={styles.name}>{productName}</Text>
 
-        {renderStars(productRating, handleProductStar)}
+        {renderStars(productRating, setProductRating)}
 
         <Text style={[styles.label, { marginTop: 20 }]}>Seller</Text>
         <Text style={styles.name}>{sellerName}</Text>
 
-        {renderStars(sellerRating, handleSellerStar)}
+        {renderStars(sellerRating, setSellerRating)}
 
-        <Text style={[styles.label, { marginTop: 20 }]}>
-          Your Review
-        </Text>
+        <Text style={[styles.label, { marginTop: 20 }]}>Your Review</Text>
 
         <CustomInput
           name="review"
@@ -157,7 +164,7 @@ export default function RatingScreen() {
 
         <TouchableOpacity
           style={styles.button}
-          onPress={formSubmit(handleSubmit)}
+          onPress={handleSubmit(onSubmit)}
         >
           <Text style={styles.buttonText}>Submit Review</Text>
         </TouchableOpacity>
