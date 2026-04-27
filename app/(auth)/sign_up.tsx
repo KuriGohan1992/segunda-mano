@@ -14,7 +14,7 @@ import DropDownPicker from 'react-native-dropdown-picker'
 import { ADDRESS } from '@/constants/address'
 
 const EMAIL_REGEX = /^(?=.{1,64}@)(?:"[^"\\\r\n]+"|[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*)@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}$/
-
+const MOBILE_REGEX = /^09\d{9}$/;
 const SignUp = () => {
   const { setUser } = useUser();
   const [loading, setLoading] = useState(false)
@@ -38,7 +38,7 @@ const SignUp = () => {
     if (loading) return;
     setLoading(true);
 
-    const {username, email, password} = data;
+    const {username, email, password, mobileNumber} = data;
 
     try {
       const q = query(collection(db, "users"), where("username", "==", username));
@@ -55,7 +55,7 @@ const SignUp = () => {
       setUser(user);
 
       await setDoc(doc(db, "users", user.uid), {
-        username, email, address, createdAt: serverTimestamp(), carton: []
+        username, email, address, createdAt: serverTimestamp(), carton: [], mobileNumber: mobileNumber || null,
       }, { merge: true });
 
       await sendEmailVerification(user);
@@ -131,16 +131,32 @@ const SignUp = () => {
         secureTextEntry
         control={control}
       />
+      <CustomInput
+        name="mobileNumber"
+        rules={{
+          pattern: {
+            value: MOBILE_REGEX,
+            message: "Enter a valid mobile number (09XXXXXXXXX)",
+          },
+        }}
+        placeholder="Mobile Number (09XXXXXXXXX)"
+        keyboardType="numeric"
+        control={control}
+      />
+
+      <Text style={styles.helperText}>
+        Add your GCash/Maya number to enable online payment on listings that you create. You can always change this number in the settings.
+      </Text>
 
       <CustomButton
         text="Sign Up"
         onPress={handleSubmit(onSignUpPressed)}
       />
 
-      <Text style={styles.text}>By creating an account, you confirm that you have read and agree to the{" "}
+      {/* <Text style={styles.text}>By creating an account, you confirm that you have read and agree to the{" "}
         <Text style={styles.link} onPress={ onTermsOfUsePressed }>Terms of Use</Text> and{" "} 
         <Text style={styles.link} onPress={ onPrivacyPolicyPressed }>Privacy Policy</Text>
-      </Text>
+      </Text> */}
 
       <CustomButton
         text="Already have an account? Sign in"

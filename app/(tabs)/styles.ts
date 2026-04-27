@@ -739,6 +739,12 @@ const styles = StyleSheet.create({
   toggleTextActive: {
     color: "#DC143C",
   },
+  helperText: {
+  fontSize: 12,
+  color: "#888",
+  alignSelf: "flex-start",
+  marginBottom: 10,
+}
 
 });
 

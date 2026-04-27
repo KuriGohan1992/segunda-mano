@@ -140,6 +140,7 @@ exports.paymongoWebhook = functions.https.onRequest(async (req, res) => {
         isCompleted: false,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
         paidAt: admin.firestore.FieldValue.serverTimestamp(),
+        sellerReceivedPayment: false,
       }, { merge: true });
       // await db.collection("orders").doc(orderId).set({
       //   userId,

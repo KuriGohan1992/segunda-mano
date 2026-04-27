@@ -18,12 +18,11 @@ export default function Checkout() {
   const { user } = useUser();
   const uid = user?.uid;
 
-
+  const [sellerMobile, setSellerMobile] = useState<string | null>(null);
   const [listing, setListing] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   const checkout = httpsCallable(functions, "createCheckout");
-
   const [address, setAddress] = useState<string>("");
   const [openAddress, setOpenAddress] = useState(false);
 
@@ -81,7 +80,9 @@ export default function Checkout() {
       const snap = await getDoc(ref);
 
       if (snap.exists()) {
-        setSellerName(snap.data().username);
+        const data = snap.data()
+        setSellerName(data.username);
+        setSellerMobile(data.mobileNumber || null);
       }
     };
 
@@ -294,10 +295,31 @@ export default function Checkout() {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.option, paymentMethod === "ONLINE" && styles.selected]}
-          onPress={() => setPaymentMethod("ONLINE")}
+          // disabled={!sellerMobile}
+          style={[
+            styles.option,
+            paymentMethod === "ONLINE" && styles.selected,
+            !sellerMobile && styles.disabledOption
+          ]}
+          onPress={() => {
+            if (!sellerMobile) {
+              Alert.alert(
+                "Online Payment Unavailable",
+                "This seller hasn’t added a payment number yet."
+              );
+              return;
+            }
+            setPaymentMethod("ONLINE");
+          }}
         >
-          <Text style={styles.optionText}>QRPH (Gcash, Maya, etc...)</Text>
+          <Text
+            style={[
+              styles.optionText,
+              !sellerMobile && styles.disabledText
+            ]}
+          >
+            QRPH (Gcash, Maya, etc...)
+          </Text>
         </TouchableOpacity>
 
         <View style={styles.divider} />
@@ -510,6 +532,15 @@ const styles = StyleSheet.create({
 
   listItemContainerStyle: { 
     height: 45, borderBottomColor: '#e8e8e8', borderBottomWidth: 0.5
+  },
+
+  disabledOption: {
+    backgroundColor: "#f5f5f5",
+    borderColor: "#ddd",
+  },
+
+  disabledText: {
+    color: "#aaa",
   },
 
 });

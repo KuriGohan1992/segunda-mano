@@ -20,7 +20,9 @@ import DropDownPicker from "react-native-dropdown-picker";
 import * as ImagePicker from "expo-image-picker";
 import { useUser } from "../../context/UserContext";
 import { ADDRESS } from "@/constants/address";
+import { TouchableWithoutFeedback, Keyboard } from "react-native";
 
+const MOBILE_REGEX = /^09\d{9}$/;
 export default function Details() {
   const router = useRouter();
   const { user } = useUser();
@@ -52,7 +54,7 @@ export default function Details() {
         const d: any = snap.data();
 
         setValue("username", d.username || "");
-        setValue("contactNumber", d.contactNumber || "");
+        setValue("mobileNumber", d.mobileNumber || "");
         
         setAddress(d.address || "");
         setGender(d.gender || null);
@@ -96,7 +98,7 @@ export default function Details() {
     await updateDoc(doc(db, "users", uid), {
       username: data.username,
       gender,
-      contactNumber: data.contactNumber,
+      mobileNumber: data.mobileNumber,
       picture,
       address
     });
@@ -135,82 +137,94 @@ export default function Details() {
   //   );
   // }
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.headerRow}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="chevron-back" size={28} color="#DC143C" />
-        </TouchableOpacity>
 
-        <Text style={styles.title}>Edit Profile</Text>
 
-        <View style={{ width: 28 }} />
-      </View>
+return (
+  <SafeAreaView style={styles.container}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={{ flex: 1 }}>
 
-      {/* <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          padding: 20,
-          paddingTop: 10,
-        }}
-      > */}
-      <View style={{ padding: 20, paddingTop: 10 }}>
-        <View style={{ alignItems: "center", marginBottom: 20 }}>
-          <TouchableOpacity onPress={pickImage}>
-            <Image
-              source={
-                picture
-                  ? { uri: picture }
-                  : require("../../assets/profile.png")
-              }
-              style={{
-                width: 100,
-                height: 100,
-                borderRadius: 50,
-              }}
-            />
+        <View style={styles.headerRow}>
+          <TouchableOpacity onPress={() => router.back()}>
+            <Ionicons name="chevron-back" size={28} color="#DC143C" />
           </TouchableOpacity>
 
-          <Text style={{ marginTop: 8, color: "#777" }}>
-            Tap to change profile picture
-          </Text>
+          <Text style={styles.title}>Edit Profile</Text>
+
+          <View style={{ width: 28 }} />
         </View>
 
-        <Text style={styles.BoxTitle}>Username</Text>
-        <CustomInput
-          name="username"
-          control={control}
-          placeholder="Username"
-        />
+        <View style={{ padding: 20, paddingTop: 10 }}>
+          <View style={{ alignItems: "center", marginBottom: 20 }}>
+            <TouchableOpacity onPress={pickImage}>
+              <Image
+                source={
+                  picture
+                    ? { uri: picture }
+                    : require("../../assets/profile.png")
+                }
+                style={{
+                  width: 100,
+                  height: 100,
+                  borderRadius: 50,
+                }}
+              />
+            </TouchableOpacity>
 
-        <Text style={styles.BoxTitle}>Contact Number</Text>
-        <CustomInput
-          name="contactNumber"
-          control={control}
-          placeholder="Contact Number"
-        />
-        <Text style={styles.BoxTitle}>Address</Text>
-        <View style={{ zIndex: 2, elevation: 2 }}>
-          <DropDownPicker
-            open={openAddress}
-            value={address}
-            items={ADDRESS.map((i) => ({ label: i, value: i }))}
-            setOpen={handleSetOpenAddress}
-            setValue={setAddress}
-            placeholder="Select Address"
-            style={styles.dropdown}
-            placeholderStyle={styles.placeholderStyle}
-            listItemLabelStyle={styles.dropdownInput}
-            labelStyle={styles.dropdownInput}
-            listItemContainerStyle={styles.listItemContainerStyle}
-            dropDownContainerStyle={styles.dropdown}
+            <Text style={{ marginTop: 8, color: "#777" }}>
+              Tap to change profile picture
+            </Text>
+          </View>
+
+          <Text style={styles.BoxTitle}>Username</Text>
+          <CustomInput
+            name="username"
+            control={control}
+            placeholder="Username"
           />
+
+          <Text style={styles.BoxTitle}>Address</Text>
+          <View style={{ zIndex: 2, elevation: 2 }}>
+            <DropDownPicker
+              open={openAddress}
+              value={address}
+              items={ADDRESS.map((i) => ({ label: i, value: i }))}
+              setOpen={handleSetOpenAddress}
+              setValue={setAddress}
+              placeholder="Select Address"
+              style={styles.dropdown}
+              placeholderStyle={styles.placeholderStyle}
+              listItemLabelStyle={styles.dropdownInput}
+              labelStyle={styles.dropdownInput}
+              listItemContainerStyle={styles.listItemContainerStyle}
+              dropDownContainerStyle={styles.dropdown}
+            />
+          </View>
+
+          <Text style={styles.BoxTitle}>Mobile Number</Text>
+          <CustomInput
+            name="mobileNumber"
+            rules={{
+              pattern: {
+                value: MOBILE_REGEX,
+                message: "Enter a valid mobile number (09XXXXXXXXX)",
+              },
+            }}
+            placeholder="Mobile Number (09XXXXXXXXX)"
+            keyboardType="numeric"
+            control={control}
+          />
+
+          <Text style={styles.helperText}>
+            Used to receive online payments–keep it updated. Leave blank to disable online payments on your listings.
+          </Text>
+
+          <View style={{ marginTop: 0 }}>
+            <CustomButton text="Save" onPress={handleSubmit(onSave)} />
+          </View>
         </View>
 
-        <View style={{ marginTop: 20 }}>
-          <CustomButton text="Save" onPress={handleSubmit(onSave)} />
-        </View>
       </View>
-    </SafeAreaView>
-  );
-}
+    </TouchableWithoutFeedback>
+  </SafeAreaView>
+)}

@@ -71,7 +71,12 @@ const styles = StyleSheet.create({
   listItemContainerStyle: { 
     height: 45, borderBottomColor: '#e8e8e8', borderBottomWidth: 0.5
   },
-
+  helperText: {
+    fontSize: 12,
+    color: "#888",
+    alignSelf: "flex-start",
+    marginBottom: 10,
+  }
 })
 
 export default styles

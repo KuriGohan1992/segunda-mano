@@ -34,15 +34,17 @@ export default function OrderCard({ item, onCancel }: any) {
     const isCancelled = item.deliveryStatus === "CANCELLED";
 
     if (isSeller) {
-      if (isCancelled) return `Buyer: ${buyerName || "Unknown"}`;
-      return isDone
-        ? `Sold to: ${buyerName || "Unknown"}`
-        : `Selling to: ${buyerName || "Unknown"}`;
+      return `Buyer: ${buyerName || "Unknown"}`;
+      // if (isCancelled) return `Buyer: ${buyerName || "Unknown"}`;
+      // return isDone
+      //   ? `Sold to: ${buyerName || "Unknown"}`
+      //   : `Selling to: ${buyerName || "Unknown"}`;
     } else {
-      if (isCancelled) return `Seller: ${sellerName || "Unknown"}`;
-      return isDone
-        ? `Bought from: ${sellerName || "Unknown"}`
-        : `Buying from: ${sellerName || "Unknown"}`;
+      return `Seller: ${sellerName || "Unknown"}`
+      // if (isCancelled) return `Seller: ${sellerName || "Unknown"}`;
+      // return isDone
+      //   ? `Bought from: ${sellerName || "Unknown"}`
+      //   : `Buying from: ${sellerName || "Unknown"}`;
     }
   };
 
@@ -125,7 +127,7 @@ export default function OrderCard({ item, onCancel }: any) {
             {item.listingName}
           </Text>
 
-          <Text style={styles.party}>{getPartyText()}</Text>
+          
 
 
           {/* CONDITION */}
@@ -140,13 +142,14 @@ export default function OrderCard({ item, onCancel }: any) {
               : "Online Payment"}{" "}
             • {formatDate(item.createdAt)}
           </Text>
-
+          <Text style={styles.party}>{getPartyText()}</Text>
           {/* BIG PRICE (BOTTOM RIGHT) */}
           <View style={styles.priceContainer}>
             <Text style={styles.bigPrice}>
               ₱ {Number(item.amount || 0).toLocaleString()}
             </Text>
           </View>
+          
         </View>
       </View>
 
