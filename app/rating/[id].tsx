@@ -19,9 +19,9 @@ import {
   where,
   getDocs,
   collection,
-  addDoc,
   updateDoc,
   serverTimestamp,
+  setDoc, // ✅ FIX ADDED
 } from "firebase/firestore";
 import { db } from "@/firebase";
 import { useUser } from "@/context/UserContext";
@@ -122,14 +122,18 @@ export default function RatingScreen() {
 
       const orderData = orderSnap.data() as any;
 
-      await addDoc(collection(db, "ratings"), {
+      // 🔥 FIXED: deterministic document ID (no duplicates ever)
+      const ratingId = `${orderData.listingId}_${user?.uid}`;
+      const ratingRef = doc(db, "ratings", ratingId);
+
+      await setDoc(ratingRef, {
         listingId: orderData.listingId,
         productRating,
         review: reviewText,
         sellerId: orderData.sellerId,
         sellerRating,
         userId: user?.uid,
-        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
       });
 
       await updateDoc(orderRef, {
@@ -139,14 +143,11 @@ export default function RatingScreen() {
       router.back();
     } catch (err) {
       console.log("submit error", err);
-      Alert.alert("Error in submitting a review, please try again.")
+      Alert.alert("Error in submitting a review, please try again.");
     }
   };
 
-  const renderStars = (
-    rating: number,
-    setRating: (value: number) => void
-  ) => {
+  const renderStars = (rating: number, setRating: (value: number) => void) => {
     return (
       <View style={styles.starRow}>
         {[1, 2, 3, 4, 5].map((i) => (
@@ -226,18 +227,18 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
     backgroundColor: "#fff",
-    },
+  },
 
-    backButton: {
+  backButton: {
     position: "absolute",
     left: 16,
-    },
+  },
 
-    headerTitle: {
+  headerTitle: {
     fontSize: 20,
     fontWeight: "bold",
     color: "#DC143C",
-    },
+  },
 
   scrollContent: {
     padding: 16,
