@@ -40,7 +40,7 @@ export default function ListingCard({ item, onPress }: Props) {
       <View style={styles.meta}>
         <Text numberOfLines={2} style={styles.title}>
           {item.type === "lf" && (
-            <Text style={styles.lfTag}>[LF]</Text>
+            <Text style={styles.lfTag}>[LF] </Text>
           )}
           {item.title}
         </Text>

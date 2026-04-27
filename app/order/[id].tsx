@@ -44,17 +44,21 @@ export default function OrderDetails() {
     const isDone = ["DELIVERED", "COMPLETED"].includes(status);
     const isCancelled = status === "CANCELLED";
 
+
     if (isSeller) {
-      if (isCancelled) return `Buyer: ${buyerName || "Unknown"}`;
-      return isDone
-        ? `Sold to: ${buyerName || "Unknown"}`
-        : `Selling to: ${buyerName || "Unknown"}`;
+      return `Buyer: ${buyerName || "Unknown"}`;
+      // if (isCancelled) return `Buyer: ${buyerName || "Unknown"}`;
+      // return isDone
+      //   ? `Sold to: ${buyerName || "Unknown"}`
+      //   : `Selling to: ${buyerName || "Unknown"}`;
     } else {
-      if (isCancelled) return `Seller: ${sellerName || "Unknown"}`;
-      return isDone
-        ? `Bought from: ${sellerName || "Unknown"}`
-        : `Buying from: ${sellerName || "Unknown"}`;
+      return `Seller: ${sellerName || "Unknown"}`
+      // if (isCancelled) return `Seller: ${sellerName || "Unknown"}`;
+      // return isDone
+      //   ? `Bought from: ${sellerName || "Unknown"}`
+      //   : `Buying from: ${sellerName || "Unknown"}`;
     }
+
   };
 
   useEffect(() => {
