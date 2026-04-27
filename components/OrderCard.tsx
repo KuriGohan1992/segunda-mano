@@ -22,6 +22,7 @@ export default function OrderCard({ item, onCancel }: any) {
   const isSeller = item.sellerId === user?.uid;
   const canCancel = item.deliveryStatus === "PLACED" && item.paymentMethod === "COD";
   const [buyerName, setBuyerName] = useState<string | null>(null);
+  const isBuyer = item.userId === user?.uid;
 
   const formatDate = (timestamp: any) => {
     if (!timestamp) return "";
@@ -173,24 +174,28 @@ export default function OrderCard({ item, onCancel }: any) {
           )}
 
           {/* ADD REVIEW */}
-          {item.deliveryStatus === "COMPLETED" && item.hasReviewed === false && (
-            <TouchableOpacity
-              style={styles.cBtn}
-              onPress={() => router.push(`/rating/${item.id}`)}
-            >
-              <Text style={styles.cText}>Add Review</Text>
-            </TouchableOpacity>
-          )}
+          {isBuyer &&
+            item.deliveryStatus === "COMPLETED" &&
+            item.hasReviewed === false && (
+              <TouchableOpacity
+                style={styles.cBtn}
+                onPress={() => router.push(`/rating/${item.id}`)}
+              >
+                <Text style={styles.cText}>Add Review</Text>
+              </TouchableOpacity>
+            )}
 
           {/* EDIT REVIEW */}
-          {item.deliveryStatus === "COMPLETED" && item.hasReviewed === true && (
-            <TouchableOpacity
-              style={styles.cBtn}
-              onPress={() => router.push(`/rating/${item.id}`)}
-            >
-              <Text style={styles.cText}>Edit Review</Text>
-            </TouchableOpacity>
-          )}
+          {isBuyer &&
+            item.deliveryStatus === "COMPLETED" &&
+            item.hasReviewed === true && (
+              <TouchableOpacity
+                style={styles.cBtn}
+                onPress={() => router.push(`/rating/${item.id}`)}
+              >
+                <Text style={styles.cText}>Edit Review</Text>
+              </TouchableOpacity>
+            )}
 
         </View>
       </View>

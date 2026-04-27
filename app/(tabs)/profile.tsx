@@ -30,6 +30,7 @@ import { img_placeholder } from "../../constants/img_placeholder";
 import ListingCard from "../../components/ListingCard";
 import { SafeAreaView } from "react-native-safe-area-context";
 import OrderCard from "@/components/OrderCard";
+import RatingCard from "@/components/RatingsCard";
 
 export default function Profile() {
   const router = useRouter();
@@ -46,6 +47,7 @@ export default function Profile() {
 
   const [activeTab, setActiveTab] = useState("listings");
   const [userListings, setUserListings] = useState<Listing[]>([]);
+  const [reviews, setReviews] = useState<any[]>([]);
 
   const tabs = ["listings", "reviews", "my Orders"];
   const activeIndex = tabs.indexOf(activeTab);
@@ -179,6 +181,26 @@ export default function Profile() {
       unsubBuyer();
       unsubSeller();
     };
+  }, [uid]);
+
+  useEffect(() => {
+    if (!uid) return;
+
+    const q = query(
+      collection(db, "ratings"),
+      where("sellerId", "==", uid)
+    );
+
+    const unsub = onSnapshot(q, (snapshot) => {
+      const data = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      setReviews(data);
+    });
+
+    return () => unsub();
   }, [uid]);
 
   const getImageSource = () => {
@@ -328,11 +350,20 @@ export default function Profile() {
           />
         )
       ) : activeTab === "reviews" ? (
-        <ScrollView contentContainerStyle={styles.scrollContent}>
+        reviews.length === 0 ? (
           <View style={styles.centerContent}>
             <Text>No ratings yet</Text>
           </View>
-        </ScrollView>
+        ) : (
+          <FlatList
+            data={reviews}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={{ padding: 10, paddingBottom: 80 }}
+            renderItem={({ item }) => (
+              <RatingCard item={item} />
+            )}
+          />
+        )
       ) : activeTab === "my Orders" ? (
         orders.length === 0 ? (
           <View style={styles.centerContent}>

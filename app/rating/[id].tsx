@@ -128,6 +128,7 @@ export default function RatingScreen() {
 
       await setDoc(ratingRef, {
         listingId: orderData.listingId,
+        listingName: productName, // ✅ ADD THIS LINE
         productRating,
         review: reviewText,
         sellerId: orderData.sellerId,
