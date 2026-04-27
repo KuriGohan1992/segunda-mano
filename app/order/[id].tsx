@@ -247,10 +247,25 @@ export default function OrderDetails() {
                         text: "Yes",
                         style: "destructive",
                         onPress: async () => {
-                          await updateDoc(doc(db, "orders", id as string), {
-                            deliveryStatus: "CANCELLED",
-                          });
-                        },
+                          try {
+                            await updateDoc(doc(db, "orders", id as string), {
+                              deliveryStatus: "CANCELLED",
+                            });
+                            if (order.listingId) {
+                              await updateDoc(doc(db, "listings", order.listingId), {
+                                available: true,
+                              });
+                            }
+                            Alert.alert(
+                              "Order Cancelled",
+                              "Your order has been cancelled successfully."
+                            );
+                            router.back();
+                          } catch (err) {
+                            console.log(err);
+                            Alert.alert("Error", "Failed to cancel order");
+                          }
+                        }
                       },
                     ]
                   );
@@ -264,25 +279,7 @@ export default function OrderDetails() {
         {canComplete && (
           <TouchableOpacity
             style={styles.completeBtn}
-            onPress={async () => {
-              try {
-                await updateDoc(doc(db, "orders", id as string), {
-                  deliveryStatus: "CANCELLED",
-                });
-                if (order.listingId) {
-                  await updateDoc(doc(db, "listings", order.listingId), {
-                    available: true,
-                  });
-                }
-                Alert.alert(
-                  "Order Cancelled",
-                  "Your order has been cancelled successfully."
-                );
-              } catch (err) {
-                console.log(err);
-                Alert.alert("Error", "Failed to cancel order");
-              }
-            }}
+            //jade ito sayo boi
           >
             <Text style={styles.completeText}>Complete Order</Text>
           </TouchableOpacity>
