@@ -119,13 +119,12 @@ export default function RatingScreen() {
 
       const orderData = orderSnap.data() as any;
 
-      // 🔥 FIXED: deterministic document ID (no duplicates ever)
       const ratingId = `${orderData.listingId}_${user?.uid}`;
       const ratingRef = doc(db, "ratings", ratingId);
 
       await setDoc(ratingRef, {
         listingId: orderData.listingId,
-        listingName: productName, // ✅ ADD THIS LINE
+        listingName: productName,
         review: reviewText,
         sellerId: orderData.sellerId,
         sellerRating,

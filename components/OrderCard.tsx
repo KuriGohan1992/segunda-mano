@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { img_placeholder } from "../constants/img_placeholder";
 import { db } from "@/firebase";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
 import { router } from "expo-router";
 import { useUser } from "@/context/UserContext";
 
@@ -41,11 +41,7 @@ export default function OrderCard({ item, onCancel }: any) {
       //   ? `Sold to: ${buyerName || "Unknown"}`
       //   : `Selling to: ${buyerName || "Unknown"}`;
     } else {
-      return `Seller: ${sellerName || "Unknown"}`
-      // if (isCancelled) return `Seller: ${sellerName || "Unknown"}`;
-      // return isDone
-      //   ? `Bought from: ${sellerName || "Unknown"}`
-      //   : `Buying from: ${sellerName || "Unknown"}`;
+      return `Seller: ${sellerName || "Unknown"}`;
     }
   };
 
@@ -100,6 +96,28 @@ export default function OrderCard({ item, onCancel }: any) {
   const handleComplete = async () => {
     try {
       const orderRef = doc(db, "orders", item.id);
+
+      const ratingId = `${item.listingId}_${item.userId}`;
+      const ratingRef = doc(db, "ratings", ratingId);
+
+      await setDoc(
+        ratingRef,
+        {
+          listingId: item.listingId,
+          listingName: item.listingName,
+
+          sellerId: item.sellerId,
+          sellerRating: null,
+          sellerRemarks: "",
+          sellerUpdatedAt: null,
+
+          buyerId: item.userId,
+          buyerRating: null,
+          buyerRemarks: "",
+          buyerUpdatedAt: null,
+        },
+        { merge: true }
+      );
 
       await updateDoc(orderRef, {
         deliveryStatus: "COMPLETED",
@@ -158,8 +176,7 @@ export default function OrderCard({ item, onCancel }: any) {
         <Text style={styles.status}>{item.deliveryStatus}</Text>
 
         <View style={{ flexDirection: "row", gap: 8 }}>
-          
-          {/* CANCEL BUTTON */}
+          {/* CANCEL */}
           {canCancel && (
             <TouchableOpacity style={styles.cBtn} onPress={onCancel}>
               <Text style={styles.cText}>Cancel Order</Text>
@@ -177,8 +194,7 @@ export default function OrderCard({ item, onCancel }: any) {
           )}
 
           {/* ADD REVIEW */}
-          {isBuyer &&
-            item.deliveryStatus === "COMPLETED" &&
+          {item.deliveryStatus === "COMPLETED" &&
             item.hasReviewed === false && (
               <TouchableOpacity
                 style={styles.cBtn}
@@ -189,8 +205,7 @@ export default function OrderCard({ item, onCancel }: any) {
             )}
 
           {/* EDIT REVIEW */}
-          {isBuyer &&
-            item.deliveryStatus === "COMPLETED" &&
+          {item.deliveryStatus === "COMPLETED" &&
             item.hasReviewed === true && (
               <TouchableOpacity
                 style={styles.cBtn}
