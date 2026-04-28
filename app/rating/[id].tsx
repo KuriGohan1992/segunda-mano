@@ -15,13 +15,9 @@ import CustomInput from "@/components/CustomInput";
 import {
   doc,
   getDoc,
-  query,
-  where,
-  getDocs,
-  collection,
+  setDoc,
   updateDoc,
   serverTimestamp,
-  setDoc, // ✅ FIX ADDED
 } from "firebase/firestore";
 import { db } from "@/firebase";
 import { useUser } from "@/context/UserContext";
@@ -37,129 +33,140 @@ export default function RatingScreen() {
     },
   });
 
+  const [orderData, setOrderData] = useState<any>(null);
   const [productName, setProductName] = useState("Loading...");
+  const [buyerName, setBuyerName] = useState("Loading...");
   const [sellerName, setSellerName] = useState("Loading...");
-  const [sellerRating, setSellerRating] = useState(5);
+  const [rating, setRating] = useState(5);
+
+  const isBuyer = user?.uid === orderData?.userId;
+  const isSeller = user?.uid === orderData?.sellerId;
+
+  const targetLabel = isBuyer ? "Seller" : "Buyer";
+  const targetName = isBuyer ? sellerName : buyerName;
+
+  const ratingField = isBuyer ? "sellerRating" : "buyerRating";
+  const remarksField = isBuyer ? "sellerRemarks" : "buyerRemarks";
+  const updatedField = isBuyer ? "sellerUpdatedAt" : "buyerUpdatedAt";
+
+  const ratingId = orderData
+    ? `${orderData.listingId}_${orderData.userId}`
+    : null;
 
   useEffect(() => {
     const fetchData = async () => {
       if (!id) return;
-
-      try {
-        const orderRef = doc(db, "orders", id as string);
-        const orderSnap = await getDoc(orderRef);
-
-        if (!orderSnap.exists()) return;
-
-        const orderData = orderSnap.data() as any;
-
-        const listingRef = doc(db, "listings", orderData.listingId);
-        const listingSnap = await getDoc(listingRef);
-
-        if (listingSnap.exists()) {
-          setProductName(listingSnap.data()?.title || "Unknown Product");
-        }
-
-        const sellerRef = doc(db, "users", orderData.sellerId);
-        const sellerSnap = await getDoc(sellerRef);
-
-        if (sellerSnap.exists()) {
-          setSellerName(sellerSnap.data()?.username || "Unknown Seller");
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    fetchData();
-  }, [id]);
-
-  useEffect(() => {
-    const fetchExistingReview = async () => {
-      if (!id || !user?.uid) return;
-
-      try {
-        const orderRef = doc(db, "orders", id as string);
-        const orderSnap = await getDoc(orderRef);
-
-        if (!orderSnap.exists()) return;
-
-        const orderData = orderSnap.data();
-
-        const q = query(
-          collection(db, "ratings"),
-          where("userId", "==", user.uid),
-          where("listingId", "==", orderData.listingId)
-        );
-
-        const snap = await getDocs(q);
-
-        if (!snap.empty) {
-          const data = snap.docs[0].data();
-
-          setSellerRating(data.sellerRating ?? 5);
-          setValue("review", data.review ?? "");
-        }
-      } catch (err) {
-        console.log("fetch review error", err);
-      }
-    };
-
-    fetchExistingReview();
-  }, [id, user]);
-
-  const onSubmit = async (data: any) => {
-    try {
-      const reviewText = data.review;
 
       const orderRef = doc(db, "orders", id as string);
       const orderSnap = await getDoc(orderRef);
 
       if (!orderSnap.exists()) return;
 
-      const orderData = orderSnap.data() as any;
+      const data = orderSnap.data();
+      setOrderData(data);
 
-      // 🔥 FIXED: deterministic document ID (no duplicates ever)
-      const ratingId = `${orderData.listingId}_${user?.uid}`;
+      // listing
+      const listingSnap = await getDoc(
+        doc(db, "listings", data.listingId)
+      );
+
+      if (listingSnap.exists()) {
+        setProductName(listingSnap.data()?.title || "Unknown Product");
+      }
+
+      // buyer
+      const buyerSnap = await getDoc(doc(db, "users", data.userId));
+      if (buyerSnap.exists()) {
+        setBuyerName(buyerSnap.data()?.username || "Unknown Buyer");
+      }
+
+      // seller
+      const sellerSnap = await getDoc(doc(db, "users", data.sellerId));
+      if (sellerSnap.exists()) {
+        setSellerName(sellerSnap.data()?.username || "Unknown Seller");
+      }
+    };
+
+    fetchData();
+  }, [id]);
+
+  // ⭐ NEW: load existing rating (EDIT MODE)
+  useEffect(() => {
+    const loadExisting = async () => {
+      if (!orderData || !user?.uid) return;
+
+      const ratingId = `${orderData.listingId}_${orderData.userId}`;
       const ratingRef = doc(db, "ratings", ratingId);
 
-      await setDoc(ratingRef, {
-        listingId: orderData.listingId,
-        listingName: productName, // ✅ ADD THIS LINE
-        review: reviewText,
-        sellerId: orderData.sellerId,
-        sellerRating,
-        userId: user?.uid,
-        updatedAt: serverTimestamp(),
-      });
+      const snap = await getDoc(ratingRef);
 
-      await updateDoc(orderRef, {
+      if (!snap.exists()) return;
+
+      const data = snap.data();
+
+      // BUYER editing seller rating
+      if (user.uid === orderData.userId) {
+        setRating(data.sellerRating ?? 5);
+        setValue("review", data.sellerRemarks ?? "");
+      }
+
+      // SELLER editing buyer rating
+      if (user.uid === orderData.sellerId) {
+        setRating(data.buyerRating ?? 5);
+        setValue("review", data.buyerRemarks ?? "");
+      }
+    };
+
+    loadExisting();
+  }, [orderData, user]);
+
+  const onSubmit = async (data: any) => {
+    try {
+      if (!orderData || !ratingId) return;
+
+      const ratingRef = doc(db, "ratings", ratingId);
+
+      await setDoc(
+        ratingRef,
+        {
+          listingId: orderData.listingId,
+          listingName: productName,
+
+          sellerId: orderData.sellerId,
+          buyerId: orderData.userId,
+
+          [ratingField]: rating,
+          [remarksField]: data.review,
+          [updatedField]: serverTimestamp(),
+        },
+        { merge: true }
+      );
+
+      await updateDoc(doc(db, "orders", id as string), {
         hasReviewed: true,
       });
 
       router.back();
     } catch (err) {
-      console.log("submit error", err);
-      Alert.alert("Error in submitting a review, please try again.");
+      console.log(err);
+      Alert.alert("Error", "Failed to submit review.");
     }
   };
 
-  const renderStars = (rating: number, setRating: (value: number) => void) => {
-    return (
-      <View style={styles.starRow}>
-        {[1, 2, 3, 4, 5].map((i) => (
-          <TouchableOpacity key={i} onPress={() => setRating(i)}>
-            <Ionicons
-              name={i <= rating ? "star" : "star-outline"}
-              size={28}
-              color="#DC143C"
-              style={{ marginRight: 6 }}
-            />
-          </TouchableOpacity>
-        ))}
-      </View>
-    );
-  };
+  const renderStars = () => (
+    <View style={styles.starRow}>
+      {[1, 2, 3, 4, 5].map((i) => (
+        <TouchableOpacity key={i} onPress={() => setRating(i)}>
+          <Ionicons
+            name={i <= rating ? "star" : "star-outline"}
+            size={28}
+            color="#DC143C"
+            style={{ marginRight: 6 }}
+          />
+        </TouchableOpacity>
+      ))}
+    </View>
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -173,7 +180,7 @@ export default function RatingScreen() {
         </TouchableOpacity>
 
         <Text style={styles.headerTitle}>
-          Rate the product
+          {isBuyer ? "Rate the Seller" : "Rate the Buyer"}
         </Text>
       </View>
 
@@ -182,13 +189,20 @@ export default function RatingScreen() {
         <Text style={styles.label}>Product</Text>
         <Text style={styles.name}>{productName}</Text>
 
-        <Text style={[styles.label, { marginTop: 20 }]}>Seller</Text>
-        <Text style={styles.name}>{sellerName}</Text>
+        <Text style={[styles.label, { marginTop: 20 }]}>
+          {targetLabel}
+        </Text>
+        <Text style={styles.name}>{targetName}</Text>
 
-        <Text style={[styles.label, { marginTop: 20 }]}>Your Rating</Text>
-        {renderStars(sellerRating, setSellerRating)}
+        <Text style={[styles.label, { marginTop: 20 }]}>
+          Your Rating
+        </Text>
 
-        <Text style={[styles.label, { marginTop: 20 }]}>Your Review</Text>
+        {renderStars()}
+
+        <Text style={[styles.label, { marginTop: 20 }]}>
+          Your Review
+        </Text>
 
         <CustomInput
           name="review"
@@ -203,12 +217,10 @@ export default function RatingScreen() {
         >
           <Text style={styles.buttonText}>Submit Review</Text>
         </TouchableOpacity>
-
       </ScrollView>
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

@@ -22,6 +22,7 @@ import styles from "../(tabs)/styles";
 import { Listing } from "../../type/listing";
 import { img_placeholder } from "../../constants/img_placeholder";
 import ListingCard from "../../components/ListingCard";
+import RatingCard from "../../components/RatingsCard"; // ✅ ONLY ADDITION
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useUser } from "../../context/UserContext";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -41,10 +42,16 @@ export default function SellerProfile() {
 
   const [activeTab, setActiveTab] = useState("listings");
   const [userListings, setUserListings] = useState<Listing[]>([]);
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [sellerAvgRating, setSellerAvgRating] = useState<number | null>(null);
+  const [ratingCount, setRatingCount] = useState<number>(0);
 
   const tabs = ["listings", "reviews"];
   const activeIndex = tabs.indexOf(activeTab);
 
+  // -------------------------
+  // SELLER INFO
+  // -------------------------
   useEffect(() => {
     async function getSellerDetails() {
       setLoading(true);
@@ -79,6 +86,9 @@ export default function SellerProfile() {
     getSellerDetails();
   }, [id]);
 
+  // -------------------------
+  // LISTINGS
+  // -------------------------
   useEffect(() => {
     if (!id) return;
 
@@ -113,6 +123,38 @@ export default function SellerProfile() {
     return () => unsub();
   }, [id]);
 
+  // -------------------------
+  // REVIEWS (SELLER ONLY)
+  // -------------------------
+  useEffect(() => {
+    if (!id) return;
+
+    const q = query(
+      collection(db, "ratings"),
+      where("sellerId", "==", id)
+    );
+
+    const unsub = onSnapshot(q, (snapshot) => {
+      const data = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      const valid = data.filter((r: any) => r.sellerRating != null);
+
+      const total = valid.reduce(
+        (sum, r: any) => sum + (r.sellerRating || 0),
+        0
+      );
+
+      setReviews(valid);
+      setRatingCount(valid.length);
+      setSellerAvgRating(valid.length ? total / valid.length : null);
+    });
+
+    return () => unsub();
+  }, [id]);
+
   const getImageSource = () => {
     if (!picture) {
       return require("../../assets/profile.png");
@@ -140,6 +182,7 @@ export default function SellerProfile() {
   return (
     <SafeAreaView style={styles.container}>
 
+      {/* HEADER */}
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => router.back()}
@@ -147,25 +190,17 @@ export default function SellerProfile() {
         >
           <Ionicons
             name="chevron-back"
-            size={28} 
+            size={28}
             color="#DC143C"
             style={{ marginRight: 6 }}
           />
-
-          <Text
-            style={[
-              styles.title,
-              {
-                marginBottom: 0,
-                textAlign: "left",
-              },
-            ]}
-          >
+          <Text style={[styles.title, { marginBottom: 0 }]}>
             Back
           </Text>
         </TouchableOpacity>
       </View>
 
+      {/* PROFILE */}
       <View style={{ flexDirection: "row", paddingHorizontal: 16, paddingTop: 10 }}>
         <Image style={styles.avatar} source={getImageSource()} />
 
@@ -176,6 +211,7 @@ export default function SellerProfile() {
         </View>
       </View>
 
+      {/* TABS */}
       <View style={styles.tabsContainer}>
         <View style={styles.tabsRow}>
           {tabs.map((tab) => (
@@ -209,6 +245,7 @@ export default function SellerProfile() {
         />
       </View>
 
+      {/* CONTENT */}
       {activeTab === "listings" ? (
         <FlatList
           data={userListings}
@@ -230,12 +267,23 @@ export default function SellerProfile() {
           )}
         />
       ) : (
-        <ScrollView contentContainerStyle={styles.scrollContent}>
-          <View style={styles.centerContent}>
-            <Text>No ratings yet</Text>
-          </View>
-        </ScrollView>
+        <FlatList
+          data={reviews}
+          key="reviews"
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={{ padding: 10, paddingBottom: 80 }}
+          ListEmptyComponent={
+            <View style={styles.centerContent}>
+              <Text>No ratings yet</Text>
+            </View>
+          }
+          renderItem={({ item }) => (
+            <RatingCard item={item} />
+          )}
+        />
       )}
+
+      {/* CHAT BUTTON */}
       {uid !== id && (
         <TouchableOpacity
           style={styles.floatingButton}
@@ -244,6 +292,7 @@ export default function SellerProfile() {
           <Ionicons name="chatbubble" size={26} color="#fff" />
         </TouchableOpacity>
       )}
+
     </SafeAreaView>
   );
 }

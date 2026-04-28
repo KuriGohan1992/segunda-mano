@@ -1,106 +1,90 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-} from "react-native";
-import { img_placeholder } from "../constants/img_placeholder";
-import { db } from "@/firebase";
+import { View, Text, Image, StyleSheet } from "react-native";
 import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/firebase";
 
 export default function RatingCard({ item }: any) {
-  const [imgUrl, setImgUrl] = useState<string | null>(null);
-  const [buyerName, setBuyerName] = useState<string | null>(null);
-  const [buyerImage, setBuyerImage] = useState<string | null>(null);
+  const [otherUser, setOtherUser] = useState<any>(null);
 
+  const isSeller = item.role === "seller";
+
+  const rating = isSeller
+    ? item.sellerRating
+    : item.buyerRating;
+
+  const review = isSeller
+    ? item.sellerRemarks
+    : item.buyerRemarks;
+
+  const otherUserId = isSeller
+    ? item.buyerId
+    : item.sellerId;
+
+  // fetch other user
   useEffect(() => {
-    let isMounted = true;
+    let mounted = true;
 
-    const fetchData = async () => {
+    const fetchUser = async () => {
       try {
-        const listingRef = doc(db, "listings", item.listingId);
-        const listingSnap = await getDoc(listingRef);
+        if (!otherUserId) return;
 
-        if (listingSnap.exists() && isMounted) {
-          const d: any = listingSnap.data();
-          setImgUrl(d.images?.[0] || d.thumbnail || null);
+        const ref = doc(db, "users", otherUserId);
+        const snap = await getDoc(ref);
+
+        if (snap.exists() && mounted) {
+          setOtherUser(snap.data());
         }
-
-        if (item.userId) {
-          const userRef = doc(db, "users", item.userId);
-          const userSnap = await getDoc(userRef);
-
-          if (userSnap.exists() && isMounted) {
-            const u = userSnap.data();
-            setBuyerName(u.username || "Unknown");
-            setBuyerImage(u.picture || null);
-          }
-        }
-      } catch (err) {
-        console.log("fetch error", err);
+      } catch (e) {
+        console.log("fetch user error:", e);
       }
     };
 
-    fetchData();
+    fetchUser();
 
     return () => {
-      isMounted = false;
+      mounted = false;
     };
-  }, [item.listingId, item.userId]);
+  }, [otherUserId]);
 
-  const buyerUri =
-    buyerImage && buyerImage !== ""
-      ? buyerImage.startsWith("http")
-        ? buyerImage
-        : buyerImage.startsWith("data:image")
-        ? buyerImage
-        : `data:image/jpeg;base64,${buyerImage}`
+  // image handling (same logic that worked before)
+  const imageUri =
+    otherUser?.picture && otherUser.picture !== ""
+      ? otherUser.picture.startsWith("http")
+        ? otherUser.picture
+        : otherUser.picture.startsWith("data:image")
+        ? otherUser.picture
+        : `data:image/jpeg;base64,${otherUser.picture}`
       : null;
 
-  const renderStars = (rating: number) => {
-    return (
-      <View style={styles.starRow}>
-        {[1, 2, 3, 4, 5].map((i) => (
-          <Text key={i} style={styles.star}>
-            {i <= rating ? "★" : "☆"}
-          </Text>
-        ))}
-      </View>
-    );
-  };
+  const renderStars = (value = 0) => (
+    <View style={{ flexDirection: "row" }}>
+      {[1, 2, 3, 4, 5].map((i) => (
+        <Text key={i} style={{ color: i <= value ? "#DC143C" : "#ccc" }}>
+          ★
+        </Text>
+      ))}
+    </View>
+  );
 
   return (
     <View style={styles.card}>
-      <View style={styles.topRow}>
-        
-        <View style={styles.leftHeader}>
-          <Image
-            source={buyerUri ? { uri: buyerUri } : img_placeholder}
-            style={styles.avatar}
-          />
+      <View style={styles.row}>
+        <Image
+          source={imageUri ? { uri: imageUri } : undefined}
+          style={styles.avatar}
+        />
 
-          <View style={{ marginLeft: 10 }}>
-            <Text style={styles.name}>
-              {buyerName || "Unknown"}{" "}
-              <Text style={styles.listingName}>
-                ({item.listingName || "Unknown Item"})
-              </Text>
-            </Text>
+        <View style={{ marginLeft: 10 }}>
+          <Text style={styles.name}>
+            {otherUser?.username || "Unknown"}
+          </Text>
 
-            {renderStars(item.sellerRating)}
-          </View>
+          {renderStars(rating)}
         </View>
-
-        <Text style={styles.date}>
-          {item.updatedAt
-            ? new Date(item.updatedAt.seconds * 1000).toLocaleDateString()
-            : ""}
-        </Text>
       </View>
 
-      <Text style={styles.description}>
-        {item.review}
+      <Text style={styles.review}>
+        {review || "No review provided"}
       </Text>
     </View>
   );
@@ -108,65 +92,30 @@ export default function RatingCard({ item }: any) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    marginBottom: 12,
-    marginHorizontal: 0,
     padding: 10,
     borderWidth: 1,
     borderColor: "#eee",
+    borderRadius: 10,
+    marginBottom: 10,
+    backgroundColor: "#fff",
   },
-
-  topRow: {
+  row: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
+    alignItems: "center",
   },
-
-  leftHeader: {
-    flexDirection: "row",
-    flex: 1,
-    marginRight: 8,
-  },
-
   avatar: {
     width: 42,
     height: 42,
     borderRadius: 21,
     backgroundColor: "#ccc",
   },
-
   name: {
+    fontWeight: "bold",
     fontSize: 14,
-    fontWeight: "700",
-    color: "#222",
   },
-
-  listingName: {
-    fontSize: 13,
-    color: "#777",
-    fontWeight: "400",
-  },
-
-  date: {
-    fontSize: 11,
-    color: "#999",
-  },
-
-  starRow: {
-    flexDirection: "row",
-  },
-
-  star: {
-    fontSize: 14,
-    color: "#DC143C",
-    marginRight: 2,
-  },
-
-  description: {
-    marginTop: 10,
+  review: {
+    marginTop: 8,
     fontSize: 13,
     color: "#555",
-    lineHeight: 18,
   },
 });

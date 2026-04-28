@@ -53,46 +53,76 @@ export default function Profile() {
   const tabs = ["listings", "reviews", "my Orders"];
   const activeIndex = tabs.indexOf(activeTab);
 
-
-
   const { tab } = useLocalSearchParams();
 
-  // ⭐ NEW: seller rating fetch (FIXED)
   useEffect(() => {
     if (!uid) return;
 
-    const q = query(
+    let sellerRatings: any[] = [];
+    let buyerRatings: any[] = [];
+
+    const sellerQuery = query(
       collection(db, "ratings"),
       where("sellerId", "==", uid)
     );
 
-    const unsub = onSnapshot(q, (snapshot) => {
-      if (snapshot.empty) {
-        setSellerAvgRating(null);
-        setRatingCount(0);
-        return;
-      }
+    const buyerQuery = query(
+      collection(db, "ratings"),
+      where("buyerId", "==", uid)
+    );
 
-      let total = 0;
+    const merge = () => {
+      const combined = [...sellerRatings, ...buyerRatings];
 
-      snapshot.docs.forEach((doc) => {
-        const data = doc.data();
-        total += data.sellerRating || 0;
+      const unique = Array.from(
+        new Map(combined.map((r) => [r.id, r])).values()
+      );
+
+      const valid = unique.filter((r: any) => {
+        if (r.sellerId === uid) return r.sellerRating != null;
+        if (r.buyerId === uid) return r.buyerRating != null;
+        return false;
       });
 
-      const avg = total / snapshot.docs.length;
+      const total = valid.reduce((sum, r: any) => {
+        if (r.sellerId === uid) return sum + (r.sellerRating || 0);
+        if (r.buyerId === uid) return sum + (r.buyerRating || 0);
+        return sum;
+      }, 0);
 
-      setSellerAvgRating(avg);
-      setRatingCount(snapshot.docs.length);
+      setSellerAvgRating(valid.length ? total / valid.length : null);
+      setRatingCount(valid.length);
+      setReviews(valid);
+    };
+
+    const unsubSeller = onSnapshot(sellerQuery, (snapshot) => {
+      sellerRatings = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        role: "seller",
+        ...doc.data(),
+      }));
+      merge();
     });
 
-    return () => unsub();
+    const unsubBuyer = onSnapshot(buyerQuery, (snapshot) => {
+      buyerRatings = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        role: "buyer",
+        ...doc.data(),
+      }));
+      merge();
+    });
+
+    return () => {
+      unsubSeller();
+      unsubBuyer();
+    };
   }, [uid]);
 
-  // ⭐ FIXED star renderer (uses value not setter)
+  // ⭐ FIXED star renderer
   const renderStars = (rating: number) => {
     return (
-      <View style={{ flexDirection: "row"}}>
+      <View style={{ flexDirection: "row" }}>
         {[1, 2, 3, 4, 5].map((i) => (
           <Text
             key={i}
@@ -235,26 +265,6 @@ export default function Profile() {
     };
   }, [uid]);
 
-  useEffect(() => {
-    if (!uid) return;
-
-    const q = query(
-      collection(db, "ratings"),
-      where("sellerId", "==", uid)
-    );
-
-    const unsub = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-
-      setReviews(data);
-    });
-
-    return () => unsub();
-  }, [uid]);
-
   const getImageSource = () => {
     if (!picture) {
       return require("../../assets/profile.png");
@@ -289,7 +299,7 @@ export default function Profile() {
 
   const handleContactUs = async () => {
     const url =
-      `mailto:jadeddragon26@gmail.com` +
+      `mailto:${email}` +
       `?subject=Segunda Mano Support` +
       `&body=From: ${email}%0A%0AHello, I need help with:%0A`;
 
@@ -320,6 +330,7 @@ export default function Profile() {
   return (
     <SafeAreaView style={styles.container}>
 
+      {/* HEADER */}
       <View style={styles.header}>
         <Text style={styles.title}>Profile</Text>
 
@@ -328,6 +339,7 @@ export default function Profile() {
         </TouchableOpacity>
       </View>
 
+      {/* PROFILE */}
       <View style={{ flexDirection: "row", paddingHorizontal: 16 }}>
         <Image style={styles.avatar} source={getImageSource()} />
 
@@ -339,9 +351,9 @@ export default function Profile() {
               No ratings yet
             </Text>
           ) : (
-            <View style={{ flexDirection: "row", alignItems: "center", marginTop: 4 }}>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
               {renderStars(sellerAvgRating)}
-              <Text style={[styles.infoText, { marginLeft: 6 }]}>
+              <Text style={{ marginLeft: 6 }}>
                 {sellerAvgRating.toFixed(1)} ({ratingCount})
               </Text>
             </View>
@@ -352,6 +364,7 @@ export default function Profile() {
         </View>
       </View>
 
+      {/* TABS */}
       <View style={styles.tabsContainer}>
 
       <View style={styles.tabsRow}>
@@ -386,6 +399,7 @@ export default function Profile() {
       />
     </View>
 
+      {/* CONTENT */}
       {activeTab === "listings" ? (
         userListings.length === 0 ? (
           <View style={styles.centerContent}>
@@ -489,46 +503,25 @@ export default function Profile() {
           <View style={styles.menuPanel}>
             <Text style={styles.menuTitle}>MENU</Text>
 
-            <TouchableOpacity
-              onPress={() =>
-                handleMenuPress(handleContactUs)
-              }
-            >
+            <TouchableOpacity onPress={handleContactUs}>
               <Text style={styles.menuText}>Contact Us</Text>
             </TouchableOpacity>
-            
-            <TouchableOpacity
-              onPress={() =>
-                handleMenuPress(() => router.push("../profileMenu/details"))
-              }
-            >
+
+            <TouchableOpacity onPress={() => router.push("../profileMenu/details")}>
               <Text style={styles.menuText}>Edit Profile</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={() =>
-                handleMenuPress(() => router.push("../profileMenu/passwordChange"))
-              }
-            >
+            <TouchableOpacity onPress={() => router.push("../profileMenu/passwordChange")}>
               <Text style={styles.menuText}>Change Password</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={() =>
-                handleMenuPress(() => router.push("../profileMenu/about"))
-              }
-            >
+            <TouchableOpacity onPress={() => router.push("../profileMenu/about")}>
               <Text style={styles.menuText}>About Segunda Mano</Text>
             </TouchableOpacity>
 
-
             <View style={styles.menuDivider} />
 
-            <TouchableOpacity
-              onPress={() =>
-                handleMenuPress(handleLogout)
-              }
-            >
+            <TouchableOpacity onPress={handleLogout}>
               <Text style={styles.menuText}>Log out</Text>
             </TouchableOpacity>
           </View>

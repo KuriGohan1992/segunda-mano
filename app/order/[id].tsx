@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, setDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -85,10 +85,9 @@ export default function OrderDetails() {
           if (listingSnap.exists()) {
             const d: any = listingSnap.data();
             setImage(d.images?.[0] || d.thumbnail || null);
-            setTitle(d.title)
-            setCondition(d.condition)
-            setPrice(d.price)
-
+            setTitle(d.title);
+            setCondition(d.condition);
+            setPrice(d.price);
           }
         }
 
@@ -241,54 +240,108 @@ export default function OrderDetails() {
         {canCancel && (
           <TouchableOpacity
             style={styles.completeBtn}
-            onPress={async () => {
-                  Alert.alert( 
-                    "Cancel Order",
-                    "Are you sure you want to cancel this order?",
-                    [
-                      { text: "No" },
-                      {
-                        text: "Yes",
-                        style: "destructive",
-                        onPress: async () => {
-                          try {
-                            await updateDoc(doc(db, "orders", id as string), {
-                              deliveryStatus: "CANCELLED",
-                            });
-                            if (order.listingId) {
-                              await updateDoc(doc(db, "listings", order.listingId), {
-                                available: true,
-                              });
-                            }
-                            Alert.alert(
-                              "Order Cancelled",
-                              "Your order has been cancelled successfully."
-                            );
-                            router.back();
-                          } catch (err) {
-                            console.log(err);
-                            Alert.alert("Error", "Failed to cancel order");
-                          }
+            onPress={() => {
+              Alert.alert(
+                "Cancel Order",
+                "Are you sure you want to cancel this order?",
+                [
+                  { text: "No" },
+                  {
+                    text: "Yes",
+                    style: "destructive",
+                    onPress: async () => {
+                      try {
+                        await updateDoc(doc(db, "orders", id as string), {
+                          deliveryStatus: "CANCELLED",
+                        });
+
+                        if (order.listingId) {
+                          await updateDoc(
+                            doc(db, "listings", order.listingId),
+                            { available: true }
+                          );
                         }
-                      },
-                    ]
-                  );
-                }}
+
+                        router.back();
+                      } catch (err) {
+                        console.log(err);
+                        Alert.alert("Error", "Failed to cancel order");
+                      }
+                    },
+                  },
+                ]
+              );
+            }}
           >
             <Text style={styles.completeText}>Cancel Order</Text>
           </TouchableOpacity>
         )}
 
-        {/* COMPLETE (BUYER ONLY) */}
         {canComplete && (
           <TouchableOpacity
             style={styles.completeBtn}
-            //jade ito sayo boi
+            onPress={async () => {
+              try {
+                const orderRef = doc(db, "orders", id as string);
+
+                const ratingId = `${order.listingId}_${order.userId}`;
+                const ratingRef = doc(db, "ratings", ratingId);
+
+                await setDoc(
+                  ratingRef,
+                  {
+                    listingId: order.listingId,
+                    listingName: order.listingName,
+
+                    sellerId: order.sellerId,
+                    sellerRating: null,
+                    sellerRemarks: "",
+                    sellerUpdatedAt: null,
+
+                    buyerId: order.userId,
+                    buyerRating: null,
+                    buyerRemarks: "",
+                    buyerUpdatedAt: null,
+                  },
+                  { merge: true }
+                );
+
+                await updateDoc(orderRef, {
+                  deliveryStatus: "COMPLETED",
+                  isCompleted: true,
+                  hasReviewed: false,
+                });
+
+                router.back();
+              } catch (err) {
+                console.log(err);
+                Alert.alert("Error", "Failed to complete order");
+              }
+            }}
           >
             <Text style={styles.completeText}>Complete Order</Text>
           </TouchableOpacity>
         )}
 
+        {order?.deliveryStatus === "COMPLETED" &&
+          !order?.hasReviewed && (
+            <TouchableOpacity
+              style={styles.completeBtn}
+              onPress={() => router.push(`/rating/${id}`)}
+            >
+              <Text style={styles.completeText}>Add Review</Text>
+            </TouchableOpacity>
+          )}
+
+        {order?.deliveryStatus === "COMPLETED" &&
+          order?.hasReviewed && (
+            <TouchableOpacity
+              style={styles.completeBtn}
+              onPress={() => router.push(`/rating/${id}`)}
+            >
+              <Text style={styles.completeText}>Edit Review</Text>
+            </TouchableOpacity>
+          )}
       </View>
     </SafeAreaView>
   );
